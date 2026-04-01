@@ -3,6 +3,12 @@ session_start();
 include "functions.php";
 include "monsters.php";
 
+// Redirect to main page if no save exists
+if (!file_exists("save.json") || filesize("save.json") === 0) {
+    header("Location: main.php");
+    exit;
+}
+
 $game = loadGame();
 $action = $_POST['action'] ?? null;
 
