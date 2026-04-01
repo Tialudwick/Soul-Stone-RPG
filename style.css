@@ -1,0 +1,40 @@
+.hp-bar {
+    width: 100px;
+    height: 10px;
+    background: red;
+}
+.hp-bar-inner {
+    height: 100%;
+    background: green;
+}
+
+button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+h1 { color: #6b2d2d; }
+
+.game-area {
+    width: 600px;
+    margin: 0 auto;
+    background: url('images/backgrounds/forest.png') no-repeat center;
+    background-size: cover;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px #555;
+}
+
+.monster, .player {
+    display: inline-block;
+    width: 120px;
+}
