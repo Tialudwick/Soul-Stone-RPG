@@ -72,7 +72,7 @@ if (isset($_POST['buy'])) {
     <div class="logo"><strong>SOUL STONE RPG</strong></div>
     <div class="nav-links">
         <a href="bestiary.php">BESTIARY</a>
-        <a href="store.php">SHOP</a>
+        <a href="shop.php">SHOP</a>
         <a href="index.php">HOME</a>
     </div>
 </div>
