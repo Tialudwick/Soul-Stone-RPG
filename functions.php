@@ -29,8 +29,19 @@ function recordCapture(&$game, $monsterName) {
     }
 }
 
-//spawn monster
+// Damage Multiplier Logic
+function getTypeMultiplier($attackerType, $defenderType) {
+    $chart = [
+        "fire"  => ["earth" => 2.0, "water" => 0.5, "fire" => 1.0],
+        "water" => ["fire" => 2.0, "earth" => 0.5, "water" => 1.0],
+        "earth" => ["water" => 2.0, "fire" => 0.5, "earth" => 1.0]
+    ];
+    return $chart[$attackerType][$defenderType] ?? 1.0;
+}
+
+// Updated spawn to include moves
 function spawnMonster($allMonsters) {
+    global $moves;
     $roll = rand(1, 100);
     $target = ($roll <= 5) ? "ancient" : (($roll <= 30) ? "greater" : "basic");
     
@@ -40,6 +51,7 @@ function spawnMonster($allMonsters) {
     
     $wild = $pool[array_rand($pool)];
     $wild['hp'] = $wild['max_hp'];
+    $wild['moves'] = $moves[$wild['type']]; // Attach moveset
     return $wild;
 }
 
