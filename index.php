@@ -48,7 +48,7 @@ if ($game['currentBattle']) {
     }
 }
 
-// Item Usage Logic
+// --- ITEM & CATCH LOGIC ---
 if (str_starts_with($action, "use_pot_")) {
     $type = str_replace("use_pot_", "", $action);
     $healAmt = ["basic" => 30, "greater" => 80, "ancient" => 200][$type];
@@ -56,6 +56,48 @@ if (str_starts_with($action, "use_pot_")) {
         $pm = &$game['player']['roster'][$game['player']['active']];
         $pm['hp'] = min($pm['max_hp'], $pm['hp'] + $healAmt);
         $game['inventory'][$type."_potion"]--;
+        $game['message'] = "Used " . ucfirst($type) . " Potion!";
+    }
+}
+
+// NEW CATCH LOGIC
+if (str_starts_with($action, "catch_")) {
+    $stoneType = str_replace("catch_", "", $action); // 'basic', 'greater', or 'ancient'
+    
+    if (($game['inventory'][$stoneType] ?? 0) > 0) {
+        $game['inventory'][$stoneType]--; // Consume the stone
+        
+        $em = &$game['currentBattle'];
+        // Success Rate Calculation
+        // Lower Enemy HP = Higher Catch Rate
+        $hpPercent = $em['hp'] / $em['max_hp'];
+        $stonePower = ["basic" => 0.3, "greater" => 0.6, "ancient" => 1.0][$stoneType];
+        
+        $catchChance = (1 - $hpPercent) + $stonePower;
+        $roll = rand(0, 100) / 100;
+
+        if ($roll < $catchChance) {
+            // SUCCESS: Add to roster if there is room
+            if (count($game['player']['roster']) < 8) {
+                $newMonster = $em;
+                $newMonster['hp'] = $newMonster['max_hp']; // Heal upon capture
+                $game['player']['roster'][] = $newMonster;
+                $game['message'] = "Gotcha! {$em['name']} was caught!";
+                $game['currentBattle'] = null; // End battle
+            } else {
+                $game['message'] = "Roster full! Could not keep {$em['name']}.";
+                $game['currentBattle'] = null;
+            }
+        } else {
+            // FAILURE: Enemy attacks back
+            $game['message'] = "Oh no! The {$em['name']} broke free!";
+            $eMove = $em['moves'][rand(0,3)];
+            $pm = &$game['player']['roster'][$game['player']['active']];
+            $pm['hp'] -= floor(rand($em['attack']-2, $em['attack']+2) * $eMove['power']);
+            if ($pm['hp'] < 0) { $pm['hp'] = 0; }
+        }
+    } else {
+        $game['message'] = "You don't have any $stoneType stones!";
     }
 }
 
@@ -180,9 +222,15 @@ saveGame($game);
 
             <div class="section-title">SOUL STONES</div>
             <div class="btn-grid">
-                <button name="action" value="catch_basic" class="btn btn-stone">Basic (<?php echo $game['inventory']['basic'] ?? 0; ?>)</button>
-                <button name="action" value="catch_greater" class="btn btn-stone">Great (<?php echo $game['inventory']['greater'] ?? 0; ?>)</button>
-                <button name="action" value="catch_ancient" class="btn btn-stone">Ancient (<?php echo $game['inventory']['ancient'] ?? 0; ?>)</button>
+                <button name="action" value="catch_basic" class="btn btn-stone">
+                    Basic (<?php echo $game['inventory']['basic'] ?? 0; ?>)
+                </button>
+                <button name="action" value="catch_greater" class="btn btn-stone">
+                    Great (<?php echo $game['inventory']['greater'] ?? 0; ?>)
+                </button>
+                <button name="action" value="catch_ancient" class="btn btn-stone">
+                     Ancient (<?php echo $game['inventory']['ancient'] ?? 0; ?>)
+                </button>
             </div>
 
             <div class="section-title">MONSTER ROSTER</div>
