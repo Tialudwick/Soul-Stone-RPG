@@ -6,14 +6,18 @@ include "monsters.php";
 $game = loadGame();
 $action = $_POST['action'] ?? null;
 
-// --- DATA REPAIR ---
+// --- DATA REPAIR & SYNC ---
 if (!empty($game['player']['roster'])) {
     foreach ($game['player']['roster'] as &$m) {
-        if (!isset($m['xp'])) { $m['xp'] = 0; } 
+        // Ensure type and moves exist for display
         if (!isset($m['type'])) {
-            foreach ($allMonsters as $ref) { if ($ref['name'] === $m['name']) { $m['type'] = $ref['type']; break; } }
+            foreach ($allMonsters as $ref) { 
+                if ($ref['name'] === $m['name']) { $m['type'] = $ref['type']; break; } 
+            }
         }
-        if (!isset($m['moves']) || empty($m['moves'])) { $m['moves'] = $moves[$m['type'] ?? 'earth']; }
+        if (!isset($m['moves']) || empty($m['moves'])) { 
+            $m['moves'] = $moves[$m['type'] ?? 'earth']; 
+        }
     }
 }
 
@@ -22,22 +26,26 @@ if ($game['currentBattle']) {
     $pm = &$game['player']['roster'][$game['player']['active']];
     $em = &$game['currentBattle'];
 
-    // Fainted Logic: Cannot attack if fainted
+    // FAINTED LOGIC: Prevent attacking if HP is 0
     if ($pm['hp'] <= 0) {
-        $game['message'] = "Your monster has fainted! Switch to another or use a potion.";
+        $game['message'] = "{$pm['name']} is fainted! Use a potion or switch monsters.";
     } elseif (str_starts_with($action, "attack_")) {
         $idx = (int)str_replace("attack_", "", $action);
         $move = $pm['moves'][$idx];
+        
+        // Damage Calculation
         $dmg = floor(rand($pm['attack']-2, $pm['attack']+2) * $move['power'] * getTypeMultiplier($move['type'], $em['type']));
         $em['hp'] -= $dmg;
         
         if ($em['hp'] <= 0) {
-            $em['hp'] = 0;
-            $msg = gainXP($pm, 80); // This now auto-heals on level up inside functions.php
+            $em['hp'] = 0; 
+            // AUTO-HEAL: Leveling up now fully restores HP
+            $lvlMsg = gainXP($pm, 80); 
             $game['player']['gold'] += rand(50, 100);
-            $game['message'] = "Victory! " . ($msg ? $msg : "");
+            $game['message'] = "Victory! " . ($lvlMsg ?: "");
             $game['currentBattle'] = null;
         } else {
+            // Enemy Counter-Attack
             $eMove = $em['moves'][rand(0,3)];
             $pm['hp'] -= floor(rand($em['attack']-2, $em['attack']+2) * $eMove['power']);
             if ($pm['hp'] < 0) { $pm['hp'] = 0; } 
@@ -45,7 +53,7 @@ if ($game['currentBattle']) {
     }
 }
 
-// Item Logic
+// Item Usage
 if (str_starts_with($action, "use_pot_")) {
     $type = str_replace("use_pot_", "", $action);
     $healAmt = ["basic" => 30, "greater" => 80, "ancient" => 200][$type];
@@ -67,45 +75,35 @@ saveGame($game);
 <head>
     <title>Soul Stone RPG</title>
     <style>
-        body { font-family: sans-serif; background: #2c3e50; margin: 0; padding: 0; color: #333; }
-        .top-nav { background: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ddd; }
-        .top-nav a { text-decoration: none; color: #3498db; font-weight: bold; margin-left: 20px; }
-        .main-container { display: flex; justify-content: center; gap: 20px; max-width: 1100px; margin: 30px auto; }
-        
-        .battle-column { flex: 1.2; background: #bdc3c7; padding: 25px; border-radius: 5px; border: 4px solid #3498db; }
-        .stage { display: flex; justify-content: space-between; background: #ecf0f1; padding: 30px; border-radius: 5px; margin-bottom: 20px; border: 2px solid #7f8c8d; }
-        .monster-box { width: 160px; text-align: center; }
-        .monster-box img { width: 140px; height: 140px; background: #fff; border: 1px solid #333; margin-bottom: 5px; }
-        
-        /* Type Tag Styles */
-        .type-tag { font-size: 0.65em; padding: 2px 6px; border-radius: 3px; color: white; text-transform: uppercase; display: inline-block; margin-bottom: 5px; }
-        .type-fire { background: #e67e22; } .type-water { background: #3498db; } .type-earth { background: #27ae60; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #2c3e50; margin: 0; color: #333; }
+        /* NAVIGATION FIX */
+        .top-nav { background: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #3498db; }
+        .nav-links a { text-decoration: none; color: #2c3e50; font-weight: bold; margin-left: 20px; transition: 0.3s; }
+        .nav-links a:hover { color: #3498db; }
 
-        .stat-label { font-size: 0.75em; color: #555; display: block; margin-top: 2px; text-transform: uppercase; font-weight: bold; }
-        .ui-column { flex: 1; background: #bdc3c7; padding: 25px; border-radius: 5px; }
-        .section-box { background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-        .section-label { font-weight: bold; text-align: center; margin-bottom: 10px; font-size: 0.9em; }
+        .main-container { display: flex; justify-content: center; gap: 20px; max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .battle-column, .ui-column { background: #bdc3c7; padding: 25px; border-radius: 8px; border: 4px solid #3498db; }
+        .battle-column { flex: 1.2; } .ui-column { flex: 1; }
 
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .roster-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        /* TYPE LABELS */
+        .type-badge { font-size: 0.7em; padding: 3px 8px; border-radius: 4px; color: white; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: inline-block; }
+        .fire { background: #e67e22; } .water { background: #3498db; } .earth { background: #27ae60; }
 
-        .btn { border: none; padding: 12px 5px; cursor: pointer; font-weight: bold; color: white; border-radius: 2px; }
-        .btn-atk { background: #f39c12; border-bottom: 3px solid #d35400; }
-        .btn:disabled { background: #95a5a6; cursor: not-allowed; border: none; }
-        .btn-pot { background: #9b59b6; } .btn-pot.greater { background: #3498db; } .btn-pot.ancient { background: #2ecc71; }
-        .btn-stone { background: #9b59b6; } .btn-stone.greater { background: #3498db; } .btn-stone.ancient { background: #2ecc71; }
-        .btn-run { background: #e74c3c; width: 100%; margin-top: 10px; padding: 15px; font-size: 1.1em; }
+        .stage { display: flex; justify-content: space-between; background: #ecf0f1; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #7f8c8d; }
+        .monster-box img { width: 120px; height: 120px; object-fit: contain; background: white; border-radius: 4px; border: 1px solid #ccc; }
         
-        .roster-slot { background: #fff; border: 1px solid #7f8c8d; padding: 5px; height: 105px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .active-slot { border: 3px solid #3498db; }
-        .fainted { opacity: 0.6; filter: grayscale(1); }
+        .hp-bar { width: 100%; height: 12px; background: #95a5a6; border-radius: 6px; overflow: hidden; margin: 5px 0; }
+        .hp-fill { height: 100%; background: #2ecc71; transition: width 0.4s ease; }
+        .fainted-img { filter: grayscale(100%) opacity(0.5); }
+
+        .btn { border: none; padding: 12px; cursor: pointer; font-weight: bold; color: white; border-radius: 4px; transition: 0.2s; }
+        .btn-atk { background: #f39c12; border-bottom: 4px solid #d35400; }
+        .btn-atk:active { border-bottom: 0; transform: translateY(4px); }
+        .btn:disabled { background: #7f8c8d; cursor: not-allowed; border-bottom: none; }
         
-        .hp-bar { width: 100%; height: 10px; background: #7f8c8d; overflow: hidden; margin-top: 5px; }
-        .hp-fill { height: 100%; background: #2ecc71; }
-        .xp-bar { width: 100%; height: 4px; background: #dfe6e9; margin-top: 2px; }
-        .xp-fill { height: 100%; background: #3498db; }
-        
-        .gold-display { background: #ddd; padding: 10px; text-align: center; font-weight: bold; margin-top: 10px; }
+        .roster-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .roster-slot { background: white; border: 2px solid #ddd; padding: 8px; border-radius: 6px; cursor: pointer; text-align: center; }
+        .active-slot { border-color: #3498db; background: #ebf5fb; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
     </style>
 </head>
 <body>
@@ -125,95 +123,78 @@ saveGame($game);
             $pm = $game['player']['roster'][$game['player']['active']];
             $em = $game['currentBattle'];
             $pmXP = getXPStats($pm['xp']); 
-            $pmHPPercent = max(0, ($pm['hp'] / $pm['max_hp']) * 100);
-            $emHPPercent = max(0, ($em['hp'] / $em['max_hp']) * 100);
+            $pmHP = ($pm['hp'] / $pm['max_hp']) * 100;
+            $emHP = ($em['hp'] / $em['max_hp']) * 100;
         ?>
             <div class="stage">
                 <div class="monster-box">
-                    <div class="type-tag type-<?php echo $pm['type']; ?>"><?php echo $pm['type']; ?></div><br>
-                    <small>Lvl <?php echo $pmXP['level']; ?></small>
-                    <img src="images/monsters/<?php echo $pm['image']; ?>">
-                    <strong><?php echo $pm['name']; ?></strong>
-                    
-                    <div class="hp-bar"><div class="hp-fill" style="width:<?php echo $pmHPPercent; ?>%"></div></div>
-                    <span class="stat-label"><?php echo "{$pm['hp']} / {$pm['max_hp']} HP"; ?></span>
-                    
-                    <div class="xp-bar"><div class="xp-fill" style="width:<?php echo $pmXP['percent']; ?>%"></div></div>
-                    <span class="stat-label"><?php echo "{$pmXP['current']} / {$pmXP['needed']} XP"; ?></span>
+                    <span class="type-badge <?php echo $pm['type']; ?>"><?php echo $pm['type']; ?></span><br>
+                    <img src="images/monsters/<?php echo $pm['image']; ?>" class="<?php echo $pm['hp'] <= 0 ? 'fainted-img' : ''; ?>">
+                    <div><strong><?php echo $pm['name']; ?></strong> (Lvl <?php echo $pmXP['level']; ?>)</div>
+                    <div class="hp-bar"><div class="hp-fill" style="width:<?php echo $pmHP; ?>%"></div></div>
+                    <small><?php echo "{$pm['hp']}/{$pm['max_hp']} HP"; ?></small>
                 </div>
-                <div style="align-self:center; font-weight:bold; font-size: 1.5em;">VS</div>
+
+                <div style="align-self:center; font-size: 2em; font-weight: bold; color: #7f8c8d;">VS</div>
+
                 <div class="monster-box">
-                    <div class="type-tag type-<?php echo $em['type']; ?>"><?php echo $em['type']; ?></div><br>
-                    <small><?php echo ucfirst($em['rarity']); ?></small>
+                    <span class="type-badge <?php echo $em['type']; ?>"><?php echo $em['type']; ?></span><br>
                     <img src="images/monsters/<?php echo $em['image']; ?>">
-                    <strong><?php echo $em['name']; ?></strong>
-                    
-                    <div class="hp-bar"><div class="hp-fill" style="background:#e74c3c; width:<?php echo $emHPPercent; ?>%"></div></div>
-                    <span class="stat-label"><?php echo "{$em['hp']} / {$em['max_hp']} HP"; ?></span>
+                    <div><strong>Wild <?php echo $em['name']; ?></strong></div>
+                    <div class="hp-bar"><div class="hp-fill" style="background:#e74c3c; width:<?php echo $emHP; ?>%"></div></div>
+                    <small><?php echo "{$em['hp']}/{$em['max_hp']} HP"; ?></small>
                 </div>
             </div>
 
             <form method="post">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <?php foreach($pm['moves'] as $i => $move): ?>
-                        <button name="action" value="attack_<?php echo $i; ?>" 
-                                class="btn btn-atk" <?php echo ($pm['hp'] <= 0) ? 'disabled' : ''; ?>>
-                            <?php echo strtoupper($move['name']); ?>
+                        <button name="action" value="attack_<?php echo $i; ?>" class="btn btn-atk" <?php echo $pm['hp'] <= 0 ? 'disabled' : ''; ?>>
+                            <?php echo strtoupper($move['name']); ?><br><small>Pwr: <?php echo $move['power']; ?></small>
                         </button>
                     <?php endforeach; ?>
                 </div>
-                <button name="action" value="run" class="btn btn-run">RUN</button>
+                <button name="action" value="run" class="btn" style="background:#e74c3c; width:100%; margin-top:10px;">RUN AWAY</button>
             </form>
         <?php else: ?>
-            <div style="height:350px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                <p><strong><?php echo $game['message']; ?></strong></p>
-                <form method="post"><button name="action" value="start_battle" class="btn btn-atk" style="padding:20px 40px;">EXPLORE GRASS</button></form>
+            <div style="height:350px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#ecf0f1; border-radius:8px;">
+                <h3><?php echo $game['message']; ?></h3>
+                <form method="post"><button name="action" value="start_battle" class="btn btn-atk" style="padding:15px 50px; font-size:1.2em;">EXPLORE GRASS</button></form>
             </div>
         <?php endif; ?>
     </div>
 
     <div class="ui-column">
         <form method="post">
-            <div class="section-box">
-                <div class="section-label">POTIONS</div>
-                <div class="grid-3">
-                    <button name="action" value="use_pot_basic" class="btn btn-pot">Basic (<?php echo $game['inventory']['basic_potion'] ?? 0; ?>)</button>
-                    <button name="action" value="use_pot_greater" class="btn btn-pot greater">Greater (<?php echo $game['inventory']['greater_potion'] ?? 0; ?>)</button>
-                    <button name="action" value="use_pot_ancient" class="btn btn-pot ancient">Ancient (<?php echo $game['inventory']['ancient_potion'] ?? 0; ?>)</button>
+            <div class="section-box" style="background:#ecf0f1; padding:15px; border-radius:8px; margin-bottom:15px;">
+                <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ccc;">ITEMS & CAPTURE</div>
+                <div class="grid-3" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:5px;">
+                    <button name="action" value="use_pot_basic" class="btn" style="background:#9b59b6; font-size:0.8em;">Pot (<?php echo $game['inventory']['basic_potion'] ?? 0; ?>)</button>
+                    <button name="action" value="catch_basic" class="btn" style="background:#2ecc71; font-size:0.8em;">Stone (<?php echo $game['inventory']['basic'] ?? 0; ?>)</button>
                 </div>
             </div>
 
-            <div class="section-box">
-                <div class="section-label">SOUL STONES</div>
-                <div class="grid-3">
-                    <button name="action" value="catch_basic" class="btn btn-stone">Basic (<?php echo $game['inventory']['basic'] ?? 0; ?>)</button>
-                    <button name="action" value="catch_greater" class="btn btn-stone greater">Greater (<?php echo $game['inventory']['greater'] ?? 0; ?>)</button>
-                    <button name="action" value="catch_ancient" class="btn btn-stone ancient">Ancient (<?php echo $game['inventory']['ancient'] ?? 0; ?>)</button>
-                </div>
-            </div>
-
-            <div class="section-box">
-                <div class="section-label">MONSTER ROSTER</div>
+            <div class="section-box" style="background:#ecf0f1; padding:15px; border-radius:8px;">
+                <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ccc;">MONSTER ROSTER</div>
                 <div class="roster-grid">
                     <?php for($i=0; $i<8; $i++): ?>
                         <?php if(isset($game['player']['roster'][$i])): 
                             $m = $game['player']['roster'][$i];
-                            $rosterHP = max(0, ($m['hp'] / $m['max_hp']) * 100);
+                            $hpP = ($m['hp'] / $m['max_hp']) * 100;
                         ?>
-                            <button name="switch_to" value="<?php echo $i; ?>" class="roster-slot <?php echo ($i == $game['player']['active']) ? 'active-slot' : ''; ?> <?php echo ($m['hp'] <= 0) ? 'fainted' : ''; ?>">
-                                <div class="type-tag type-<?php echo $m['type']; ?>" style="font-size:0.5em;"><?php echo $m['type']; ?></div>
-                                <img src="images/monsters/<?php echo $m['image']; ?>" style="width:30px; height:30px; object-fit:contain;">
-                                <div style="font-size:0.6em; font-weight:bold;"><?php echo $m['name']; ?></div>
-                                <div class="hp-bar" style="height:4px;"><div class="hp-fill" style="width:<?php echo $rosterHP; ?>%"></div></div>
+                            <button name="switch_to" value="<?php echo $i; ?>" class="roster-slot <?php echo $i == $game['player']['active'] ? 'active-slot' : ''; ?>">
+                                <img src="images/monsters/<?php echo $m['image']; ?>" style="width:30px; height:30px;" class="<?php echo $m['hp'] <= 0 ? 'fainted-img' : ''; ?>">
+                                <div class="hp-bar" style="height:4px;"><div class="hp-fill" style="width:<?php echo $hpP; ?>%"></div></div>
                             </button>
                         <?php else: ?>
-                            <div class="roster-slot" style="color:#999; font-size:0.7em;">Empty</div>
+                            <div class="roster-slot" style="color:#bdc3c7;">---</div>
                         <?php endif; ?>
                     <?php endfor; ?>
                 </div>
             </div>
-            
-            <div class="gold-display">GOLD AMOUNT: <?php echo $game['player']['gold']; ?></div>
+            <div style="background:#2c3e50; color:white; padding:10px; border-radius:8px; margin-top:15px; text-align:center; font-weight:bold;">
+                GOLD: <?php echo $game['player']['gold']; ?>
+            </div>
         </form>
     </div>
 </div>
