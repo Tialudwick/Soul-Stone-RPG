@@ -32,7 +32,7 @@ $moves = [
 // Monster Database
 $allMonsters = [
     // --- BASIC (Common) ---
-    ["name" => "Emberling", "type" => "fire", "max_hp" => 50, "attack" => 12, "rarity" => "basic", "image" => "/image/emberling.png"],
+    ["name" => "Emberling", "type" => "fire", "max_hp" => 50, "attack" => 12, "rarity" => "basic", "image" => "emberling.png"],
     ["name" => "Tidepup", "type" => "water", "max_hp" => 60, "attack" => 10, "rarity" => "basic", "image" => "tidepup.png"],
     ["name" => "Gravhorn", "type" => "earth", "max_hp" => 70, "attack" => 8, "rarity" => "basic", "image" => "gravhorn.png"],
     ["name" => "Leafy", "type" => "earth", "max_hp" => 45, "attack" => 11, "rarity" => "basic", "image" => "leafy.png"],
