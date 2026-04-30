@@ -1,109 +1,87 @@
 <?php
 function loadGame($file = "save.json") {
-    if (file_exists($file)) {
-        return json_decode(file_get_contents($file), true);
+    if (!file_exists($file) || filesize($file) === 0) {
+        return [
+            "player" => ["roster" => [], "active" => 0, "gold" => 0, "discovered" => []],
+            "inventory" => ["potions" => 0, "basic" => 0, "greater" => 0, "ancient" => 0],
+            "currentBattle" => null,
+            "message" => "Welcome to Soul Stone RPG!"
+        ];
     }
-    // default starting game
-    return [
-        "player" => [
-            "active" => 0,
-            "roster" => [],
-            "gold" => 0
-        ],
-        "inventory" => [
-            "potions" => 10, 
-            "basic" => 5,
-            "greater" => 2,
-            "ancient" => 1
-        ],
-        "currentBattle" => null,
-        "message" => ""
-    ];
+    return json_decode(file_get_contents($file), true);
 }
 
 function saveGame($game, $file = "save.json") {
     file_put_contents($file, json_encode($game));
 }
 
+function generateMonsterId() {
+    return uniqid();
+}
 
-// reward logic -----
-function getBattleRewards(&$game){
-    //random money generate between 10 and 100)
-    $amount = rand(10, 100);
+function recordCapture(&$game, $monsterName) {
+    if (!isset($game['player']['discovered'])) $game['player']['discovered'] = [];
+    if (!in_array($monsterName, $game['player']['discovered'])) {
+        $game['player']['discovered'][] = $monsterName;
+    }
+}
+
+function spawnMonster($allMonsters) {
+    $roll = rand(1, 100);
+    $target = ($roll <= 5) ? "ancient" : (($roll <= 30) ? "greater" : "basic");
+    
+    $pool = array_filter($allMonsters, function($m) use ($target) {
+        return $m['rarity'] === $target;
+    });
+    
+    $wild = $pool[array_rand($pool)];
+    $wild['hp'] = $wild['max_hp'];
+    return $wild;
+}
+
+function getBattleRewards(&$game) {
+    $amount = rand(15, 45);
     $game['player']['gold'] += $amount;
     return $amount;
 }
 
-// store logic
 function buyItem(&$game, $itemType, $cost) {
-    if ($game['player']['gold'] >= $cost){
+    if (($game['player']['gold'] ?? 0) >= $cost) {
         $game['player']['gold'] -= $cost;
-        $game['inventory'][$itemType] ++;
+        $game['inventory'][$itemType]++;
         return true;
     }
     return false;
 }
 
-//Roster Mangagement
-function addToRoster(&$game, $monster) {
-    if (count($game['player']['roster']) < 8){
-        $game['player']['roster'][] = $monster;
-        return true; //for successful adding
-    }
-    return false; //the roster is full
-}
-
-//random id for monsters
-function generateMonsterId() {
-    return uniqid(); 
-}
-
-//discard from roster
-function discardFromRoster(&$game, $index){
-    if (isset($game['player']['roster'][$index])){
-        //remove a specific monster and rest the array
-        array_splice($game['player']['roster'], $index, 1);
-
-        //if the active monster gets deleted accidentally the active goes to 0
-        if ($game['player']['active'] >= count($game['player']['roster']))
-            {
+function discardFromRoster(&$game, $monsterId) {
+    foreach ($game['player']['roster'] as $index => $monster) {
+        if ($monster['id'] === $monsterId) {
+            array_splice($game['player']['roster'], $index, 1);
+            if ($game['player']['active'] >= count($game['player']['roster'])) {
                 $game['player']['active'] = 0;
             }
             return true;
+        }
     }
-    return false; 
+    return false;
 }
 
-// Attempt to catch a monster
-function attemptCatch($monsterHP, $maxHP, $bonus) {
-    $chance = (1 - ($monsterHP / $maxHP)) * 100 + $bonus;
+function gainXP(&$monster, $amount) {
+    $monster['xp'] += $amount;
+    if ($monster['xp'] >= 100) {
+        $monster['level']++;
+        $monster['xp'] = 0;
+        $monster['max_hp'] += 10;
+        $monster['hp'] = $monster['max_hp'];
+        $monster['attack'] += 2;
+        return true;
+    }
+    return false;
+}
+
+function attemptCatch($h, $m, $b) {
+    $chance = (1 - ($h / $m)) * 100 + $b;
     return rand(1, 100) <= $chance;
 }
-
-// Gain XP and level up
-function gainXP(&$monster, $xp) {
-    $monster['xp'] = ($monster['xp'] ?? 0) + $xp;
-    $levelUp = false;
-    if ($monster['xp'] >= 20) {
-        $monster['level']++;
-        $monster['max_hp'] += 10;
-        $monster['attack'] += 2;
-        $monster['xp'] = 0;
-        $levelUp = true;
-    }
-    return $levelUp;
-}
-
-// Choose a random wild monster
-function spawnMonster($allMonsters) {
-    $wild = $allMonsters[array_rand($allMonsters)];
-    $wild['hp'] = $wild['max_hp'];
-    return $wild;
-}
-
-$soulStones = [
-    "basic" => ["name"=>"Basic Soul Stone","bonus"=>0],
-    "greater" => ["name"=>"Greater Soul Stone","bonus"=>15],
-    "ancient" => ["name"=>"Ancient Soul Stone","bonus"=>30]
-];
 ?>

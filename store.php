@@ -1,41 +1,28 @@
 <?php
 include "functions.php";
 $game = loadGame();
+$stock = ["potions"=>50, "basic"=>100, "greater"=>250, "ancient"=>1000];
 
-$shopItems = [
-    "potions" => ["name" => "Healing Potion", "price" => 50],
-    "basic"   => ["name" => "Basic Soul Stone", "price" => 100],
-    "greater" => ["name" => "Greater Soul Stone", "price" => 250]
-];
-
-if (isset($_POST['buy'])) {
-    $key = $_POST['item_key'];
-    $cost = $shopItems[$key]['price'];
-    if (buyItem($game, $key, $cost)) {
-        $game['message'] = "Bought 1 " . $shopItems[$key]['name'];
-        saveGame($game);
+if (isset($_POST['item'])) {
+    if (buyItem($game, $_POST['item'], $stock[$_POST['item']])) {
+        $msg = "Bought " . $_POST['item'];
     } else {
-        $game['message'] = "Not enough gold!";
+        $msg = "Too poor!";
     }
+    saveGame($game);
 }
 ?>
 <!DOCTYPE html>
 <html>
-<head><link rel="stylesheet" href="style.css"></head>
 <body>
-    <h1>Fantasy Shop</h1>
-    <p>Gold: <?php echo $game['player']['gold'] ?? 0; ?></p>
-    <p><strong><?php echo $game['message'] ?? ''; ?></strong></p>
-
-    <?php foreach($shopItems as $key => $item): ?>
-        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-            <strong><?php echo $item['name']; ?></strong> - <?php echo $item['price']; ?> Gold
-            <form method="post">
-                <input type="hidden" name="item_key" value="<?php echo $key; ?>">
-                <button name="buy">Buy</button>
-            </form>
-        </div>
+    <h1>Shop (Gold: <?php echo $game['player']['gold']; ?>)</h1>
+    <p><?php echo $msg ?? ''; ?></p>
+    <?php foreach($stock as $item=>$price): ?>
+        <form method="post">
+            <input type="hidden" name="item" value="<?php echo $item; ?>">
+            <button><?php echo ucfirst($item); ?> - <?php echo $price; ?>G</button>
+        </form>
     <?php endforeach; ?>
-    <a href="index.php">Return to Adventure</a>
+    <a href="index.php">Back</a>
 </body>
 </html>
