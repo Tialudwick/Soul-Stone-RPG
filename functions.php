@@ -50,6 +50,56 @@ function getBattleRewards(&$game) {
     return $amount;
 }
 
+// --- NEW SCALING LEVEL SYSTEM ---
+
+// Calculates TOTAL XP needed to reach a specific level
+function getXPForLevel($level) {
+    if ($level <= 1) return 0;
+    // Level 2: 100 XP, Level 3: 300 XP, Level 4: 600 XP (Increases by Level * 100)
+    return ($level * ($level - 1) / 2) * 100;
+}
+
+function getLevel($xp) {
+    $level = 1;
+    while ($xp >= getXPForLevel($level + 1)) {
+        $level++;
+    }
+    return $level;
+}
+
+// Data for the blue XP Progress Bar
+function getXPStats($xp) {
+    $lvl = getLevel($xp);
+    $currentLvlTotal = getXPForLevel($lvl);
+    $nextLvlTotal = getXPForLevel($lvl + 1);
+    
+    $xpInCurrentLevel = $xp - $currentLvlTotal;
+    $xpNeededForNext = $nextLvlTotal - $currentLvlTotal;
+    $percent = ($xpNeededForNext > 0) ? ($xpInCurrentLevel / $xpNeededForNext) * 100 : 0;
+
+    return [
+        'level' => $lvl,
+        'current' => $xpInCurrentLevel,
+        'needed' => $xpNeededForNext,
+        'percent' => $percent
+    ];
+}
+
+function gainXP(&$monster, $amount) {
+    $oldLevel = getLevel($monster['xp'] ?? 0);
+    $monster['xp'] += $amount;
+    $newLevel = getLevel($monster['xp']);
+    
+    if ($newLevel > $oldLevel) {
+        $levelsGained = $newLevel - $oldLevel;
+        $monster['max_hp'] += (10 * $levelsGained);
+        $monster['hp'] = $monster['max_hp']; 
+        $monster['attack'] += (5 * $levelsGained);
+        return "Level Up! {$monster['name']} is now Level $newLevel!";
+    }
+    return false;
+}
+
 //buy items
 function buyItem(&$game, $itemType, $cost) {
     if (($game['player']['gold'] ?? 0) >= $cost) {
@@ -70,28 +120,6 @@ function discardFromRoster(&$game, $monsterId) {
             }
             return true;
         }
-    }
-    return false;
-}
-
-// Calculate level based on total XP
-function getLevel($xp) {
-    // Each level requires 100 XP (Level 1 = 0-99 XP, Level 2 = 100-199, etc.)
-    return floor($xp / 100) + 1;
-}
-
-// Updated gainXP with a "Level Up" message check
-function gainXP(&$monster, $amount) {
-    $oldLevel = getLevel($monster['xp']);
-    $monster['xp'] += $amount;
-    $newLevel = getLevel($monster['xp']);
-    
-    if ($newLevel > $oldLevel) {
-        // Boost stats on level up
-        $monster['max_hp'] += 10;
-        $monster['hp'] = $monster['max_hp']; // Full heal on level up!
-        $monster['attack'] += 5;
-        return "Level Up! {$monster['name']} is now Level $newLevel!";
     }
     return false;
 }
