@@ -11,7 +11,7 @@ $soulStones = [
     "ancient" => ["name" => "Ancient Stone", "bonus" => 50]
 ];
 
-// Starter
+// --- STARTER SELECTION ---
 if (empty($game['player']['roster']) && isset($_POST['pick_id'])) {
     $s = $allMonsters[$_POST['pick_id']];
     $s['id'] = generateMonsterId();
@@ -23,19 +23,30 @@ if (empty($game['player']['roster']) && isset($_POST['pick_id'])) {
     saveGame($game);
 }
 
-if (isset($_POST['switch_to'])) { $game['player']['active'] = $_POST['switch_to']; }
+// --- SWITCH MONSTER ---
+if (isset($_POST['switch_to'])) { 
+    $game['player']['active'] = $_POST['switch_to']; 
+}
 
+// --- HEAL TEAM (POST-BATTLE BONUS) ---
 if (isset($_POST['heal_team'])) {
     foreach($game['player']['roster'] as &$m) $m['hp'] = $m['max_hp'];
     unset($game['showHeal']);
+    $game['message'] = "Your team has been fully restored!";
 }
 
-if ($action === "start_battle") $game['currentBattle'] = spawnMonster($allMonsters);
+// --- START BATTLE ---
+if ($action === "start_battle") {
+    $game['currentBattle'] = spawnMonster($allMonsters);
+    $game['message'] = "A wild monster appears!";
+}
 
+// --- BATTLE ACTIONS ---
 if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
     $pm = &$game['player']['roster'][$game['player']['active']];
     $em = &$game['currentBattle'];
 
+    // ATTACK LOGIC
     if ($action === "attack" && $pm['hp'] > 0) {
         $dmg = rand(5, $pm['attack']);
         $em['hp'] -= $dmg;
@@ -48,9 +59,26 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
         } else {
             $eDmg = rand(5, $em['attack']);
             $pm['hp'] -= $eDmg;
+            $game['message'] = "You hit for $dmg! Enemy hits back for $eDmg.";
+        }
+    }
+
+    // HEAL LOGIC (USE POTION)
+    if ($action === "heal") {
+        if ($game['inventory']['potions'] > 0) {
+            if ($pm['hp'] < $pm['max_hp']) {
+                $game['inventory']['potions']--;
+                $pm['hp'] = min($pm['hp'] + 30, $pm['max_hp']);
+                $game['message'] = "Healed {$pm['name']} for 30 HP!";
+            } else {
+                $game['message'] = "{$pm['name']} is already at full health!";
+            }
+        } else {
+            $game['message'] = "You are out of potions!";
         }
     }
     
+    // CATCH LOGIC
     if (str_starts_with($action, "catch_")) {
         $type = str_replace("catch_", "", $action);
         if ($game['inventory'][$type] > 0 && count($game['player']['roster']) < 8) {
@@ -59,7 +87,10 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
                 $em['id'] = generateMonsterId();
                 $game['player']['roster'][] = $em;
                 recordCapture($game, $em['name']);
+                $game['message'] = "Gotcha! {$em['name']} was caught!";
                 $game['currentBattle'] = null;
+            } else {
+                $game['message'] = "The monster broke free!";
             }
         }
     }
@@ -88,6 +119,7 @@ saveGame($game);
         .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; transition: transform 0.1s; }
         .btn:active { transform: scale(0.95); }
         .btn-attack { background: #e67e22; color: white; }
+        .btn-heal { background: #3498db; color: white; }
         .btn-catch { background: #9b59b6; color: white; }
         .btn-explore { background: #27ae60; color: white; padding: 15px 40px; font-size: 1.2em; }
 
@@ -132,7 +164,9 @@ saveGame($game);
             <div class="monster-card">
                 <h3>You</h3>
                 <img src="images/monsters/<?php echo $pm['image']; ?>">
-                <div class="hp-outer"><div class="hp-inner hp-green" style="width: <?php echo max(0, ($pm['hp']/$pm['max_hp'])*100); ?>%"></div></div>
+                <div class="hp-outer">
+                    <div class="hp-inner hp-green" style="width: <?php echo max(0, ($pm['hp']/$pm['max_hp'])*100); ?>%"></div>
+                </div>
                 <strong><?php echo $pm['name']; ?></strong><br>
                 HP: <?php echo max(0, $pm['hp']); ?> / <?php echo $pm['max_hp']; ?>
             </div>
@@ -143,7 +177,9 @@ saveGame($game);
                 <div class="monster-card">
                     <h3 style="color: #c0392b;">Wild</h3>
                     <img src="images/monsters/<?php echo $em['image']; ?>">
-                    <div class="hp-outer"><div class="hp-inner hp-red" style="width: <?php echo max(0, ($em['hp']/$em['max_hp'])*100); ?>%"></div></div>
+                    <div class="hp-outer">
+                        <div class="hp-inner hp-red" style="width: <?php echo max(0, ($em['hp']/$em['max_hp'])*100); ?>%"></div>
+                    </div>
                     <strong><?php echo $em['name']; ?></strong><br>
                     HP: <?php echo max(0, $em['hp']); ?> / <?php echo $em['max_hp']; ?>
                 </div>
@@ -159,6 +195,11 @@ saveGame($game);
         <?php if($game['currentBattle']): ?>
             <form method="post">
                 <button name="action" value="attack" class="btn btn-attack">⚔️ Attack</button>
+                
+                <button name="action" value="heal" class="btn btn-heal">
+                    🧪 Use Potion (<?php echo $game['inventory']['potions']; ?>)
+                </button>
+                
                 <br><br>
                 <?php foreach($soulStones as $type => $data): ?>
                     <button name="action" value="catch_<?php echo $type; ?>" class="btn btn-catch">
