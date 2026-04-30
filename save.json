@@ -1,6 +1,1 @@
-{
-    "player_name": "Hero",
-    "currency": 0,
-    "potions": 10,
-    "pack": []
-}
+{"player_name":"Hero","currency":0,"potions":10,"pack":[],"player":{"roster":[{"name":"Gravhorn","max_hp":70,"attack":8,"level":1,"hp":70,"xp":0}],"gold":50},"inventory":{"potions":10},"message":"You chose Gravhorn and received 10 Potions!"}

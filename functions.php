@@ -53,6 +53,11 @@ function addToRoster(&$game, $monster) {
     return false; //the roster is full
 }
 
+//random id for monsters
+function generateMonsterId() {
+    return uniqid(); 
+}
+
 //discard from roster
 function discardFromRoster(&$game, $index){
     if (isset($game['player']['roster'][$index])){
