@@ -1,5 +1,5 @@
 <?php
-// --- ELEMENTAL TYPE CHART ---
+//Element type chart
 // Multiplier: [Attacker][Defender]
 $typeChart = [
     "fire"  => ["fire" => 1.0, "water" => 0.5, "earth" => 2.0],
@@ -7,7 +7,7 @@ $typeChart = [
     "earth" => ["fire" => 0.5, "water" => 2.0, "earth" => 1.0]
 ];
 
-// --- MOVE DEFINITIONS ---
+// Move Definitions
 $moves = [
     "fire" => [
         ["name" => "Ember", "power" => 1.0, "type" => "fire"],
@@ -29,7 +29,7 @@ $moves = [
     ]
 ];
 
-// --- MONSTER DATABASE ---
+// Monster Database
 $allMonsters = [
     // --- BASIC (Common) ---
     ["name" => "Emberling", "type" => "fire", "max_hp" => 50, "attack" => 12, "rarity" => "basic", "image" => "emberling.png"],
@@ -78,9 +78,8 @@ $allMonsters = [
     ["name" => "Omegaruct", "type" => "earth", "max_hp" => 550, "attack" => 48, "rarity" => "ancient", "image" => "omega.png"]
 ];
 
-/**
- * spawns a fresh monster with moves and sets HP
- */
+//pawns a fresh monster with moves and sets HP
+ 
 function spawnMonster($database) {
     global $moves;
     $monster = $database[array_rand($database)];
@@ -92,9 +91,8 @@ function spawnMonster($database) {
     return $monster;
 }
 
-/**
- * returns the damage multiplier based on types
- */
+//returns the damage multiplier based on types
+
 function getTypeMultiplier($atkType, $defType) {
     global $typeChart;
     return $typeChart[$atkType][$defType] ?? 1.0;
