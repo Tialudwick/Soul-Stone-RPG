@@ -10,6 +10,7 @@ $action = $_POST['action'] ?? null;
 if (!empty($game['player']['roster'])) {
     foreach ($game['player']['roster'] as &$m) {
         if (!isset($m['xp'])) { $m['xp'] = 0; } 
+        // Logic to ensure every monster has a type
         if (!isset($m['type'])) {
             foreach ($allMonsters as $ref) { if ($ref['name'] === $m['name']) { $m['type'] = $ref['type']; break; } }
         }
@@ -29,7 +30,7 @@ if ($game['currentBattle']) {
         $em['hp'] -= $dmg;
         
         if ($em['hp'] <= 0) {
-            gainXP($pm, 80); // XP Logic
+            gainXP($pm, 80);
             $game['player']['gold'] += rand(50, 100);
             $game['message'] = "Victory!";
             $game['currentBattle'] = null;
@@ -57,15 +58,18 @@ saveGame($game);
         
         .battle-column { flex: 1.2; background: #bdc3c7; padding: 25px; border-radius: 5px; border: 4px solid #3498db; }
         .stage { display: flex; justify-content: space-between; background: #ecf0f1; padding: 30px; border-radius: 5px; margin-bottom: 20px; border: 2px solid #7f8c8d; }
-        .monster-box { width: 160px; text-align: center; }
+        .monster-box { width: 160px; text-align: center; position: relative; }
         .monster-box img { width: 140px; height: 140px; background: #fff; border: 1px solid #333; }
+
+        /* Type Tags Styling */
+        .type-tag { font-size: 0.6em; background: #333; color: #fff; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; display: inline-block; margin-bottom: 4px; }
+        .type-fire { background: #e67e22; } .type-water { background: #3498db; } .type-earth { background: #27ae60; }
 
         .ui-column { flex: 1; background: #bdc3c7; padding: 25px; border-radius: 5px; }
         .section-box { background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         .roster-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
-        /* XP and HP Bar Styles */
         .hp-bar { width: 100%; height: 8px; background: #7f8c8d; margin-top: 5px; }
         .hp-fill { height: 100%; background: #2ecc71; }
         .xp-bar { width: 100%; height: 4px; background: #dfe6e9; margin-top: 2px; }
@@ -76,7 +80,7 @@ saveGame($game);
         .btn-pot { background: #9b59b6; } .btn-pot.greater { background: #3498db; } .btn-pot.ancient { background: #2ecc71; }
         .btn-stone { background: #9b59b6; } .btn-stone.greater { background: #3498db; } .btn-stone.ancient { background: #2ecc71; }
         
-        .roster-slot { background: #fff; border: 1px solid #7f8c8d; padding: 5px; min-height: 100px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .roster-slot { background: #fff; border: 1px solid #7f8c8d; padding: 5px; min-height: 105px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .active-slot { border: 3px solid #3498db; }
         .gold-display { background: #ddd; padding: 10px; text-align: center; font-weight: bold; margin-top: 10px; }
     </style>
@@ -93,10 +97,11 @@ saveGame($game);
         <?php if($game['currentBattle']): 
             $pm = $game['player']['roster'][$game['player']['active']];
             $em = $game['currentBattle'];
-            $pmXP = getXPStats($pm['xp']); // Fetch XP
+            $pmXP = getXPStats($pm['xp']);
         ?>
             <div class="stage">
                 <div class="monster-box">
+                    <div class="type-tag type-<?php echo $pm['type']; ?>"><?php echo $pm['type']; ?></div><br>
                     <small>Lvl <?php echo $pmXP['level']; ?></small>
                     <img src="images/monsters/<?php echo $pm['image']; ?>">
                     <strong><?php echo $pm['name']; ?></strong>
@@ -105,7 +110,8 @@ saveGame($game);
                 </div>
                 <div style="align-self:center; font-weight:bold;">VS</div>
                 <div class="monster-box">
-                    <small>Wild</small>
+                    <div class="type-tag type-<?php echo $em['type']; ?>"><?php echo $em['type']; ?></div><br>
+                    <small><?php echo ucfirst($em['rarity']); ?></small>
                     <img src="images/monsters/<?php echo $em['image']; ?>">
                     <strong><?php echo $em['name']; ?></strong>
                     <div class="hp-bar"><div class="hp-fill" style="background:#e74c3c; width:<?php echo ($em['hp']/$em['max_hp'])*100; ?>%"></div></div>
@@ -153,12 +159,13 @@ saveGame($game);
                     <?php for($i=0; $i<8; $i++): ?>
                         <?php if(isset($game['player']['roster'][$i])): 
                             $m = $game['player']['roster'][$i];
-                            $mXP = getXPStats($m['xp']); // Calculate XP for roster
+                            $mXP = getXPStats($m['xp']);
                         ?>
                             <button name="switch_to" value="<?php echo $i; ?>" class="roster-slot <?php echo ($i == $game['player']['active']) ? 'active-slot' : ''; ?>">
-                                <img src="images/monsters/<?php echo $m['image']; ?>" style="width:35px; height:35px; object-fit:contain;">
-                                <div style="font-size:0.65em; font-weight:bold;"><?php echo $m['name']; ?></div>
-                                <div class="hp-bar" style="height:4px;"><div class="hp-fill" style="width:<?php echo ($m['hp']/$m['max_hp'])*100; ?>%"></div></div>
+                                <div class="type-tag type-<?php echo $m['type']; ?>" style="font-size:0.5em;"><?php echo $m['type']; ?></div>
+                                <img src="images/monsters/<?php echo $m['image']; ?>" style="width:30px; height:30px; object-fit:contain;">
+                                <div style="font-size:0.6em; font-weight:bold;"><?php echo $m['name']; ?></div>
+                                <div class="hp-bar" style="height:3px;"><div class="hp-fill" style="width:<?php echo ($m['hp']/$m['max_hp'])*100; ?>%"></div></div>
                                 <div class="xp-bar"><div class="xp-fill" style="width:<?php echo $mXP['percent']; ?>%"></div></div>
                             </button>
                         <?php else: ?>
