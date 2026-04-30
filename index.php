@@ -63,7 +63,7 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
         }
     }
 
-    // Check for Total Team Faint (Blackout)
+    // --- BLACKOUT LOGIC (Total Team Faint) ---
     $allFainted = true;
     foreach ($game['player']['roster'] as $m) {
         if ($m['hp'] > 0) {
@@ -73,27 +73,37 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
     }
 
     if ($allFainted) {
-    // Heal everyone
-    foreach ($game['player']['roster'] as &$m) {
-        $m['hp'] = $m['max_hp'];
-    }
-    $game['currentBattle'] = null; // End current battle
-    $game['message'] = "All monsters fainted! You rushed to the nearest healing station. Your team is restored.";
-    saveGame($game);
+        foreach ($game['player']['roster'] as &$m) {
+            $m['hp'] = $m['max_hp'];
+        }
+        $game['currentBattle'] = null; 
+        $game['message'] = "All monsters fainted! You rushed to the nearest healing station. Your team is restored.";
+        saveGame($game);
     }
 
-    // HEAL LOGIC (USE POTION)
-    if ($action === "heal") {
-        if ($game['inventory']['potions'] > 0) {
+    // --- ENHANCED HEALING LOGIC (Handling tiers) ---
+    if (str_starts_with($action, "heal_")) {
+        $potionType = str_replace("heal_", "", $action);
+        
+        $tiers = [
+            'basic' => ['key' => 'potions', 'amt' => 30],
+            'super' => ['key' => 'super_potions', 'amt' => 100],
+            'max'   => ['key' => 'max_potions', 'amt' => 999]
+        ];
+
+        $invKey = $tiers[$potionType]['key'];
+        $healAmt = $tiers[$potionType]['amt'];
+
+        if (($game['inventory'][$invKey] ?? 0) > 0) {
             if ($pm['hp'] < $pm['max_hp']) {
-                $game['inventory']['potions']--;
-                $pm['hp'] = min($pm['hp'] + 30, $pm['max_hp']);
-                $game['message'] = "Healed {$pm['name']} for 30 HP!";
+                $game['inventory'][$invKey]--;
+                $pm['hp'] = min($pm['hp'] + $healAmt, $pm['max_hp']);
+                $game['message'] = "Used $potionType Potion on {$pm['name']}!";
             } else {
-                $game['message'] = "{$pm['name']} is already at full health!";
+                $game['message'] = "{$pm['name']} is already healthy!";
             }
         } else {
-            $game['message'] = "You are out of potions!";
+            $game['message'] = "You don't have any $potionType potions!";
         }
     }
     
@@ -215,11 +225,19 @@ saveGame($game);
             <form method="post">
                 <button name="action" value="attack" class="btn btn-attack">⚔️ Attack</button>
                 
-                <button name="action" value="heal" class="btn btn-heal">
-                    🧪 Use Potion (<?php echo $game['inventory']['potions']; ?>)
-                </button>
-                
                 <br><br>
+                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                    <button name="action" value="heal_basic" class="btn btn-heal">
+                        🧪 Potion (<?php echo $game['inventory']['potions'] ?? 0; ?>)
+                    </button>
+                    <button name="action" value="heal_super" class="btn" style="background:#2980b9; color:white;">
+                        💎 Super (<?php echo $game['inventory']['super_potions'] ?? 0; ?>)
+                    </button>
+                    <button name="action" value="heal_max" class="btn" style="background:#8e44ad; color:white;">
+                        🌟 Max (<?php echo $game['inventory']['max_potions'] ?? 0; ?>)
+                    </button>
+                </div>
+                
                 <?php foreach($soulStones as $type => $data): ?>
                     <button name="action" value="catch_<?php echo $type; ?>" class="btn btn-catch">
                         ✨ <?php echo $data['name']; ?> (<?php echo $game['inventory'][$type] ?? 0; ?>)

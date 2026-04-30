@@ -1,7 +1,14 @@
 <?php
 include "functions.php";
 $game = loadGame();
-$stock = ["potions"=>50, "basic"=>100, "greater"=>250, "ancient"=>1000];
+$stock = [
+    "potions" => 50,          // Heals 30
+    "super_potions" => 150,    // Heals 100
+    "max_potions" => 500,      // Heals All
+    "basic" => 100, 
+    "greater" => 250, 
+    "ancient" => 1000
+];
 
 if (isset($_POST['item'])) {
     if (buyItem($game, $_POST['item'], $stock[$_POST['item']])) {
