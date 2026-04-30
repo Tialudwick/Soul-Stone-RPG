@@ -21,7 +21,6 @@ if ($game['currentBattle']) {
     $pm = &$game['player']['roster'][$game['player']['active']];
     $em = &$game['currentBattle'];
 
-    // Move Logic
     if (str_starts_with($action, "attack_")) {
         $idx = (int)str_replace("attack_", "", $action);
         $move = $pm['moves'][$idx];
@@ -29,6 +28,7 @@ if ($game['currentBattle']) {
         $em['hp'] -= $dmg;
         
         if ($em['hp'] <= 0) {
+            $em['hp'] = 0; // Prevent negative HP display
             gainXP($pm, 80);
             $game['player']['gold'] += rand(50, 100);
             $game['message'] = "Victory!";
@@ -36,26 +36,19 @@ if ($game['currentBattle']) {
         } else {
             $eMove = $em['moves'][rand(0,3)];
             $pm['hp'] -= floor(rand($em['attack']-2, $em['attack']+2) * $eMove['power']);
+            if ($pm['hp'] < 0) { $pm['hp'] = 0; } // Prevent negative HP display
         }
     }
 }
 
-// Item Logic (Updated to handle 3 types)
+// Item Logic
 if (str_starts_with($action, "use_pot_")) {
     $type = str_replace("use_pot_", "", $action);
     $healAmt = ["basic" => 30, "greater" => 80, "ancient" => 200][$type];
     if (($game['inventory'][$type."_potion"] ?? 0) > 0) {
+        $pm = &$game['player']['roster'][$game['player']['active']];
         $pm['hp'] = min($pm['max_hp'], $pm['hp'] + $healAmt);
         $game['inventory'][$type."_potion"]--;
-    }
-}
-
-// Stone Logic (Catching)
-if (str_starts_with($action, "catch_")) {
-    $type = str_replace("catch_", "", $action);
-    if (($game['inventory'][$type] ?? 0) > 0) {
-        $game['inventory'][$type]--;
-        // ... (catch probability logic remains the same)
     }
 }
 
@@ -74,16 +67,13 @@ saveGame($game);
         .top-nav { background: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ddd; }
         .main-container { display: flex; justify-content: center; gap: 20px; max-width: 1100px; margin: 30px auto; }
         
-        /* Left Column: Battle */
         .battle-column { flex: 1.2; background: #bdc3c7; padding: 25px; border-radius: 5px; border: 4px solid #3498db; }
         .stage { display: flex; justify-content: space-between; background: #ecf0f1; padding: 30px; border-radius: 5px; margin-bottom: 20px; border: 2px solid #7f8c8d; }
         .monster-box { width: 160px; text-align: center; }
         .monster-box img { width: 140px; height: 140px; background: #fff; border: 1px solid #333; margin-bottom: 10px; }
         
-        /* HP/XP Label Styles */
-        .stat-label { font-size: 0.75em; color: #555; display: block; margin-top: 3px; text-transform: uppercase; }
+        .stat-label { font-size: 0.75em; color: #555; display: block; margin-top: 3px; text-transform: uppercase; font-weight: bold; }
 
-        /* Right Column: UI */
         .ui-column { flex: 1; background: #bdc3c7; padding: 25px; border-radius: 5px; }
         .section-box { background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
         .section-label { font-weight: bold; text-align: center; margin-bottom: 10px; font-size: 0.9em; }
@@ -100,10 +90,10 @@ saveGame($game);
         .roster-slot { background: #fff; border: 1px solid #7f8c8d; padding: 5px; height: 90px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .active-slot { border: 3px solid #3498db; }
         
-        .hp-bar { width: 100%; height: 8px; background: #7f8c8d; }
-        .hp-fill { height: 100%; background: #2ecc71; }
+        .hp-bar { width: 100%; height: 10px; background: #7f8c8d; overflow: hidden; }
+        .hp-fill { height: 100%; background: #2ecc71; transition: width 0.3s ease; }
         .xp-bar { width: 100%; height: 4px; background: #dfe6e9; margin-top: 2px; }
-        .xp-fill { height: 100%; background: #3498db; }
+        .xp-fill { height: 100%; background: #3498db; transition: width 0.3s ease; }
         
         .gold-display { background: #ddd; padding: 10px; text-align: center; font-weight: bold; margin-top: 10px; }
     </style>
@@ -120,8 +110,11 @@ saveGame($game);
         <?php if($game['currentBattle']): 
             $pm = $game['player']['roster'][$game['player']['active']];
             $em = $game['currentBattle'];
-            // XP data for active monster
             $pmXP = getXPStats($pm['xp']); 
+            
+            // Calculate percentages safely
+            $pmHPPercent = max(0, ($pm['hp'] / $pm['max_hp']) * 100);
+            $emHPPercent = max(0, ($em['hp'] / $em['max_hp']) * 100);
         ?>
             <div class="stage">
                 <div class="monster-box">
@@ -129,11 +122,11 @@ saveGame($game);
                     <img src="images/monsters/<?php echo $pm['image']; ?>">
                     <strong><?php echo $pm['name']; ?></strong>
                     
-                    <div class="hp-bar"><div class="hp-fill" style="width:<?php echo ($pm['hp']/$pm['max_hp'])*100; ?>%"></div></div>
-                    <span class="stat-label"><?php echo "{$pm['hp']}/{$pm['max_hp']} HP"; ?></span>
+                    <div class="hp-bar"><div class="hp-fill" style="width:<?php echo $pmHPPercent; ?>%"></div></div>
+                    <span class="stat-label"><?php echo "{$pm['hp']} / {$pm['max_hp']} HP"; ?></span>
                     
                     <div class="xp-bar"><div class="xp-fill" style="width:<?php echo $pmXP['percent']; ?>%"></div></div>
-                    <span class="stat-label"><?php echo "{$pmXP['current']}/{$pmXP['needed']} XP"; ?></span>
+                    <span class="stat-label"><?php echo "{$pmXP['current']} / {$pmXP['needed']} XP"; ?></span>
                 </div>
                 <div style="align-self:center; font-weight:bold; font-size: 1.5em;">VS</div>
                 <div class="monster-box">
@@ -141,8 +134,8 @@ saveGame($game);
                     <img src="images/monsters/<?php echo $em['image']; ?>">
                     <strong><?php echo $em['name']; ?></strong>
                     
-                    <div class="hp-bar"><div class="hp-fill" style="background:#e74c3c; width:<?php echo ($em['hp']/$em['max_hp'])*100; ?>%"></div></div>
-                    <span class="stat-label"><?php echo "{$em['hp']}/{$em['max_hp']} HP"; ?></span>
+                    <div class="hp-bar"><div class="hp-fill" style="background:#e74c3c; width:<?php echo $emHPPercent; ?>%"></div></div>
+                    <span class="stat-label"><?php echo "{$em['hp']} / {$em['max_hp']} HP"; ?></span>
                 </div>
             </div>
 
@@ -156,7 +149,7 @@ saveGame($game);
             </form>
         <?php else: ?>
             <div style="height:350px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                <p><?php echo $game['message']; ?></p>
+                <p><strong><?php echo $game['message']; ?></strong></p>
                 <form method="post"><button name="action" value="start_battle" class="btn btn-atk" style="padding:20px 40px;">EXPLORE GRASS</button></form>
             </div>
         <?php endif; ?>
@@ -188,11 +181,12 @@ saveGame($game);
                     <?php for($i=0; $i<8; $i++): ?>
                         <?php if(isset($game['player']['roster'][$i])): 
                             $m = $game['player']['roster'][$i];
+                            $rosterHP = max(0, ($m['hp'] / $m['max_hp']) * 100);
                         ?>
                             <button name="switch_to" value="<?php echo $i; ?>" class="roster-slot <?php echo ($i == $game['player']['active']) ? 'active-slot' : ''; ?>">
                                 <img src="images/monsters/<?php echo $m['image']; ?>" style="width:35px; height:35px; object-fit:contain;">
                                 <div style="font-size:0.65em; font-weight:bold; margin-top:3px;"><?php echo $m['name']; ?></div>
-                                <div class="hp-bar" style="height:4px;"><div class="hp-fill" style="width:<?php echo ($m['hp']/$m['max_hp'])*100; ?>%"></div></div>
+                                <div class="hp-bar" style="height:4px;"><div class="hp-fill" style="width:<?php echo $rosterHP; ?>%"></div></div>
                             </button>
                         <?php else: ?>
                             <div class="roster-slot" style="color:#999; font-size:0.7em;">Empty</div>
@@ -205,6 +199,5 @@ saveGame($game);
         </form>
     </div>
 </div>
-
 </body>
 </html>
