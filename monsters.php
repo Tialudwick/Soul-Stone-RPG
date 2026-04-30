@@ -90,11 +90,12 @@ function spawnMonster($database) {
     
     return $monster;
 }
-*/
+
 //returns the damage multiplier based on types
 
 function getTypeMultiplier($atkType, $defType) {
     global $typeChart;
     return $typeChart[$atkType][$defType] ?? 1.0;
 }
+    */
 ?>
