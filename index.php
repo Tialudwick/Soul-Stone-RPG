@@ -52,8 +52,11 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
         $em['hp'] -= $dmg;
         if ($em['hp'] <= 0) {
             $gold = getBattleRewards($game);
-            gainXP($pm, 25);
-            $game['message'] = "Victory! Gained $gold Gold.";
+            
+            // INCREASED XP RATIO: 150 XP per victory for faster leveling
+            $lvlMsg = gainXP($pm, 150); 
+            
+            $game['message'] = "Victory! Gained $gold Gold. " . ($lvlMsg ? $lvlMsg : "");
             $game['currentBattle'] = null;
             $game['showHeal'] = true;
         } else {
@@ -81,7 +84,7 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
         saveGame($game);
     }
 
-    // --- ENHANCED HEALING LOGIC (Handling tiers) ---
+    // --- ENHANCED HEALING LOGIC ---
     if (str_starts_with($action, "heal_")) {
         $potionType = str_replace("heal_", "", $action);
         
@@ -135,23 +138,19 @@ saveGame($game);
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; text-align: center; color: #333; }
         .stats-bar { background: #2c3e50; color: white; padding: 15px; display: flex; justify-content: space-around; position: sticky; top: 0; z-index: 100; }
         .stats-bar a { color: #3498db; text-decoration: none; font-weight: bold; }
-        
         .battle-container { display: flex; justify-content: center; gap: 40px; margin: 30px auto; max-width: 800px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .monster-card { width: 200px; }
         .monster-card img { width: 120px; height: 120px; object-fit: contain; }
-        
         .hp-outer { width: 100%; height: 15px; background: #eee; border-radius: 10px; border: 1px solid #ccc; overflow: hidden; margin: 10px 0; }
         .hp-inner { height: 100%; transition: width 0.4s ease; }
         .hp-green { background: #2ecc71; }
         .hp-red { background: #e74c3c; }
-
         .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; transition: transform 0.1s; }
         .btn:active { transform: scale(0.95); }
         .btn-attack { background: #e67e22; color: white; }
         .btn-heal { background: #3498db; color: white; }
         .btn-catch { background: #9b59b6; color: white; }
         .btn-explore { background: #27ae60; color: white; padding: 15px 40px; font-size: 1.2em; }
-
         .pack-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
         .pack-btn { padding: 10px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; }
         .pack-btn.active { border: 2px solid #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.3); }
@@ -191,7 +190,7 @@ saveGame($game);
         <div class="battle-container">
             <?php $pm = $game['player']['roster'][$game['player']['active']]; ?>
             <div class="monster-card">
-                <h3>You</h3>
+                <h3>You (Lvl <?php echo getLevel($pm['xp']); ?>)</h3>
                 <img src="images/monsters/<?php echo $pm['image']; ?>">
                 <div class="hp-outer">
                     <div class="hp-inner hp-green" style="width: <?php echo max(0, ($pm['hp']/$pm['max_hp'])*100); ?>%"></div>
@@ -267,7 +266,7 @@ saveGame($game);
                     <button name="switch_to" value="<?php echo $i; ?>" 
                             class="pack-btn <?php echo $is_active ? 'active' : ''; ?> <?php echo $is_fainted ? 'fainted' : ''; ?>"
                             <?php echo ($is_active || $is_fainted) ? 'disabled' : ''; ?>>
-                        <strong><?php echo $m['name']; ?></strong><br>
+                        <strong><?php echo $m['name']; ?> (Lvl <?php echo getLevel($m['xp']); ?>)</strong><br>
                         <small>HP: <?php echo max(0, $m['hp']); ?>/<?php echo $m['max_hp']; ?></small>
                     </button>
                 </form>

@@ -74,16 +74,24 @@ function discardFromRoster(&$game, $monsterId) {
     return false;
 }
 
-// XP logic
+// Calculate level based on total XP
+function getLevel($xp) {
+    // Each level requires 100 XP (Level 1 = 0-99 XP, Level 2 = 100-199, etc.)
+    return floor($xp / 100) + 1;
+}
+
+// Updated gainXP with a "Level Up" message check
 function gainXP(&$monster, $amount) {
+    $oldLevel = getLevel($monster['xp']);
     $monster['xp'] += $amount;
-    if ($monster['xp'] >= 100) {
-        $monster['level']++;
-        $monster['xp'] = 0;
+    $newLevel = getLevel($monster['xp']);
+    
+    if ($newLevel > $oldLevel) {
+        // Boost stats on level up
         $monster['max_hp'] += 10;
-        $monster['hp'] = $monster['max_hp'];
-        $monster['attack'] += 2;
-        return true;
+        $monster['hp'] = $monster['max_hp']; // Full heal on level up!
+        $monster['attack'] += 5;
+        return "Level Up! {$monster['name']} is now Level $newLevel!";
     }
     return false;
 }
