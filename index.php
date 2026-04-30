@@ -120,7 +120,7 @@ saveGame($game);
         .battle-column { flex: 1.5; background: #2c3e50; padding: 25px; border-radius: 12px; border: 4px solid #34495e; }
         .ui-column { flex: 1; background: #bdc3c7; padding: 20px; border-radius: 8px; border: 4px solid #3498db; }
 
-        /* Battle Cards */
+        /* ======== Battle Cards ======= */
         .stage { display: flex; justify-content: space-around; align-items: center; padding: 20px 0; margin-bottom: 20px; }
         .monster-card { width: 220px; background: #f4e4bc; border: 8px solid #3d2b1f; border-radius: 10px; padding: 12px; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .card-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 2px solid #3d2b1f; margin-bottom: 8px; }

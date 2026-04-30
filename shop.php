@@ -6,7 +6,7 @@ include "monsters.php";
 $game = loadGame();
 $message = "";
 
-// Handle Purchases (Matches logic from index.php inventory keys)
+// Handle Purchases (Mmake sure this matches logic from index.php inventory keys)
 if (isset($_POST['buy'])) {
     $item = $_POST['buy'];
     $prices = [
