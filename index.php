@@ -63,6 +63,25 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
         }
     }
 
+    // Check for Total Team Faint (Blackout)
+    $allFainted = true;
+    foreach ($game['player']['roster'] as $m) {
+        if ($m['hp'] > 0) {
+            $allFainted = false;
+            break;
+        }
+    }
+
+    if ($allFainted) {
+    // Heal everyone
+    foreach ($game['player']['roster'] as &$m) {
+        $m['hp'] = $m['max_hp'];
+    }
+    $game['currentBattle'] = null; // End current battle
+    $game['message'] = "All monsters fainted! You rushed to the nearest healing station. Your team is restored.";
+    saveGame($game);
+    }
+
     // HEAL LOGIC (USE POTION)
     if ($action === "heal") {
         if ($game['inventory']['potions'] > 0) {
