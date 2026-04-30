@@ -7,9 +7,11 @@ function loadGame($file = "save.json") {
     return [
         "player" => [
             "active" => 0,
-            "roster" => []
+            "roster" => [],
+            "gold" => 0
         ],
         "inventory" => [
+            "potions" => 10, 
             "basic" => 5,
             "greater" => 2,
             "ancient" => 1
@@ -21,6 +23,50 @@ function loadGame($file = "save.json") {
 
 function saveGame($game, $file = "save.json") {
     file_put_contents($file, json_encode($game));
+}
+
+
+// reward logic -----
+function getBattleRewards(&$game){
+    //random money generate between 10 and 100)
+    $amount = rand(10, 100);
+    $game['player']['gold'] += $amount;
+    return $amount;
+}
+
+// store logic
+function buyItem(&$game, $itemType, $cost) {
+    if ($game['player']['gold'] >= $cost){
+        $game['player']['gold'] -= $cost;
+        $game['inventory'][$itemType] ++;
+        return true;
+    }
+    return false;
+}
+
+//Roster Mangagement
+function addToRoster(&$game, $monster) {
+    if (count($game['player']['roster']) < 8){
+        $game['player']['roster'][] = $monster;
+        return true; //for successful adding
+    }
+    return false; //the roster is full
+}
+
+//discard from roster
+function discardFromRoster(&$game, $index){
+    if (isset($game['player']['roster'][$index])){
+        //remove a specific monster and rest the array
+        array_splice($game['player']['roster'], $index, 1);
+
+        //if the active monster gets deleted accidentally the active goes to 0
+        if ($game['player']['active'] >= count($game['player']['roster']))
+            {
+                $game['player']['active'] = 0;
+            }
+            return true;
+    }
+    return false; 
 }
 
 // Attempt to catch a monster
