@@ -78,7 +78,7 @@ $allMonsters = [
     ["name" => "Omegaruct", "type" => "earth", "max_hp" => 550, "attack" => 48, "rarity" => "ancient", "image" => "omega.png"]
 ];
 
-//pawns a fresh monster with moves and sets HP
+/*pawns a fresh monster with moves and sets HP
  
 function spawnMonster($database) {
     global $moves;
@@ -90,7 +90,7 @@ function spawnMonster($database) {
     
     return $monster;
 }
-
+*/
 //returns the damage multiplier based on types
 
 function getTypeMultiplier($atkType, $defType) {
