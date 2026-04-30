@@ -23,18 +23,13 @@ if (empty($game['player']['roster']) && isset($_POST['pick_id'])) {
     saveGame($game);
 }
 
-// SWITCHING 
-if (isset($_POST['switch_to'])) {
-    $game['player']['active'] = $_POST['switch_to'];
-}
+if (isset($_POST['switch_to'])) { $game['player']['active'] = $_POST['switch_to']; }
 
-//  HEAL TEAM 
 if (isset($_POST['heal_team'])) {
     foreach($game['player']['roster'] as &$m) $m['hp'] = $m['max_hp'];
     unset($game['showHeal']);
 }
 
-// BATTLE 
 if ($action === "start_battle") $game['currentBattle'] = spawnMonster($allMonsters);
 
 if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
@@ -71,43 +66,136 @@ if ($game['currentBattle'] && count($game['player']['roster']) > 0) {
 }
 saveGame($game);
 ?>
+
 <!DOCTYPE html>
 <html>
-<head><link rel="stylesheet" href="style.css"></head>
+<head>
+    <title>Soul Stone RPG</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; text-align: center; color: #333; }
+        .stats-bar { background: #2c3e50; color: white; padding: 15px; display: flex; justify-content: space-around; position: sticky; top: 0; z-index: 100; }
+        .stats-bar a { color: #3498db; text-decoration: none; font-weight: bold; }
+        
+        .battle-container { display: flex; justify-content: center; gap: 40px; margin: 30px auto; max-width: 800px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .monster-card { width: 200px; }
+        .monster-card img { width: 120px; height: 120px; object-fit: contain; }
+        
+        .hp-outer { width: 100%; height: 15px; background: #eee; border-radius: 10px; border: 1px solid #ccc; overflow: hidden; margin: 10px 0; }
+        .hp-inner { height: 100%; transition: width 0.4s ease; }
+        .hp-green { background: #2ecc71; }
+        .hp-red { background: #e74c3c; }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.95); }
+        .btn-attack { background: #e67e22; color: white; }
+        .btn-catch { background: #9b59b6; color: white; }
+        .btn-explore { background: #27ae60; color: white; padding: 15px 40px; font-size: 1.2em; }
+
+        .pack-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .pack-btn { padding: 10px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; }
+        .pack-btn.active { border: 2px solid #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.3); }
+        .fainted { opacity: 0.5; background: #dfe6e9; cursor: not-allowed; }
+    </style>
+</head>
 <body>
-    <nav>Gold: <?php echo $game['player']['gold']; ?> | <a href="store.php">Shop</a> | <a href="bestiary.php">Bestiary</a></nav>
-    
+
+    <div class="stats-bar">
+        <span>💰 Gold: <strong><?php echo $game['player']['gold']; ?></strong></span>
+        <span>🧪 Potions: <strong><?php echo $game['inventory']['potions']; ?></strong></span>
+        <nav>
+            <a href="store.php">Shop</a> | 
+            <a href="bestiary.php">Bestiary</a> | 
+            <a href="main.php">Menu</a>
+        </nav>
+    </div>
+
+    <h1>Soul Stone RPG</h1>
+    <p><em><?php echo $game['message'] ?? 'Find a monster in the wild!'; ?></em></p>
+
     <?php if(empty($game['player']['roster'])): ?>
-        <h2>Pick a Starter</h2>
-        <form method="post"><?php for($i=0;$i<3;$i++): ?>
-            <button name="pick_id" value="<?php echo $i; ?>">Pick <?php echo $allMonsters[$i]['name']; ?></button>
-        <?php endfor; ?></form>
+        <div style="background: white; display: inline-block; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <h2>Pick Your Starter</h2>
+            <form method="post">
+                <?php for($i=0; $i<3; $i++): $m = $allMonsters[$i]; ?>
+                    <button name="pick_id" value="<?php echo $i; ?>" class="btn" style="background:#eee;">
+                        <img src="images/monsters/<?php echo $m['image']; ?>" width="80"><br>
+                        <?php echo $m['name']; ?>
+                    </button>
+                <?php endfor; ?>
+            </form>
+        </div>
     <?php endif; ?>
 
-    <div class="battle-view">
+    <?php if(!empty($game['player']['roster'])): ?>
+        <div class="battle-container">
+            <?php $pm = $game['player']['roster'][$game['player']['active']]; ?>
+            <div class="monster-card">
+                <h3>You</h3>
+                <img src="images/monsters/<?php echo $pm['image']; ?>">
+                <div class="hp-outer"><div class="hp-inner hp-green" style="width: <?php echo max(0, ($pm['hp']/$pm['max_hp'])*100); ?>%"></div></div>
+                <strong><?php echo $pm['name']; ?></strong><br>
+                HP: <?php echo max(0, $pm['hp']); ?> / <?php echo $pm['max_hp']; ?>
+            </div>
+
+            <div style="align-self: center; font-size: 2em; font-weight: bold; color: #bdc3c7;">VS</div>
+
+            <?php if($game['currentBattle']): $em = $game['currentBattle']; ?>
+                <div class="monster-card">
+                    <h3 style="color: #c0392b;">Wild</h3>
+                    <img src="images/monsters/<?php echo $em['image']; ?>">
+                    <div class="hp-outer"><div class="hp-inner hp-red" style="width: <?php echo max(0, ($em['hp']/$em['max_hp'])*100); ?>%"></div></div>
+                    <strong><?php echo $em['name']; ?></strong><br>
+                    HP: <?php echo max(0, $em['hp']); ?> / <?php echo $em['max_hp']; ?>
+                </div>
+            <?php else: ?>
+                <div class="monster-card" style="display:flex; align-items:center; justify-content:center; border: 2px dashed #ccc; border-radius: 10px;">
+                    <p style="color: #999;">Peaceful...</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <div style="margin: 20px;">
         <?php if($game['currentBattle']): ?>
-            <div class="monster">Wild <?php echo $game['currentBattle']['name']; ?> (HP: <?php echo $em['hp']; ?>)</div>
-            <div class="player">Active: <?php echo $pm['name']; ?> (HP: <?php echo $pm['hp']; ?>)</div>
             <form method="post">
-                <button name="action" value="attack">Attack</button>
-                <?php foreach($soulStones as $k=>$v): ?><button name="action" value="catch_<?php echo $k; ?>">Use <?php echo $k; ?></button><?php endforeach; ?>
+                <button name="action" value="attack" class="btn btn-attack">⚔️ Attack</button>
+                <br><br>
+                <?php foreach($soulStones as $type => $data): ?>
+                    <button name="action" value="catch_<?php echo $type; ?>" class="btn btn-catch">
+                        ✨ <?php echo $data['name']; ?> (<?php echo $game['inventory'][$type] ?? 0; ?>)
+                    </button>
+                <?php endforeach; ?>
             </form>
         <?php elseif(!empty($game['player']['roster'])): ?>
-            <form method="post"><button name="action" value="start_battle">Explore</button></form>
+            <form method="post">
+                <?php if(isset($game['showHeal'])): ?>
+                    <button name="heal_team" class="btn" style="background:#2ecc71; color:white;">💖 Full Team Heal</button>
+                <?php else: ?>
+                    <button name="action" value="start_battle" class="btn btn-explore">🌲 Explore Tall Grass</button>
+                <?php endif; ?>
+            </form>
         <?php endif; ?>
     </div>
 
-    <?php if(isset($game['showHeal'])): ?>
-        <form method="post"><button name="heal_team">Heal Roster (Victory Bonus)</button></form>
+    <?php if(!empty($game['player']['roster'])): ?>
+        <hr style="width: 80%; margin: 40px auto; border: 0; border-top: 1px solid #ccc;">
+        <h3>Your Pack</h3>
+        <div class="pack-grid">
+            <?php foreach($game['player']['roster'] as $i => $m): 
+                $is_active = ($i == $game['player']['active']);
+                $is_fainted = ($m['hp'] <= 0);
+            ?>
+                <form method="post">
+                    <button name="switch_to" value="<?php echo $i; ?>" 
+                            class="pack-btn <?php echo $is_active ? 'active' : ''; ?> <?php echo $is_fainted ? 'fainted' : ''; ?>"
+                            <?php echo ($is_active || $is_fainted) ? 'disabled' : ''; ?>>
+                        <strong><?php echo $m['name']; ?></strong><br>
+                        <small>HP: <?php echo max(0, $m['hp']); ?>/<?php echo $m['max_hp']; ?></small>
+                    </button>
+                </form>
+            <?php endforeach; ?>
+        </div>
     <?php endif; ?>
 
-    <h3>Your Pack</h3>
-    <?php foreach($game['player']['roster'] as $i=>$m): ?>
-        <form method="post" style="display:inline;">
-            <button name="switch_to" value="<?php echo $i; ?>" <?php if($m['hp']<=0)echo 'disabled';?>>
-                <?php echo $m['name']; ?> (<?php echo $m['hp']; ?>/<?php echo $m['max_hp']; ?>)
-            </button>
-        </form>
-    <?php endforeach; ?>
 </body>
 </html>
