@@ -187,6 +187,15 @@ saveGame($game);
                     <div class="card-header"><span>Wild <?php echo $em['name']; ?></span></div>
                     <div class="image-well"><img src="images/monsters/<?php echo $em['image']; ?>"></div>
                     <div class="hp-bar"><div class="hp-fill hp-enemy" style="width:<?php echo $emHP; ?>%"></div></div>
+                    <div style="margin-top: 5px;">
+                    <div class="hp-bar" style="height: 6px; background: #34495e;">
+                    <div class="hp-fill" style="width:<?php echo $pmXP['percent']; ?>%; background: #3498db;"></div>
+                    </div>
+                    <div style="font-size: 0.65em; display: flex; justify-content: space-between; color: #3d2b1f; font-weight: bold;">
+                    <span>XP: <?php echo $pm['xp']; ?> / <?php echo $pmXP['next_lvl']; ?></span>
+                    <span><?php echo floor($pmXP['percent']); ?>%</span>
+                    </div>
+                    </div>
                     <div style="font-size: 0.7em; text-align: center; margin-top: 5px;">WILD BEAST</div>
                 </div>
             </div>
