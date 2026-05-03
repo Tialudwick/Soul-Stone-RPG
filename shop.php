@@ -3,6 +3,7 @@ session_start();
 include "functions.php";
 include "monsters.php";
 
+
 $game = loadGame();
 $message = "";
 
