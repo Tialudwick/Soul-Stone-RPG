@@ -119,80 +119,191 @@ saveGame($game);
         .main-container { display: flex; justify-content: center; gap: 20px; max-width: 1300px; margin: 30px auto; padding: 0 20px; }
         .battle-column { flex: 1.5; background: #2c3e50; padding: 25px; border-radius: 12px; border: 4px solid #34495e; }
         .ui-column { flex: 1; background: #bdc3c7; padding: 20px; border-radius: 8px; border: 4px solid #3498db; }
-/* ======== Battle Cards ======== */
+
+/* =====================================================
+   BATTLEFIELD
+   ===================================================== */
 
 .stage {
+    position: relative;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    padding: 40px 0 90px;
+
+    min-height: 580px;
+    padding: 45px 55px 70px;
     margin-bottom: 20px;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #40566b 0%,
+            #30465a 55%,
+            #263b4d 100%
+        );
+
+    border: 5px solid #34495e;
+    border-radius: 18px;
+    overflow: hidden;
 }
 
+
+/* Battlefield floor */
+.stage::after {
+    content: "";
+    position: absolute;
+
+    left: 5%;
+    right: 5%;
+    bottom: 35px;
+
+    height: 90px;
+
+    background: rgba(20, 30, 35, 0.35);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 10px 15px rgba(0,0,0,0.35),
+        inset 0 5px 15px rgba(255,255,255,0.05);
+
+    z-index: 0;
+}
+
+
+/* =====================================================
+   MONSTER CARD
+   ===================================================== */
+
 .monster-card {
-    width: 220px;
-    min-height: 330px;
+    width: 250px;
+    min-height: 390px;
+
     background: #f4e4bc;
+
     border: 8px solid #3d2b1f;
-    border-radius: 10px;
+    border-radius: 12px;
+
     padding: 12px;
+
     position: relative;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+
+    box-shadow:
+        0 12px 25px rgba(0,0,0,0.55);
+
     z-index: 2;
 }
+
+
+/* Enemy card */
+.stage .monster-card:nth-child(2) {
+    border-color: #b83b32;
+}
+
+
+/* =====================================================
+   CARD HEADER
+   ===================================================== */
 
 .card-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
     font-weight: bold;
+
     border-bottom: 2px solid #3d2b1f;
-    margin-bottom: 8px;
+
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+
     position: relative;
     z-index: 5;
 }
 
-/* Transparent artwork area */
+
+/* =====================================================
+   IMAGE WELL
+   ===================================================== */
+
 .image-well {
-    background: transparent;
-    border: none;
-    height: 180px;
+    width: 100%;
+    height: 190px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #fff8df 0%,
+            #f4e4bc 70%
+        );
+
+    border: 3px solid #3d2b1f;
+    border-radius: 8px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 8px;
+
+    margin-bottom: 10px;
+
     position: relative;
-    overflow: visible;
+
+    /* VERY IMPORTANT */
+    overflow: hidden;
+
+    box-shadow:
+        inset 0 0 15px rgba(61,43,31,0.2);
 }
 
-/* Monster artwork */
+
+/* Monster stays INSIDE image well */
 .image-well img {
-    width: 125%;
-    max-width: none;
-    height: auto;
-    position: absolute;
-    left: 50%;
-    bottom: -65px;
-    transform: translateX(-50%);
-    z-index: 3;
-    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.45));
+    width: 95%;
+    height: 95%;
+
+    object-fit: contain;
+
+    display: block;
+
+    position: static;
+
+    transform: none;
+
+    filter:
+        drop-shadow(3px 5px 3px rgba(0,0,0,0.35));
 }
 
-/* Type badge */
+
+/* =====================================================
+   TYPE BADGE
+   ===================================================== */
+
 .type-badge {
     position: absolute;
-    top: -12px;
-    right: -12px;
-    padding: 5px 10px;
+
+    top: -15px;
+    right: -15px;
+
+    padding: 5px 12px;
+
     border-radius: 20px;
+
     color: white;
+
     font-size: 0.7em;
     font-weight: bold;
-    border: 2px solid white;
+
+    border: 3px solid white;
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+
     z-index: 10;
 }
 
 
-/* ======== Types ======== */
+/* =====================================================
+   TYPES
+   ===================================================== */
 
 .fire {
     background: #e67e22;
@@ -207,25 +318,71 @@ saveGame($game);
 }
 
 
-/* ======== HP Bars ======== */
+/* =====================================================
+   HP BAR
+   ===================================================== */
 
 .hp-bar {
     width: 100%;
-    height: 12px;
-    background: #95a5a6;
-    border-radius: 6px;
+    height: 13px;
+
+    background: #7f8c8d;
+
+    border-radius: 7px;
+
     overflow: hidden;
-    border: 1px solid #333;
+
+    border: 2px solid #3d2b1f;
+
+    margin-top: 5px;
 }
 
 .hp-fill {
     height: 100%;
-    background: #2ecc71;
+
+    background: linear-gradient(
+        to bottom,
+        #55e889,
+        #20a653
+    );
+
     transition: width 0.4s;
 }
 
 .hp-enemy {
-    background: #e74c3c;
+    background: linear-gradient(
+        to bottom,
+        #ff6b5f,
+        #c0392b
+    );
+}
+
+
+/* =====================================================
+   BATTLE VS
+   ===================================================== */
+
+.stage::before {
+    content: "VS";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    font-size: 42px;
+    font-weight: 900;
+
+    color: #ffd21c;
+
+    text-shadow:
+        3px 3px 0 #3d2b1f,
+        -2px -2px 0 #3d2b1f,
+        0 5px 8px rgba(0,0,0,0.5);
+
+    z-index: 4;
 }
 
 
