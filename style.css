@@ -4,31 +4,29 @@
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #1a1a1d;
     color: #333;
-    margin: 0;
-    text-align: center;
-}
-
-h1 { 
-    color: #6b2d2d; 
+    overflow-x: hidden;
 }
 
 /* ==========================================================================
-   2. NAVIGATION & HEADER
+   2. NAVIGATION
    ========================================================================== */
 
 .top-nav { 
     background: #fff; 
-    padding: 15px 40px; 
+    padding: 10px 30px; 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
     border-bottom: 3px solid #3498db; 
+    height: 50px;
 }
 
 .nav-links a { 
@@ -39,47 +37,43 @@ h1 {
 }
 
 /* ==========================================================================
-   3. LAYOUT & CONTAINERS
+   3. LAYOUT & CONTAINERS (Single-Screen Fit)
    ========================================================================== */
 
 .main-container {
     display: grid;
-    grid-template-columns: minmax(650px, 2fr) minmax(300px, 1fr);
-    gap: 20px;
-    max-width: 1400px;
+    grid-template-columns: minmax(550px, 2.2fr) minmax(320px, 1fr);
+    gap: 15px;
+    max-width: 1350px;
     width: 100%;
-    margin: 20px auto;
+    margin: 10px auto;
     padding: 0 15px;
-}
-
-.game-area {
-    width: 600px;
-    margin: 0 auto;
-    background: url('images/backgrounds/forest.png') no-repeat center;
-    background-size: cover;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px #555;
+    height: calc(100vh - 70px); /* Fits inside viewport without scrolling */
 }
 
 .battle-column {
     background: #2c3e50;
-    padding: 20px;
+    padding: 12px;
     border-radius: 12px;
     border: 4px solid #34495e;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     min-width: 0;
 }
 
 .ui-column {
     background: #bdc3c7;
-    padding: 15px;
+    padding: 12px;
     border-radius: 8px;
     border: 4px solid #3498db;
-    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .explore-screen {
-    height: 400px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -93,51 +87,51 @@ h1 {
 .stage {
     position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    min-height: 520px;
-    padding: 30px 25px 60px;
+    flex: 1;
+    min-height: 0; /* Allows container to shrink dynamically */
+    padding: 15px 10px;
     background: radial-gradient(
         ellipse at center,
         #40566b 0%,
         #30465a 55%,
         #263b4d 100%
     );
-    border: 5px solid #34495e;
-    border-radius: 18px;
-    overflow: hidden;
+    border: 4px solid #34495e;
+    border-radius: 14px;
 }
 
 /* Stage Floor Shadow */
 .stage::after {
     content: "";
     position: absolute;
-    left: 5%;
-    right: 5%;
-    bottom: 35px;
-    height: 90px;
+    left: 10%;
+    right: 10%;
+    bottom: 15px;
+    height: 60px;
     background: rgba(20, 30, 35, 0.35);
     border-radius: 50%;
     box-shadow: 
-        0 10px 15px rgba(0, 0, 0, 0.35),
-        inset 0 5px 15px rgba(255, 255, 255, 0.05);
+        0 8px 12px rgba(0, 0, 0, 0.35),
+        inset 0 4px 10px rgba(255, 255, 255, 0.05);
     z-index: 0;
 }
 
-/* "VS" Overlay Text */
+/* Central "VS" Text */
 .stage::before {
     content: "VS";
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    font-size: 42px;
+    font-size: 32px;
     font-weight: 900;
     color: #ffd21c;
     text-shadow:
-        3px 3px 0 #3d2b1f,
+        2px 2px 0 #3d2b1f,
         -2px -2px 0 #3d2b1f,
-        0 5px 8px rgba(0, 0, 0, 0.5);
+        0 4px 6px rgba(0, 0, 0, 0.5);
     z-index: 4;
 }
 
@@ -145,25 +139,17 @@ h1 {
    5. MONSTER CARDS & UNITS
    ========================================================================== */
 
-.monster, 
-.player {
-    display: inline-block;
-    width: 120px;
-}
-
 .monster-card {
-    width: clamp(190px, 22vw, 250px);
-    min-height: 360px;
+    position: relative;
+    width: 220px;
     background: #f4e4bc;
-    border: 8px solid #3d2b1f;
-    border-radius: 12px;
-    padding: 10px;
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.55);
+    border: 6px solid #3d2b1f;
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
     z-index: 2;
-    flex-shrink: 1;
 }
 
-/* Enemy Specific Card Border */
 .stage .monster-card:nth-child(2) {
     border-color: #b83b32;
 }
@@ -173,19 +159,18 @@ h1 {
     justify-content: space-between;
     align-items: center;
     font-weight: bold;
+    font-size: 0.85em;
     border-bottom: 2px solid #3d2b1f;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    position: relative;
-    z-index: 5;
+    padding-bottom: 3px;
+    margin-bottom: 6px;
 }
 
 .image-well {
     width: 100%;
-    height: 170px;
+    height: 130px;
     background: radial-gradient(circle, #fff8df, #f4e4bc);
-    border: 3px solid #3d2b1f;
-    border-radius: 8px;
+    border: 2px solid #3d2b1f;
+    border-radius: 6px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -193,25 +178,24 @@ h1 {
 }
 
 .image-well img {
-    width: 90%;
-    height: 90%;
+    max-width: 85%;
+    max-height: 85%;
     object-fit: contain;
-    display: block;
-    filter: drop-shadow(3px 5px 3px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(2px 4px 2px rgba(0, 0, 0, .35));
 }
 
-/* Type Badges */
+/* Fixed Type Badges */
 .type-badge {
     position: absolute;
-    top: -15px;
-    right: -15px;
-    padding: 5px 12px;
-    border-radius: 20px;
+    top: -10px;
+    right: 5px;
+    padding: 2px 8px;
+    border-radius: 12px;
     color: white;
-    font-size: 0.7em;
+    font-size: 0.65em;
     font-weight: bold;
-    border: 3px solid white;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     z-index: 10;
 }
 
@@ -225,15 +209,14 @@ h1 {
 
 .hp-bar {
     width: 100%;
-    height: 13px;
+    height: 10px;
     background: #7f8c8d;
-    border-radius: 7px;
+    border-radius: 5px;
     overflow: hidden;
-    border: 2px solid #3d2b1f;
-    margin-top: 5px;
+    border: 1.5px solid #3d2b1f;
+    margin-top: 4px;
 }
 
-.hp-bar-inner,
 .hp-fill {
     height: 100%;
     background: linear-gradient(to bottom, #55e889, #20a653);
@@ -242,6 +225,14 @@ h1 {
 
 .hp-enemy {
     background: linear-gradient(to bottom, #ff6b5f, #c0392b);
+}
+
+.card-stats {
+    font-size: 0.65em;
+    text-align: center;
+    margin-top: 4px;
+    font-weight: bold;
+    color: #3d2b1f;
 }
 
 /* ==========================================================================
@@ -253,44 +244,54 @@ h1 {
     text-align: center;
     background: #34495e;
     color: white;
-    padding: 5px;
-    margin: 10px 0;
+    padding: 4px;
+    margin: 6px 0;
     border-radius: 4px;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
-button,
 .btn {
     border: none;
-    margin: 5px;
-    padding: 10px 5px;
     cursor: pointer;
     color: white;
-    border-radius: 5px;
+    border-radius: 4px;
     font-weight: bold;
     font-size: 0.75em;
-    transition: transform 0.2s, opacity 0.2s;
+    transition: transform 0.1s, opacity 0.1s;
 }
 
-.btn-pot {
-    background: #9b59b6;
-}
-
-.btn-stone {
-    background: #2ecc71;
-}
-
-button:hover,
 .btn:hover {
-    opacity: 0.8;
-    transform: scale(1.02);
+    opacity: 0.85;
+    transform: scale(1.01);
 }
 
 .btn-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-    margin-bottom: 15px;
+    gap: 4px;
+}
+
+.btn-pot { background: #9b59b6; padding: 6px 2px; }
+.btn-stone { background: #2ecc71; padding: 6px 2px; }
+
+.moves-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.btn-move {
+    background: #f39c12;
+    height: 42px;
+    border-bottom: 3px solid #d35400;
+}
+
+.btn-run {
+    background: #e74c3c;
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px;
 }
 
 /* ==========================================================================
@@ -300,57 +301,70 @@ button:hover,
 .roster-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 6px;
 }
 
 .roster-card {
     background: white;
     border: 2px solid #7f8c8d;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 4px 6px;
+    border-radius: 5px;
     cursor: pointer;
     text-align: left;
     display: flex;
     align-items: center;
-    gap: 8px;
-    position: relative;
+    gap: 6px;
+    height: 48px;
 }
 
 .active-slot {
     border-color: #3498db;
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.6);
     background: #ebf5fb;
 }
 
 .roster-card img {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     object-fit: contain;
 }
 
 .roster-info {
     flex: 1;
-    font-size: 0.8em;
+    min-width: 0;
+}
+
+.roster-name {
+    font-weight: bold;
+    font-size: 0.75em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .fainted-img {
     filter: grayscale(100%) opacity(0.5);
 }
 
+.gold-box {
+    background: #2c3e50;
+    color: #f1c40f;
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.85em;
+    border: 2px solid #f1c40f;
+}
+
 /* ==========================================================================
    9. RESPONSIVE MEDIA QUERIES
    ========================================================================== */
 
-@media (max-width: 1100px) {
+@media (max-width: 1000px) {
     .main-container {
         grid-template-columns: 1fr;
-    }
-
-    .stage {
-        min-height: auto;
-    }
-
-    .monster-card {
-        width: 220px;
+        height: auto;
     }
 }
