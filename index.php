@@ -119,36 +119,200 @@ saveGame($game);
         .main-container { display: flex; justify-content: center; gap: 20px; max-width: 1300px; margin: 30px auto; padding: 0 20px; }
         .battle-column { flex: 1.5; background: #2c3e50; padding: 25px; border-radius: 12px; border: 4px solid #34495e; }
         .ui-column { flex: 1; background: #bdc3c7; padding: 20px; border-radius: 8px; border: 4px solid #3498db; }
+/* ======== Battle Cards ======== */
 
-        /* ======== Battle Cards ======= */
-        .stage { display: flex; justify-content: space-around; align-items: center; padding: 20px 0; margin-bottom: 20px; }
-        .monster-card { width: 220px; background: #f4e4bc; border: 8px solid #3d2b1f; border-radius: 10px; padding: 12px; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .card-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 2px solid #3d2b1f; margin-bottom: 8px; }
-        .image-well { background: #fff; border: 3px solid #3d2b1f; height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-        .image-well img { width: 80%; height: auto; }
-        .type-badge { position: absolute; top: -12px; right: -12px; padding: 5px 10px; border-radius: 20px; color: white; font-size: 0.7em; font-weight: bold; border: 2px solid white; }
-        
-        /* Types */
-        .fire { background: #e67e22; } .water { background: #3498db; } .earth { background: #27ae60; }
+.stage {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 40px 0 90px;
+    margin-bottom: 20px;
+}
 
-        /* HP Bars */
-        .hp-bar { width: 100%; height: 12px; background: #95a5a6; border-radius: 6px; overflow: hidden; border: 1px solid #333; }
-        .hp-fill { height: 100%; background: #2ecc71; transition: width 0.4s; }
-        .hp-enemy { background: #e74c3c; }
+.monster-card {
+    width: 220px;
+    min-height: 330px;
+    background: #f4e4bc;
+    border: 8px solid #3d2b1f;
+    border-radius: 10px;
+    padding: 12px;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    z-index: 2;
+}
 
-        /* UI Elements */
-        .section-title { font-weight: bold; text-align: center; background: #34495e; color: white; padding: 5px; margin: 10px 0; border-radius: 4px; font-size: 0.9em; }
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 15px; }
-        .btn { border: none; padding: 10px 5px; cursor: pointer; color: white; border-radius: 4px; font-weight: bold; font-size: 0.75em; transition: 0.2s; }
-        .btn-pot { background: #9b59b6; } .btn-stone { background: #2ecc71; }
-        .btn:hover { opacity: 0.8; transform: scale(1.02); }
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    border-bottom: 2px solid #3d2b1f;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 5;
+}
 
-        .roster-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .roster-card { background: white; border: 2px solid #7f8c8d; padding: 8px; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; position: relative; }
-        .active-slot { border-color: #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); background: #ebf5fb; }
-        .roster-card img { width: 40px; height: 40px; object-fit: contain; }
-        .roster-info { flex: 1; font-size: 0.8em; }
-        .fainted-img { filter: grayscale(100%) opacity(0.5); }
+/* Transparent artwork area */
+.image-well {
+    background: transparent;
+    border: none;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: visible;
+}
+
+/* Monster artwork */
+.image-well img {
+    width: 125%;
+    max-width: none;
+    height: auto;
+    position: absolute;
+    left: 50%;
+    bottom: -65px;
+    transform: translateX(-50%);
+    z-index: 3;
+    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.45));
+}
+
+/* Type badge */
+.type-badge {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.7em;
+    font-weight: bold;
+    border: 2px solid white;
+    z-index: 10;
+}
+
+
+/* ======== Types ======== */
+
+.fire {
+    background: #e67e22;
+}
+
+.water {
+    background: #3498db;
+}
+
+.earth {
+    background: #27ae60;
+}
+
+
+/* ======== HP Bars ======== */
+
+.hp-bar {
+    width: 100%;
+    height: 12px;
+    background: #95a5a6;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+.hp-fill {
+    height: 100%;
+    background: #2ecc71;
+    transition: width 0.4s;
+}
+
+.hp-enemy {
+    background: #e74c3c;
+}
+
+
+/* ======== UI Elements ======== */
+
+.section-title {
+    font-weight: bold;
+    text-align: center;
+    background: #34495e;
+    color: white;
+    padding: 5px;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    border: none;
+    padding: 10px 5px;
+    cursor: pointer;
+    color: white;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.75em;
+    transition: 0.2s;
+}
+
+.btn-pot {
+    background: #9b59b6;
+}
+
+.btn-stone {
+    background: #2ecc71;
+}
+
+.btn:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+}
+
+
+.roster-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.roster-card {
+    background: white;
+    border: 2px solid #7f8c8d;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.active-slot {
+    border-color: #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    background: #ebf5fb;
+}
+
+.roster-card img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.roster-info {
+    flex: 1;
+    font-size: 0.8em;
+}
+
+.fainted-img {
+    filter: grayscale(100%) opacity(0.5);
+}
     </style>
 </head>
 <body>
