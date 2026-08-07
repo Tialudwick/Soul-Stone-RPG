@@ -116,23 +116,65 @@ saveGame($game);
         .top-nav { background: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #3498db; }
         .nav-links a { text-decoration: none; color: #2c3e50; font-weight: bold; margin-left: 20px; }
         
-        .main-container { display: flex; justify-content: center; gap: 20px; max-width: 1300px; margin: 30px auto; padding: 0 20px; }
-        .battle-column { flex: 1.5; background: #2c3e50; padding: 25px; border-radius: 12px; border: 4px solid #34495e; }
-        .ui-column { flex: 1; background: #bdc3c7; padding: 20px; border-radius: 8px; border: 4px solid #3498db; }
+/* ================================
+MAIN GAME LAYOUT
+================================ */
 
-/* =====================================================
-   BATTLEFIELD
-   ===================================================== */
+.main-container {
+    display: grid;
+    grid-template-columns: minmax(650px, 2fr) minmax(300px, 1fr);
+    gap: 20px;
+
+    max-width: 1400px;
+    width: 100%;
+    margin: 20px auto;
+    padding: 0 15px;
+
+    box-sizing: border-box;
+}
+
+
+/* ================================
+BATTLE COLUMN
+================================ */
+
+.battle-column {
+    background: #2c3e50;
+    padding: 20px;
+    border-radius: 12px;
+    border: 4px solid #34495e;
+
+    min-width: 0;
+}
+
+
+/* ================================
+UI COLUMN
+================================ */
+
+.ui-column {
+    background: #bdc3c7;
+    padding: 15px;
+    border-radius: 8px;
+    border: 4px solid #3498db;
+
+    min-width: 280px;
+}
+
+/* ================================
+BATTLEFIELD
+================================ */
 
 .stage {
     position: relative;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    min-height: 580px;
-    padding: 45px 55px 70px;
-    margin-bottom: 20px;
+    min-height: 520px;
+
+    padding: 30px 25px 60px;
 
     background:
         radial-gradient(
@@ -142,11 +184,11 @@ saveGame($game);
             #263b4d 100%
         );
 
-    border: 5px solid #34495e;
-    border-radius: 18px;
-    overflow: hidden;
-}
+    border:5px solid #34495e;
+    border-radius:18px;
 
+    overflow:hidden;
+}
 
 /* Battlefield floor */
 .stage::after {
@@ -171,27 +213,29 @@ saveGame($game);
 }
 
 
-/* =====================================================
-   MONSTER CARD
-   ===================================================== */
+/* ================================
+MONSTER CARDS
+================================ */
 
 .monster-card {
-    width: 250px;
-    min-height: 390px;
 
-    background: #f4e4bc;
+    width: clamp(190px, 22vw, 250px);
 
-    border: 8px solid #3d2b1f;
-    border-radius: 12px;
+    min-height: 360px;
 
-    padding: 12px;
+    background:#f4e4bc;
 
-    position: relative;
+    border:8px solid #3d2b1f;
+    border-radius:12px;
+
+    padding:10px;
 
     box-shadow:
-        0 12px 25px rgba(0,0,0,0.55);
+        0 12px 25px rgba(0,0,0,.55);
 
-    z-index: 2;
+    z-index:2;
+
+    flex-shrink:1;
 }
 
 
@@ -222,56 +266,48 @@ saveGame($game);
 }
 
 
-/* =====================================================
-   IMAGE WELL
-   ===================================================== */
+/* ================================
+IMAGE WELL
+================================ */
 
 .image-well {
-    width: 100%;
-    height: 190px;
+
+    width:100%;
+    height:170px;
 
     background:
-        radial-gradient(
-            circle at center,
-            #fff8df 0%,
-            #f4e4bc 70%
-        );
+    radial-gradient(
+        circle,
+        #fff8df,
+        #f4e4bc
+    );
 
-    border: 3px solid #3d2b1f;
-    border-radius: 8px;
+    border:3px solid #3d2b1f;
+    border-radius:8px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-    margin-bottom: 10px;
-
-    position: relative;
-
-    /* VERY IMPORTANT */
-    overflow: hidden;
-
-    box-shadow:
-        inset 0 0 15px rgba(61,43,31,0.2);
+    overflow:hidden;
 }
 
 
-/* Monster stays INSIDE image well */
 .image-well img {
-    width: 95%;
-    height: 95%;
 
-    object-fit: contain;
+    width:90%;
+    height:90%;
 
-    display: block;
+    object-fit:contain;
 
-    position: static;
-
-    transform: none;
+    display:block;
 
     filter:
-        drop-shadow(3px 5px 3px rgba(0,0,0,0.35));
+    drop-shadow(
+        3px 5px 3px rgba(0,0,0,.35)
+    );
 }
+
 
 
 /* =====================================================
