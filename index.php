@@ -60,16 +60,13 @@ if (str_starts_with($action, "use_pot_")) {
     }
 }
 
-// NEW CATCH LOGIC
 if (str_starts_with($action, "catch_")) {
-    $stoneType = str_replace("catch_", "", $action); // 'basic', 'greater', or 'ancient'
+    $stoneType = str_replace("catch_", "", $action);
     
     if (($game['inventory'][$stoneType] ?? 0) > 0) {
-        $game['inventory'][$stoneType]--; // Consume the stone
+        $game['inventory'][$stoneType]--;
         
         $em = &$game['currentBattle'];
-        // Success Rate Calculation
-        // Lower Enemy HP = Higher Catch Rate
         $hpPercent = $em['hp'] / $em['max_hp'];
         $stonePower = ["basic" => 0.3, "greater" => 0.6, "ancient" => 1.0][$stoneType];
         
@@ -77,19 +74,17 @@ if (str_starts_with($action, "catch_")) {
         $roll = rand(0, 100) / 100;
 
         if ($roll < $catchChance) {
-            // SUCCESS: Add to roster if there is room
             if (count($game['player']['roster']) < 8) {
                 $newMonster = $em;
-                $newMonster['hp'] = $newMonster['max_hp']; // Heal upon capture
+                $newMonster['hp'] = $newMonster['max_hp'];
                 $game['player']['roster'][] = $newMonster;
                 $game['message'] = "Gotcha! {$em['name']} was caught!";
-                $game['currentBattle'] = null; // End battle
+                $game['currentBattle'] = null;
             } else {
                 $game['message'] = "Roster full! Could not keep {$em['name']}.";
                 $game['currentBattle'] = null;
             }
         } else {
-            // FAILURE: Enemy attacks back
             $game['message'] = "Oh no! The {$em['name']} broke free!";
             $eMove = $em['moves'][rand(0,3)];
             $pm = &$game['player']['roster'][$game['player']['active']];
@@ -108,11 +103,12 @@ if ($action === "run") { $game['currentBattle'] = null; }
 saveGame($game);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soul Stone RPG</title>
     <link rel="stylesheet" href="style.css">
-    
 </head>
 <body>
 
@@ -135,35 +131,52 @@ saveGame($game);
             $emHP = ($em['hp'] / $em['max_hp']) * 100;
         ?>
             <div class="stage">
+                <!-- Player Card -->
                 <div class="monster-card">
                     <div class="type-badge <?php echo $pm['type']; ?>"><?php echo strtoupper($pm['type']); ?></div>
-                    <div class="card-header"><span><?php echo $pm['name']; ?></span> <span>Lv.<?php echo $pmXP['level']; ?></span></div>
-                    <div class="image-well"><img src="images/monsters/<?php echo $pm['image']; ?>" class="<?php echo $pm['hp'] <= 0 ? 'fainted-img' : ''; ?>"></div>
-                    <div class="hp-bar"><div class="hp-fill" style="width:<?php echo $pmHP; ?>%"></div></div>
+                    <div class="card-header">
+                        <span><?php echo $pm['name']; ?></span> 
+                        <span>Lv.<?php echo $pmXP['level']; ?></span>
+                    </div>
+                    <div class="image-well">
+                        <img src="images/monsters/<?php echo $pm['image']; ?>" class="<?php echo $pm['hp'] <= 0 ? 'fainted-img' : ''; ?>">
+                    </div>
+                    <div class="hp-bar">
+                        <div class="hp-fill" style="width:<?php echo $pmHP; ?>%"></div>
+                    </div>
+                    
+                    <!-- XP Sub-bar -->
                     <div style="margin-top: 5px;">
-                    <div class="hp-bar" style="height: 6px; background: #34495e;">
-                        <div class="hp-fill" style="width:<?php echo $pmXP['percent']; ?>%; background: #3498db;"></div>
+                        <div class="hp-bar" style="height: 6px; background: #34495e;">
+                            <div class="hp-fill" style="width:<?php echo $pmXP['percent']; ?>%; background: #3498db;"></div>
+                        </div>
+                        <div style="font-size: 0.65em; display: flex; justify-content: space-between; color: #3d2b1f; font-weight: bold;">
+                            <span>XP: <?php echo $pm['xp']; ?> / <?php echo $pmXP['next_lvl']; ?></span>
+                            <span><?php echo floor($pmXP['percent']); ?>%</span>
+                        </div>
                     </div>
-                    <div style="font-size: 0.65em; display: flex; justify-content: space-between; color: #3d2b1f; font-weight: bold;">
-                        <span>XP: <?php echo $pm['xp']; ?> / <?php echo $pmXP['next_lvl']; ?></span>
-                        <span><?php echo floor($pmXP['percent']); ?>%</span>
+                    <div style="font-size: 0.7em; text-align: center; margin-top: 5px;">
+                        HP: <?php echo $pm['hp']."/".$pm['max_hp']; ?> | ATK: <?php echo $pm['attack']; ?>
                     </div>
-                    </div>
-                    <div style="font-size: 0.7em; text-align: center; margin-top: 5px;">HP: <?php echo $pm['hp']."/".$pm['max_hp']; ?> | ATK: <?php echo $pm['attack']; ?></div>
                 </div>
 
-                <div style="font-size: 3em; font-weight: bold; color: #f1c40f; text-shadow: 2px 2px #000;">VS</div>
-
-                <div class="monster-card" style="border-color: #c0392b;">
+                <!-- Enemy Card -->
+                <div class="monster-card">
                     <div class="type-badge <?php echo $em['type']; ?>"><?php echo strtoupper($em['type']); ?></div>
-                    <div class="card-header"><span>Wild <?php echo $em['name']; ?></span></div>
-                    <div class="image-well"><img src="images/monsters/<?php echo $em['image']; ?>"></div>
-                    <div class="hp-bar"><div class="hp-fill hp-enemy" style="width:<?php echo $emHP; ?>%"></div></div>
+                    <div class="card-header">
+                        <span>Wild <?php echo $em['name']; ?></span>
+                    </div>
+                    <div class="image-well">
+                        <img src="images/monsters/<?php echo $em['image']; ?>">
+                    </div>
+                    <div class="hp-bar">
+                        <div class="hp-fill hp-enemy" style="width:<?php echo $emHP; ?>%"></div>
+                    </div>
                     <div style="font-size: 0.7em; text-align: center; margin-top: 5px;">WILD BEAST</div>
                 </div>
             </div>
 
-            <form method="post">
+            <form method="post" style="margin-top: 15px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <?php foreach($pm['moves'] as $i => $move): ?>
                         <button name="action" value="attack_<?php echo $i; ?>" class="btn" style="background:#f39c12; height:50px; border-bottom:4px solid #d35400;" <?php echo $pm['hp'] <= 0 ? 'disabled' : ''; ?>>
@@ -176,9 +189,11 @@ saveGame($game);
             <div style="color:white; text-align:center; margin-top:15px; font-weight:bold;"><?php echo $game['message']; ?></div>
 
         <?php else: ?>
-            <div style="height:400px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div class="explore-screen">
                 <h3 style="color:white;"><?php echo $game['message'] ?: "Explore the world of Soul Stones!"; ?></h3>
-                <form method="post"><button name="action" value="start_battle" class="btn" style="background:#27ae60; padding:20px 50px; font-size:1.5em;">EXPLORE GRASS</button></form>
+                <form method="post">
+                    <button name="action" value="start_battle" class="btn" style="background:#27ae60; padding:20px 50px; font-size:1.5em;">EXPLORE GRASS</button>
+                </form>
             </div>
         <?php endif; ?>
     </div>
@@ -217,8 +232,13 @@ saveGame($game);
                             <img src="images/monsters/<?php echo $m['image']; ?>" class="<?php echo $m['hp'] <= 0 ? 'fainted-img' : ''; ?>">
                             <div class="roster-info">
                                 <div style="font-weight:bold; font-size: 0.9em;"><?php echo $m['name']; ?></div>
-                                <div style="font-size: 0.8em; color: #7f8c8d;">Lv.<?php echo $stats['level']; ?> <span class="type-text <?php echo $m['type']; ?>" style="font-size: 0.8em; padding: 1px 4px; border-radius: 3px; color: white;"><?php echo $m['type']; ?></span></div>
-                                <div class="hp-bar" style="height:5px; margin-top:3px;"><div class="hp-fill" style="width:<?php echo $hpP; ?>%"></div></div>
+                                <div style="font-size: 0.8em; color: #7f8c8d;">
+                                    Lv.<?php echo $stats['level']; ?> 
+                                    <span class="<?php echo $m['type']; ?>" style="font-size: 0.8em; padding: 1px 4px; border-radius: 3px; color: white;"><?php echo $m['type']; ?></span>
+                                </div>
+                                <div class="hp-bar" style="height:5px; margin-top:3px;">
+                                    <div class="hp-fill" style="width:<?php echo $hpP; ?>%"></div>
+                                </div>
                             </div>
                         </button>
                     <?php else: ?>
