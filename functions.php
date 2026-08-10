@@ -1,34 +1,73 @@
 <?php
 
 // ============================================================
+// SOUL STONE RPG
+// FUNCTIONS / SAVE SYSTEM
+// ============================================================
+
+
+// ============================================================
+// DEFAULT GAME STRUCTURE
+// ============================================================
+
+function getDefaultGame(): array
+{
+    return [
+
+        'player' => [
+
+            'roster' => [],
+
+            'active' => 0,
+
+            'gold' => 0,
+
+            'discovered' => []
+        ],
+
+        'inventory' => [
+
+            'potions' => 0,
+
+            'super_potions' => 0,
+
+            'max_potions' => 0,
+
+            'basic_potion' => 0,
+
+            'greater_potion' => 0,
+
+            'ancient_potion' => 0,
+
+            'basic' => 0,
+
+            'greater' => 0,
+
+            'ancient' => 0
+        ],
+
+        'currentBattle' => null,
+
+        'message' => 'Welcome to Soul Stone RPG!',
+
+        'battle_code' => null,
+
+        'game_started' => false,
+
+        'starter_chosen' => false
+    ];
+}
+
+
+// ============================================================
 // GAME SAVE / LOAD SYSTEM
 // ============================================================
 
-function loadGame($file = "save.json") {
-
+function loadGame($file = "save.json")
+{
     if (!file_exists($file) || filesize($file) === 0) {
 
-        return [
-            "player" => [
-                "roster" => [],
-                "active" => 0,
-                "gold" => 0,
-                "discovered" => []
-            ],
-
-            "inventory" => [
-                "potions" => 0,
-                "super_potions" => 0,
-                "max_potions" => 0,
-                "basic" => 0,
-                "greater" => 0,
-                "ancient" => 0
-            ],
-
-            "currentBattle" => null,
-
-            "message" => "Welcome to Soul Stone RPG!"
-        ];
+        return getDefaultGame();
     }
 
     $data = json_decode(
@@ -36,74 +75,49 @@ function loadGame($file = "save.json") {
         true
     );
 
-    // Protect against corrupted JSON
     if (!is_array($data)) {
 
-        return [
-            "player" => [
-                "roster" => [],
-                "active" => 0,
-                "gold" => 0,
-                "discovered" => []
-            ],
-
-            "inventory" => [
-                "potions" => 0,
-                "super_potions" => 0,
-                "max_potions" => 0,
-                "basic" => 0,
-                "greater" => 0,
-                "ancient" => 0
-            ],
-
-            "currentBattle" => null,
-
-            "message" => "Welcome to Soul Stone RPG!"
-        ];
+        return getDefaultGame();
     }
 
     return $data;
 }
 
 
-// ------------------------------------------------------------
-// Existing saveGame function
-// ------------------------------------------------------------
+// ============================================================
+// OLD SAVE FUNCTION
+// ============================================================
 
-function saveGame($game, $file = "save.json") {
-
+function saveGame($game, $file = "save.json")
+{
     return file_put_contents(
         $file,
-        json_encode($game, JSON_PRETTY_PRINT)
+        json_encode(
+            $game,
+            JSON_PRETTY_PRINT
+        )
     );
 }
 
 
 // ============================================================
-// BATTLE CODE SAVE SYSTEM
+// BATTLE CODE SYSTEM
 // ============================================================
 
-/*
- * Creates a unique Battle Code.
- *
- * Example:
- *
- * SS-A7K2-91XM
- *
- * Characters that look similar, such as 0/O and 1/I,
- * are intentionally excluded.
- */
-
-function generateBattleCode(): string {
-
-    $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function generateBattleCode(): string
+{
+    $characters =
+        'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
     $code = '';
 
     for ($i = 0; $i < 8; $i++) {
 
         $code .= $characters[
-            random_int(0, strlen($characters) - 1)
+            random_int(
+                0,
+                strlen($characters) - 1
+            )
         ];
     }
 
@@ -114,39 +128,39 @@ function generateBattleCode(): string {
 }
 
 
-// ------------------------------------------------------------
-// Clean and normalize Battle Code
-// ------------------------------------------------------------
+// ============================================================
+// NORMALIZE BATTLE CODE
+// ============================================================
 
-function normalizeBattleCode($code): string {
-
+function normalizeBattleCode($code): string
+{
     $code = strtoupper(trim($code));
 
-    // Remove spaces
-    $code = str_replace(' ', '', $code);
+    $code = str_replace(
+        ' ',
+        '',
+        $code
+    );
 
     return $code;
 }
 
 
-// ------------------------------------------------------------
-// Get save file path for Battle Code
-// ------------------------------------------------------------
+// ============================================================
+// BATTLE SAVE PATH
+// ============================================================
 
-function getBattleSavePath(string $code): string {
+function getBattleSavePath(string $code): string
+{
+    $code =
+        normalizeBattleCode($code);
 
-    $code = normalizeBattleCode($code);
-
-    /*
-     * Only allow the characters used by our Battle Codes.
-     * This prevents path traversal.
-     */
-
-    $safeCode = preg_replace(
-        '/[^A-Z0-9-]/',
-        '',
-        $code
-    );
+    $safeCode =
+        preg_replace(
+            '/[^A-Z0-9-]/',
+            '',
+            $code
+        );
 
     return __DIR__
         . '/saves/'
@@ -155,27 +169,28 @@ function getBattleSavePath(string $code): string {
 }
 
 
-// ------------------------------------------------------------
-// Check whether a Battle Code exists
-// ------------------------------------------------------------
+// ============================================================
+// CHECK BATTLE CODE
+// ============================================================
 
-function battleCodeExists(string $code): bool {
-
+function battleCodeExists(string $code): bool
+{
     return file_exists(
         getBattleSavePath($code)
     );
 }
 
 
-// ------------------------------------------------------------
-// Create a new Battle Code save
-// ------------------------------------------------------------
+// ============================================================
+// CREATE NEW BATTLE SAVE
+// ============================================================
 
-function createBattleSave(array $game): string {
+function createBattleSave(array $game): string
+{
+    $saveDirectory =
+        __DIR__ . '/saves';
 
-    $saveDirectory = __DIR__ . '/saves';
 
-    // Create saves directory if it doesn't exist
     if (!is_dir($saveDirectory)) {
 
         mkdir(
@@ -185,41 +200,56 @@ function createBattleSave(array $game): string {
         );
     }
 
+
     do {
 
-        $code = generateBattleCode();
+        $code =
+            generateBattleCode();
 
-        $path = getBattleSavePath($code);
+        $path =
+            getBattleSavePath($code);
 
     } while (file_exists($path));
 
 
-    // Store Battle Code inside the game data
-    $game['battle_code'] = $code;
+    $game['battle_code'] =
+        $code;
 
 
-    file_put_contents(
-        $path,
-        json_encode(
-            $game,
-            JSON_PRETTY_PRINT
-        )
-    );
+    $result =
+        file_put_contents(
+            $path,
+            json_encode(
+                $game,
+                JSON_PRETTY_PRINT
+            )
+        );
+
+
+    if ($result === false) {
+
+        throw new RuntimeException(
+            'Unable to create Battle Code save.'
+        );
+    }
 
 
     return $code;
 }
 
 
-// ------------------------------------------------------------
-// Load Battle Code save
-// ------------------------------------------------------------
+// ============================================================
+// LOAD BATTLE SAVE
+// ============================================================
 
-function loadBattleSave(string $code): ?array {
+function loadBattleSave(string $code): ?array
+{
+    $code =
+        normalizeBattleCode($code);
 
-    $code = normalizeBattleCode($code);
+    $path =
+        getBattleSavePath($code);
 
-    $path = getBattleSavePath($code);
 
     if (!file_exists($path)) {
 
@@ -227,10 +257,11 @@ function loadBattleSave(string $code): ?array {
     }
 
 
-    $data = json_decode(
-        file_get_contents($path),
-        true
-    );
+    $data =
+        json_decode(
+            file_get_contents($path),
+            true
+        );
 
 
     if (!is_array($data)) {
@@ -239,31 +270,29 @@ function loadBattleSave(string $code): ?array {
     }
 
 
-    // Make sure the loaded game knows its code
-    $data['battle_code'] = $code;
+    $data['battle_code'] =
+        $code;
 
 
     return $data;
 }
 
 
-// ------------------------------------------------------------
-// Save existing Battle Code game
-// ------------------------------------------------------------
+// ============================================================
+// SAVE EXISTING BATTLE GAME
+// ============================================================
 
 function saveBattleGame(
     string $code,
     array $game
-): bool {
+): bool
+{
+    $code =
+        normalizeBattleCode($code);
 
-    $code = normalizeBattleCode($code);
+    $path =
+        getBattleSavePath($code);
 
-    $path = getBattleSavePath($code);
-
-
-    /*
-     * Don't accidentally create a save for an invalid code.
-     */
 
     if (!file_exists($path)) {
 
@@ -271,16 +300,18 @@ function saveBattleGame(
     }
 
 
-    $game['battle_code'] = $code;
+    $game['battle_code'] =
+        $code;
 
 
-    $result = file_put_contents(
-        $path,
-        json_encode(
-            $game,
-            JSON_PRETTY_PRINT
-        )
-    );
+    $result =
+        file_put_contents(
+            $path,
+            json_encode(
+                $game,
+                JSON_PRETTY_PRINT
+            )
+        );
 
 
     return $result !== false;
@@ -288,12 +319,15 @@ function saveBattleGame(
 
 
 // ============================================================
-// MONSTER IDs
+// MONSTER IDS
 // ============================================================
 
-function generateMonsterId() {
-
-    return uniqid();
+function generateMonsterId(): string
+{
+    return uniqid(
+        'monster_',
+        true
+    );
 }
 
 
@@ -301,22 +335,26 @@ function generateMonsterId() {
 // CAPTURE TRACKING
 // ============================================================
 
-function recordCapture(&$game, $monsterName) {
-
+function recordCapture(
+    &$game,
+    $monsterName
+) {
     if (
         !isset(
             $game['player']['discovered']
         )
     ) {
 
-        $game['player']['discovered'] = [];
+        $game['player']['discovered'] =
+            [];
     }
 
 
     if (
         !in_array(
             $monsterName,
-            $game['player']['discovered']
+            $game['player']['discovered'],
+            true
         )
     ) {
 
@@ -334,30 +372,39 @@ function getTypeMultiplier(
     $attackerType,
     $defenderType
 ) {
-
     $chart = [
 
         "fire" => [
+
             "earth" => 2.0,
+
             "water" => 0.5,
+
             "fire" => 1.0
         ],
 
         "water" => [
+
             "fire" => 2.0,
+
             "earth" => 0.5,
+
             "water" => 1.0
         ],
 
         "earth" => [
+
             "water" => 2.0,
+
             "fire" => 0.5,
+
             "earth" => 1.0
         ]
     ];
 
 
-    return $chart[$attackerType][$defenderType]
+    return
+        $chart[$attackerType][$defenderType]
         ?? 1.0;
 }
 
@@ -366,53 +413,61 @@ function getTypeMultiplier(
 // SPAWN WILD MONSTER
 // ============================================================
 
-function spawnMonster($allMonsters) {
-
+function spawnMonster($allMonsters)
+{
     global $moves;
 
 
-    // Determine rarity
-    $roll = rand(1, 100);
-
-
-    $target =
-        ($roll <= 5)
-        ? "ancient"
-        : (
-            ($roll <= 30)
-            ? "greater"
-            : "basic"
+    $roll =
+        rand(
+            1,
+            100
         );
 
 
-    // Filter monster pool
-    $pool = array_filter(
-        $allMonsters,
-        function ($m) use ($target) {
+    if ($roll <= 5) {
 
-            return $m['rarity'] === $target;
-        }
-    );
+        $target = 'ancient';
 
+    } elseif ($roll <= 30) {
 
-    // Safety check
-    if (empty($pool)) {
+        $target = 'greater';
 
-        $pool = $allMonsters;
+    } else {
+
+        $target = 'basic';
     }
 
 
-    // Pick random monster
-    $wild = $pool[
-        array_rand($pool)
-    ];
+    $pool =
+        array_filter(
+            $allMonsters,
+            function ($monster) use ($target) {
+
+                return
+                    ($monster['rarity'] ?? '')
+                    === $target;
+            }
+        );
 
 
-    // Set current HP
-    $wild['hp'] = $wild['max_hp'];
+    if (empty($pool)) {
+
+        $pool =
+            $allMonsters;
+    }
 
 
-    // Attach moveset
+    $wild =
+        $pool[
+            array_rand($pool)
+        ];
+
+
+    $wild['hp'] =
+        $wild['max_hp'];
+
+
     if (
         isset(
             $moves[$wild['type']]
@@ -424,11 +479,11 @@ function spawnMonster($allMonsters) {
 
     } else {
 
-        $wild['moves'] = [];
+        $wild['moves'] =
+            [];
     }
 
 
-    // Give wild monster a unique ID
     if (!isset($wild['id'])) {
 
         $wild['id'] =
@@ -436,7 +491,6 @@ function spawnMonster($allMonsters) {
     }
 
 
-    // Make sure XP exists
     if (!isset($wild['xp'])) {
 
         $wild['xp'] = 0;
@@ -451,9 +505,13 @@ function spawnMonster($allMonsters) {
 // BATTLE REWARDS
 // ============================================================
 
-function getBattleRewards(&$game) {
-
-    $amount = rand(15, 45);
+function getBattleRewards(&$game)
+{
+    $amount =
+        rand(
+            15,
+            45
+        );
 
 
     if (
@@ -462,11 +520,13 @@ function getBattleRewards(&$game) {
         )
     ) {
 
-        $game['player']['gold'] = 0;
+        $game['player']['gold'] =
+            0;
     }
 
 
-    $game['player']['gold'] += $amount;
+    $game['player']['gold'] +=
+        $amount;
 
 
     return $amount;
@@ -474,13 +534,11 @@ function getBattleRewards(&$game) {
 
 
 // ============================================================
-// XP / LEVEL SYSTEM
+// XP SYSTEM
 // ============================================================
 
-
-// Total XP needed to reach a level
-function getXPForLevel($level) {
-
+function getXPForLevel($level)
+{
     if ($level <= 1) {
 
         return 0;
@@ -495,9 +553,12 @@ function getXPForLevel($level) {
 }
 
 
-// Determine level from XP
-function getLevel($xp) {
+// ============================================================
+// GET LEVEL
+// ============================================================
 
+function getLevel($xp)
+{
     $level = 1;
 
 
@@ -516,19 +577,23 @@ function getLevel($xp) {
 }
 
 
-// XP progress bar data
-function getXPStats($xp) {
+// ============================================================
+// XP PROGRESS
+// ============================================================
 
-    $lvl = getLevel($xp);
+function getXPStats($xp)
+{
+    $level =
+        getLevel($xp);
 
 
     $currentLvlTotal =
-        getXPForLevel($lvl);
+        getXPForLevel($level);
 
 
     $nextLvlTotal =
         getXPForLevel(
-            $lvl + 1
+            $level + 1
         );
 
 
@@ -553,7 +618,8 @@ function getXPStats($xp) {
 
     return [
 
-        'level' => $lvl,
+        'level' =>
+            $level,
 
         'current' =>
             $xpInCurrentLevel,
@@ -561,8 +627,17 @@ function getXPStats($xp) {
         'needed' =>
             $xpNeededForNext,
 
+        'next_lvl' =>
+            $nextLvlTotal,
+
         'percent' =>
-            $percent
+            max(
+                0,
+                min(
+                    100,
+                    $percent
+                )
+            )
     ];
 }
 
@@ -571,9 +646,10 @@ function getXPStats($xp) {
 // GIVE XP
 // ============================================================
 
-function gainXP(&$monster, $amount) {
-
-    // Make sure XP exists
+function gainXP(
+    &$monster,
+    $amount
+) {
     if (
         !isset(
             $monster['xp']
@@ -584,7 +660,6 @@ function gainXP(&$monster, $amount) {
     }
 
 
-    // Make sure attack exists
     if (
         !isset(
             $monster['attack']
@@ -595,7 +670,6 @@ function gainXP(&$monster, $amount) {
     }
 
 
-    // Make sure max HP exists
     if (
         !isset(
             $monster['max_hp']
@@ -612,7 +686,8 @@ function gainXP(&$monster, $amount) {
         );
 
 
-    $monster['xp'] += $amount;
+    $monster['xp'] +=
+        $amount;
 
 
     $newLevel =
@@ -631,18 +706,15 @@ function gainXP(&$monster, $amount) {
             $oldLevel;
 
 
-        // Increase HP
         $monster['max_hp'] +=
             10 *
             $levelsGained;
 
 
-        // Fully heal after level up
         $monster['hp'] =
             $monster['max_hp'];
 
 
-        // Increase attack
         $monster['attack'] +=
             5 *
             $levelsGained;
@@ -662,7 +734,7 @@ function gainXP(&$monster, $amount) {
 
 
 // ============================================================
-// SHOP / BUY ITEMS
+// SHOP
 // ============================================================
 
 function buyItem(
@@ -670,7 +742,6 @@ function buyItem(
     $itemType,
     $cost
 ) {
-
     if (
         ($game['player']['gold'] ?? 0)
         >= $cost
@@ -703,14 +774,13 @@ function buyItem(
 
 
 // ============================================================
-// REMOVE MONSTER FROM ROSTER
+// REMOVE MONSTER
 // ============================================================
 
 function discardFromRoster(
     &$game,
     $monsterId
 ) {
-
     foreach (
         $game['player']['roster']
         as $index => $monster
@@ -728,14 +798,14 @@ function discardFromRoster(
             );
 
 
-            // Make sure active index remains valid
             if (
                 empty(
                     $game['player']['roster']
                 )
             ) {
 
-                $game['player']['active'] = 0;
+                $game['player']['active'] =
+                    0;
 
             } elseif (
                 $game['player']['active']
@@ -745,7 +815,8 @@ function discardFromRoster(
                 )
             ) {
 
-                $game['player']['active'] = 0;
+                $game['player']['active'] =
+                    0;
             }
 
 
@@ -759,7 +830,7 @@ function discardFromRoster(
 
 
 // ============================================================
-// CAPTURE / SOUL STONE LOGIC
+// CAPTURE
 // ============================================================
 
 function attemptCatch(
@@ -767,11 +838,6 @@ function attemptCatch(
     $m,
     $b
 ) {
-
-    /*
-     * Prevent division by zero.
-     */
-
     if ($m <= 0) {
 
         return false;
@@ -779,12 +845,13 @@ function attemptCatch(
 
 
     $chance =
-        (1 - ($h / $m)) *
-        100 +
+        (
+            1 -
+            ($h / $m)
+        ) * 100 +
         $b;
 
 
-    // Keep chance between 1% and 95%
     $chance =
         max(
             1,
@@ -795,10 +862,11 @@ function attemptCatch(
         );
 
 
-    return rand(
-        1,
-        100
-    ) <= $chance;
+    return
+        rand(
+            1,
+            100
+        ) <= $chance;
 }
 
 
@@ -806,99 +874,81 @@ function attemptCatch(
 // POTION LOGIC
 // ============================================================
 
-function usePotion(
-    &$game,
-    $type = 'potions'
-) {
-
-    // Make sure active monster exists
+function usePotion(&$game, $type = 'basic_potion')
+{
+    // Make sure the player has an active monster
     if (
-        !isset(
-            $game['player']['roster']
-            [$game['player']['active']]
-        )
+        !isset($game['player']['roster']) ||
+        !isset($game['player']['active']) ||
+        !isset($game['player']['roster'][$game['player']['active']])
     ) {
-
         return false;
     }
 
+    // Reference the active monster
+    $pm = &$game['player']['roster'][$game['player']['active']];
 
-    $pm =
-        &$game['player']['roster']
-        [$game['player']['active']];
-
-
-    // Healing amounts
+    // Healing amounts for each potion
     $heals = [
+        'basic_potion'   => 30,
+        'greater_potion' => 100,
+        'ancient_potion' => 999,
 
-        'potions' =>
-            30,
-
-        'super_potions' =>
-            100,
-
-        'max_potions' =>
-            999
+        // Legacy names — kept so older saves still work
+        'potions'        => 30,
+        'super_potions'  => 100,
+        'max_potions'    => 999
     ];
 
-
-    // Invalid potion type
-    if (
-        !isset(
-            $heals[$type]
-        )
-    ) {
-
+    // Check that the potion type exists
+    if (!isset($heals[$type])) {
         return false;
     }
 
+    // Make sure inventory exists
+    if (!isset($game['inventory'])) {
+        $game['inventory'] = [];
+    }
 
-    // No potion available
-    if (
-        ($game['inventory'][$type] ?? 0)
-        <= 0
-    ) {
+    // Make sure this potion exists in inventory
+    if (!isset($game['inventory'][$type])) {
+        $game['inventory'][$type] = 0;
+    }
 
+    // Check whether the player has any
+    if ($game['inventory'][$type] <= 0) {
         return false;
     }
 
+    // Make sure monster has HP values
+    $currentHP = $pm['hp'] ?? 0;
+    $maxHP = $pm['max_hp'] ?? 1;
 
-    // Already full HP
-    if (
-        $pm['hp'] >=
-        $pm['max_hp']
-    ) {
-
+    // Monster is already at full HP
+    if ($currentHP >= $maxHP) {
         return false;
     }
 
-
-    // Use potion
+    // Remove one potion
     $game['inventory'][$type]--;
 
-
-    $pm['hp'] =
-        min(
-            $pm['hp'] +
-            $heals[$type],
-
-            $pm['max_hp']
-        );
-
+    // Heal monster
+    $pm['hp'] = min(
+        $currentHP + $heals[$type],
+        $maxHP
+    );
 
     return true;
 }
 
-
 // ============================================================
-// SWITCH ACTIVE MONSTER
+// SWITCH MONSTER
 // ============================================================
 
 function switchActiveMonster(
     &$game,
     $newIndex
 ) {
-
     if (
         !isset(
             $game['player']['roster']
@@ -910,7 +960,6 @@ function switchActiveMonster(
     }
 
 
-    // Cannot switch to fainted monster
     if (
         $game['player']['roster']
         [$newIndex]['hp'] <= 0
@@ -929,11 +978,11 @@ function switchActiveMonster(
 
 
 // ============================================================
-// CHECK WHETHER PLAYER HAS USABLE MONSTERS
+// HAS USABLE MONSTER
 // ============================================================
 
-function hasUsableMonster($game): bool {
-
+function hasUsableMonster($game): bool
+{
     foreach (
         $game['player']['roster']
         as $monster
@@ -953,11 +1002,11 @@ function hasUsableMonster($game): bool {
 
 
 // ============================================================
-// FIND FIRST USABLE MONSTER
+// FIRST USABLE MONSTER
 // ============================================================
 
-function getFirstUsableMonster($game): ?int {
-
+function getFirstUsableMonster($game): ?int
+{
     foreach (
         $game['player']['roster']
         as $index => $monster
@@ -975,32 +1024,37 @@ function getFirstUsableMonster($game): ?int {
     return null;
 }
 
+
 // ============================================================
-// NEW GAME / STARTER MONSTER SYSTEM
+// STARTER MONSTER SYSTEM
 // ============================================================
 
-function getStarterMonsters($allMonsters): array
-{
-    /*
-     * These are the three starter monsters.
-     *
-     * Change the names here if you decide to use different
-     * starter creatures later.
-     */
-
+function getStarterMonsters(
+    $allMonsters
+): array {
     $starterNames = [
+
         'emberling',
+
         'tidepup',
+
         'gravhorn'
     ];
 
+
     $starters = [];
 
-    foreach ($allMonsters as $monster) {
 
-        $monsterName = strtolower(
-            $monster['name'] ?? ''
-        );
+    foreach (
+        $allMonsters
+        as $monster
+    ) {
+
+        $monsterName =
+            strtolower(
+                $monster['name'] ?? ''
+            );
+
 
         if (
             in_array(
@@ -1010,26 +1064,34 @@ function getStarterMonsters($allMonsters): array
             )
         ) {
 
-            $starters[$monsterName] = $monster;
+            $starters[$monsterName] =
+                $monster;
         }
     }
+
 
     return $starters;
 }
 
 
-// ------------------------------------------------------------
-// Get a single starter monster
-// ------------------------------------------------------------
+// ============================================================
+// GET STARTER
+// ============================================================
 
 function getStarterMonster(
     $allMonsters,
     string $name
 ): ?array {
+    $name =
+        strtolower(
+            trim($name)
+        );
 
-    $name = strtolower(trim($name));
 
-    foreach ($allMonsters as $monster) {
+    foreach (
+        $allMonsters
+        as $monster
+    ) {
 
         if (
             strtolower(
@@ -1041,50 +1103,56 @@ function getStarterMonster(
         }
     }
 
+
     return null;
 }
 
 
-// ------------------------------------------------------------
-// Prepare starter monster for a new game
-// ------------------------------------------------------------
+// ============================================================
+// PREPARE STARTER
+// ============================================================
 
 function prepareStarterMonster(
     array $monster
 ): array {
+    global $moves;
 
-    /*
-     * Starter monsters always begin at level 1.
-     */
 
-    $monster['xp'] = 0;
+    $monster['xp'] =
+        0;
+
 
     $monster['hp'] =
         $monster['max_hp'];
 
-    /*
-     * Every monster gets a unique ID.
-     */
 
     $monster['id'] =
         generateMonsterId();
 
-    /*
-     * Make sure the starter has a moves array.
-     */
 
-    if (!isset($monster['moves'])) {
+    if (
+        isset(
+            $moves[$monster['type']]
+        )
+    ) {
 
-        $monster['moves'] = [];
+        $monster['moves'] =
+            $moves[$monster['type']];
+
+    } else {
+
+        $monster['moves'] =
+            [];
     }
+
 
     return $monster;
 }
 
 
-// ------------------------------------------------------------
-// Create a completely fresh game
-// ------------------------------------------------------------
+// ============================================================
+// CREATE COMPLETELY NEW GAME
+// ============================================================
 
 function createNewGame(): array
 {
@@ -1109,6 +1177,12 @@ function createNewGame(): array
 
             'max_potions' => 0,
 
+            'basic_potion' => 0,
+
+            'greater_potion' => 0,
+
+            'ancient_potion' => 0,
+
             'basic' => 0,
 
             'greater' => 0,
@@ -1130,37 +1204,51 @@ function createNewGame(): array
 }
 
 
-// ------------------------------------------------------------
-// Add starter monster to new game
-// ------------------------------------------------------------
+// ============================================================
+// START GAME WITH STARTER
+// ============================================================
 
 function startGameWithStarter(
     array &$game,
     array $starter
 ): void {
-
     $starter =
         prepareStarterMonster(
             $starter
         );
 
+
     $game['player']['roster'] = [
+
         $starter
     ];
 
-    $game['player']['active'] = 0;
 
-    $game['player']['gold'] = 500;
+    $game['player']['active'] =
+        0;
+
+
+    $game['player']['gold'] =
+        500;
+
 
     $game['player']['discovered'] = [
+
         $starter['name']
     ];
 
-    $game['currentBattle'] = null;
 
-    $game['game_started'] = true;
+    $game['currentBattle'] =
+        null;
 
-    $game['starter_chosen'] = true;
+
+    $game['game_started'] =
+        true;
+
+
+    $game['starter_chosen'] =
+        true;
+
 
     $game['message'] =
         "Your journey has begun! "

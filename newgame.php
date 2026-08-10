@@ -1,81 +1,51 @@
+```php
 <?php
 
-session_start();
+// ============================================================
+// SOUL STONE RPG
+// NEW GAME / STARTER SELECTION
+// ============================================================
 
-require_once 'functions.php';
-require_once 'monsters.php';
+// Load game functions
+require_once __DIR__ . '/functions.php';
+
+// Load monster database
+require_once __DIR__ . '/monsters.php';
 
 
 // ============================================================
-// STARTER DATA
+// INITIAL SETUP
 // ============================================================
 
+// Get the three starter monsters
 $starters = getStarterMonsters($allMonsters);
 
+// Current screen
+$step = 'intro';
 
-// ============================================================
-// NEW GAME
-// ============================================================
+// Selected starter
+$selectedStarter = null;
 
-if (
-    !isset(
-        $_SESSION['new_game']
-    )
-) {
-
-    $_SESSION['new_game'] =
-        createNewGame();
-}
-
-
-$game =
-    &$_SESSION['new_game'];
+// Message
+$message = '';
 
 
 // ============================================================
-// CURRENT STEP
+// HANDLE FORM ACTIONS
 // ============================================================
 
-$step =
-    $_SESSION['new_game_step']
-    ?? 'welcome';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-
-// ============================================================
-// SELECTED STARTER
-// ============================================================
-
-$selectedStarter =
-    $_SESSION['selected_starter']
-    ?? null;
-
-
-// ============================================================
-// POST ACTIONS
-// ============================================================
-
-if (
-    $_SERVER['REQUEST_METHOD'] === 'POST'
-) {
-
-    $action =
-        $_POST['action'] ?? '';
+    $action = $_POST['action'] ?? '';
 
 
     // --------------------------------------------------------
-    // BEGIN
+    // BEGIN NEW GAME
     // --------------------------------------------------------
 
     if ($action === 'begin') {
 
-        $_SESSION['new_game_step'] =
-            'choose';
-
-        header(
-            'Location: newgame.php'
-        );
-
-        exit;
+        $step = 'selection';
     }
 
 
@@ -83,57 +53,43 @@ if (
     // VIEW STARTER
     // --------------------------------------------------------
 
-    if ($action === 'view_starter') {
+    elseif ($action === 'view_starter') {
 
-        $starterName =
-            strtolower(
-                trim(
-                    $_POST['starter'] ?? ''
-                )
-            );
-
-
-        if (
-            isset(
-                $starters[$starterName]
-            )
-        ) {
-
-            $_SESSION['selected_starter'] =
-                $starterName;
-
-            $_SESSION['new_game_step'] =
-                'preview';
-        }
-
-
-        header(
-            'Location: newgame.php'
+        $starterName = strtolower(
+            trim($_POST['starter'] ?? '')
         );
 
-        exit;
+
+        // Make sure the selected monster is one of
+        // the three valid starters.
+
+        if (isset($starters[$starterName])) {
+
+            $selectedStarter = $starterName;
+
+            $step = 'preview';
+
+        } else {
+
+            $message =
+                'Invalid starter selection.';
+
+            $step = 'selection';
+        }
     }
 
 
     // --------------------------------------------------------
-    // PICK ANOTHER
+    // PICK ANOTHER STARTER
     // --------------------------------------------------------
 
-    if ($action === 'pick_another') {
+    elseif ($action === 'pick_another') {
 
-        unset(
-            $_SESSION['selected_starter']
-        );
+        // Return to the three Soul Stones
 
-        $_SESSION['new_game_step'] =
-            'choose';
+        $selectedStarter = null;
 
-
-        header(
-            'Location: newgame.php'
-        );
-
-        exit;
+        $step = 'selection';
     }
 
 
@@ -141,62 +97,114 @@ if (
     // CHOOSE STARTER
     // --------------------------------------------------------
 
-    if ($action === 'choose_starter') {
+    elseif ($action === 'choose_starter') {
 
-        $starterName =
-            $_SESSION['selected_starter']
-            ?? null;
+        /*
+         * The selected starter is sent as a hidden field.
+         * This prevents relying on the browser session alone.
+         */
 
+        $starterName = strtolower(
+            trim($_POST['starter'] ?? '')
+        );
+
+
+        // Verify the starter exists
+
+        $starter = getStarterMonster(
+            $allMonsters,
+            $starterName
+        );
+
+
+        // Only allow the official three starters
 
         if (
-            $starterName &&
-            isset(
-                $starters[$starterName]
-            )
+            $starter === null ||
+            !isset($starters[$starterName])
         ) {
+
+            $message =
+                'That monster cannot be selected.';
+
+            $step = 'selection';
+
+        } else {
+
+            // ------------------------------------------------
+            // CREATE BRAND NEW GAME
+            // ------------------------------------------------
+
+            $game = createNewGame();
+
+
+            // ------------------------------------------------
+            // ADD STARTER
+            // ------------------------------------------------
 
             startGameWithStarter(
                 $game,
-                $starters[$starterName]
+                $starter
             );
 
 
-            /*
-             * Create the Battle Code AFTER the
-             * starter has been selected.
-             */
+            // ------------------------------------------------
+            // CREATE BATTLE CODE
+            // ------------------------------------------------
 
             $battleCode =
-                createBattleSave(
-                    $game
-                );
+                createBattleSave($game);
 
 
-            $_SESSION['battle_code'] =
+            // Make sure the code exists in memory
+
+            $game['battle_code'] =
                 $battleCode;
 
 
-            unset(
-                $_SESSION['new_game']
+            // Save the completed new game
+
+            saveBattleGame(
+                $battleCode,
+                $game
             );
 
-            unset(
-                $_SESSION['new_game_step']
-            );
 
-            unset(
-                $_SESSION['selected_starter']
-            );
-
+            // ------------------------------------------------
+            // SEND PLAYER TO MAIN GAME
+            // ------------------------------------------------
 
             header(
-                'Location: index.php'
+                'Location: main.php?code=' .
+                urlencode($battleCode)
             );
 
             exit;
         }
     }
 }
+
+
+// ============================================================
+// STARTER DESCRIPTIONS
+// ============================================================
+
+$descriptions = [
+
+    'emberling' =>
+        'A fiery little companion with a brave heart. Emberling is quick, aggressive, and excels at dealing damage.',
+
+    'tidepup' =>
+        'A loyal water companion known for its adaptability. Tidepup has strong health and can withstand difficult battles.',
+
+    'gravhorn' =>
+        'A sturdy earth monster built for endurance. Gravhorn has powerful defenses and the highest starting HP of the three.'
+];
+
+
+// ============================================================
+// PAGE
+// ============================================================
 
 ?>
 
@@ -224,8 +232,13 @@ if (
 
 </head>
 
-<body class="new-game-page">
 
+<body>
+
+
+<!-- =====================================================
+     NAVIGATION
+     ===================================================== -->
 
 <nav class="top-nav">
 
@@ -244,15 +257,19 @@ if (
 </nav>
 
 
+<!-- =====================================================
+     MAIN NEW GAME CONTAINER
+     ===================================================== -->
+
 <main class="new-game-container">
 
 
-<?php if ($step === 'welcome'): ?>
+<?php if ($step === 'intro'): ?>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          INTRODUCTION
-         ===================================================== -->
+         ================================================= -->
 
     <section class="tutorial-panel">
 
@@ -260,13 +277,16 @@ if (
             ◆
         </div>
 
+
         <p class="tutorial-step">
             WELCOME, SOUL KEEPER
         </p>
 
+
         <h1>
             YOUR JOURNEY BEGINS
         </h1>
+
 
         <p class="tutorial-text">
 
@@ -274,6 +294,7 @@ if (
             mysterious creatures known as monsters.
 
         </p>
+
 
         <p class="tutorial-text">
 
@@ -283,12 +304,34 @@ if (
 
         </p>
 
+
         <p class="tutorial-text">
 
             Before you begin your adventure,
             you must choose your first companion.
 
         </p>
+
+
+        <div class="tutorial-tip">
+
+            <strong>
+                YOUR STARTING RESOURCES
+            </strong>
+
+            <br>
+
+            You will begin with:
+
+            <br><br>
+
+            <strong>500 GOLD</strong>
+
+            <br>
+
+            <strong>1 STARTER MONSTER</strong>
+
+        </div>
 
 
         <form method="post">
@@ -307,12 +350,12 @@ if (
     </section>
 
 
-<?php elseif ($step === 'choose'): ?>
+<?php elseif ($step === 'selection'): ?>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          CHOOSE STARTER
-         ===================================================== -->
+         ================================================= -->
 
     <section class="starter-selection">
 
@@ -320,9 +363,11 @@ if (
             STEP 1
         </p>
 
+
         <h1>
             CHOOSE YOUR FIRST SOUL
         </h1>
+
 
         <p class="tutorial-text">
 
@@ -332,6 +377,17 @@ if (
             different elemental affinity.
 
         </p>
+
+
+        <?php if ($message): ?>
+
+            <div class="start-message error">
+
+                <?php echo htmlspecialchars($message); ?>
+
+            </div>
+
+        <?php endif; ?>
 
 
         <div class="starter-stones">
@@ -360,7 +416,10 @@ if (
                     >
 
 
+                        <!-- STONE SYMBOL -->
+
                         <div class="stone-glow">
+
 
                             <?php if ($starter['type'] === 'fire'): ?>
 
@@ -376,8 +435,11 @@ if (
 
                             <?php endif; ?>
 
+
                         </div>
 
+
+                        <!-- STONE TYPE -->
 
                         <div class="stone-type">
 
@@ -390,16 +452,20 @@ if (
                         </div>
 
 
+                        <!-- MONSTER IMAGE -->
+
                         <img
                             src="images/monsters/<?php echo htmlspecialchars($starter['image']); ?>"
                             alt="<?php echo htmlspecialchars($starter['name']); ?>"
                         >
 
 
+                        <!-- MONSTER NAME -->
+
                         <strong>
 
                             <?php echo htmlspecialchars(
-                                $starter['name']
+                                ucfirst($starter['name'])
                             ); ?>
 
                         </strong>
@@ -427,39 +493,49 @@ if (
                 CHOOSE CAREFULLY
             </strong>
 
+            <br>
+
             Your first monster will become
             the foundation of your team.
 
         </div>
 
+
     </section>
 
 
-<?php elseif (
-    $step === 'preview' &&
-    $selectedStarter &&
-    isset($starters[$selectedStarter])
-): ?>
+<?php elseif ($step === 'preview' && $selectedStarter !== null): ?>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          STARTER PREVIEW
-         ===================================================== -->
+         ================================================= -->
 
     <?php
 
     $starter =
         $starters[$selectedStarter];
 
+
     $starterLevel =
         getLevel(
             $starter['xp'] ?? 0
         );
 
+
+    $description =
+        $descriptions[
+            strtolower(
+                $starter['name']
+            )
+        ]
+        ?? 'A mysterious creature ready to begin its journey with you.';
+
     ?>
 
 
     <section class="starter-preview">
+
 
         <p class="tutorial-step">
 
@@ -469,6 +545,9 @@ if (
 
 
         <div class="preview-card">
+
+
+            <!-- TYPE -->
 
             <div
                 class="preview-type <?php echo htmlspecialchars($starter['type']); ?>"
@@ -481,14 +560,18 @@ if (
             </div>
 
 
+            <!-- NAME -->
+
             <h1>
 
                 <?php echo htmlspecialchars(
-                    $starter['name']
+                    ucfirst($starter['name'])
                 ); ?>
 
             </h1>
 
+
+            <!-- IMAGE -->
 
             <div class="preview-image">
 
@@ -500,39 +583,21 @@ if (
             </div>
 
 
+            <!-- DESCRIPTION -->
+
             <div class="preview-description">
 
-                <?php
-
-                $descriptions = [
-
-                    'emberling' =>
-                        'A fiery little companion with a brave heart. Emberling is quick, aggressive, and excels at dealing damage.',
-
-                    'tidepup' =>
-                        'A loyal water companion known for its adaptability. Tidepup has strong health and can withstand difficult battles.',
-
-                    'gravhorn' =>
-                        'A sturdy earth monster built for endurance. Gravhorn has powerful defenses and the highest starting HP of the three.'
-
-                ];
-
-
-                echo htmlspecialchars(
-                    $descriptions[
-                        strtolower(
-                            $starter['name']
-                        )
-                    ]
-                    ?? 'A mysterious creature ready to begin its journey with you.'
-                );
-
-                ?>
+                <?php echo htmlspecialchars(
+                    $description
+                ); ?>
 
             </div>
 
 
+            <!-- STATS -->
+
             <div class="preview-stats">
+
 
                 <div>
 
@@ -542,7 +607,7 @@ if (
 
                     <strong>
                         <?php echo htmlspecialchars(
-                            $starter['type']
+                            strtoupper($starter['type'])
                         ); ?>
                     </strong>
 
@@ -556,7 +621,7 @@ if (
                     </span>
 
                     <strong>
-                        <?php echo $starter['max_hp']; ?>
+                        <?php echo (int)$starter['max_hp']; ?>
                     </strong>
 
                 </div>
@@ -569,7 +634,7 @@ if (
                     </span>
 
                     <strong>
-                        <?php echo $starter['attack']; ?>
+                        <?php echo (int)$starter['attack']; ?>
                     </strong>
 
                 </div>
@@ -582,22 +647,32 @@ if (
                     </span>
 
                     <strong>
-                        <?php echo $starterLevel; ?>
+                        <?php echo (int)$starterLevel; ?>
                     </strong>
 
                 </div>
 
+
             </div>
 
 
-            <!-- ==============================================
-                 ACTIONS
-                 ============================================== -->
+            <!-- =================================================
+                 ACTION BUTTONS
+                 ================================================= -->
 
             <div class="starter-actions">
 
 
+                <!-- CHOOSE -->
+
                 <form method="post">
+
+                    <input
+                        type="hidden"
+                        name="starter"
+                        value="<?php echo htmlspecialchars($selectedStarter); ?>"
+                    >
+
 
                     <button
                         type="submit"
@@ -605,7 +680,10 @@ if (
                         value="choose_starter"
                         class="choose-starter-btn"
                     >
-                        CHOOSE <?php echo strtoupper(
+
+                        CHOOSE
+
+                        <?php echo strtoupper(
                             $starter['name']
                         ); ?>
 
@@ -613,6 +691,8 @@ if (
 
                 </form>
 
+
+                <!-- PICK ANOTHER -->
 
                 <form method="post">
 
@@ -622,7 +702,9 @@ if (
                         value="pick_another"
                         class="another-starter-btn"
                     >
+
                         PICK ANOTHER
+
                     </button>
 
                 </form>
@@ -630,7 +712,9 @@ if (
 
             </div>
 
+
         </div>
+
 
     </section>
 
@@ -640,6 +724,8 @@ if (
 
 </main>
 
+
 </body>
 
 </html>
+```

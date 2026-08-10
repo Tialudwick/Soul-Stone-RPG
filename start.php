@@ -3,40 +3,78 @@
 session_start();
 
 require_once 'functions.php';
+require_once 'monsters.php';
 
 $message = '';
+
 $messageType = '';
 
 
 // ============================================================
-// CONTINUE EXISTING GAME
+// HANDLE START SCREEN
 // ============================================================
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+) {
 
-    if (isset($_POST['continue_game'])) {
+    // ========================================================
+    // CONTINUE GAME
+    // ========================================================
 
-        $code = strtoupper(trim($_POST['battle_code'] ?? ''));
+    if (
+        isset(
+            $_POST['continue_game']
+        )
+    ) {
 
-        if ($code === '') {
+        $battleCode =
+            normalizeBattleCode(
+                $_POST['battle_code'] ?? ''
+            );
 
-            $message = 'Please enter your Battle Code.';
-            $messageType = 'error';
+
+        if (
+            $battleCode === ''
+        ) {
+
+            $message =
+                'Please enter your Battle Code.';
+
+            $messageType =
+                'error';
 
         } else {
 
-            $game = loadBattleSave($code);
+            $game =
+                loadBattleSave(
+                    $battleCode
+                );
 
-            if ($game === null) {
 
-                $message = 'Battle Code not found. Check the code and try again.';
-                $messageType = 'error';
+            if (
+                $game === null
+            ) {
+
+                $message =
+                    'Battle Code not found. Please check the code and try again.';
+
+                $messageType =
+                    'error';
 
             } else {
 
-                $_SESSION['battle_code'] = $code;
+                $_SESSION['game'] =
+                    $game;
 
-                header('Location: index.php');
+                $_SESSION['battle_code'] =
+                    $battleCode;
+
+
+                header(
+                    'Location: main.php'
+                );
+
                 exit;
             }
         }
@@ -44,31 +82,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // ========================================================
-    // START NEW GAME
+    // NEW GAME
     // ========================================================
 
-    if (isset($_POST['new_game'])) {
+    if (
+        isset(
+            $_POST['new_game']
+        )
+    ) {
 
-        /*
-         * Load your existing default game.
-         *
-         * This uses save.json as the template for a new game.
-         */
-        $game = loadGame();
+        unset(
+            $_SESSION['game']
+        );
 
-        // Remove anything left over from an old battle
-        $game['currentBattle'] = null;
+        unset(
+            $_SESSION['battle_code']
+        );
 
-        $game['message'] = 'Welcome to Soul Stone RPG!';
+        unset(
+            $_SESSION['selected_starter']
+        );
 
-        // Create unique Battle Code
-        $code = createBattleSave($game);
 
-        // Remember this game's code
-        $_SESSION['battle_code'] = $code;
+        header(
+            'Location: newgame.php'
+        );
 
-        // Send player to game
-        header('Location: index.php');
         exit;
     }
 }
@@ -76,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -87,7 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Soul Stone RPG</title>
+    <title>
+        Soul Stone RPG
+    </title>
 
     <link
         rel="stylesheet"
@@ -96,142 +138,179 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </head>
 
-<body class="start-page">
+<body>
 
 
-    <!-- ======================================================
-         NAVIGATION
-         ====================================================== -->
+<!-- ======================================================
+     NAVIGATION
+     ====================================================== -->
 
-    <nav class="top-nav">
+<nav class="top-nav">
 
-        <div class="logo">
-            <a href="start.php">
-                <strong>SOUL STONE RPG</strong>
-            </a>
-        </div>
+    <div class="logo">
 
-    </nav>
+        <a href="start.php">
 
+            <strong>
+                SOUL STONE RPG
+            </strong>
 
-    <!-- ======================================================
-         START SCREEN
-         ====================================================== -->
+        </a>
 
-    <main class="start-container">
+    </div>
 
-        <div class="start-panel">
+</nav>
 
 
-            <div class="start-logo">
+<!-- ======================================================
+     START SCREEN
+     ====================================================== -->
 
-                <div class="logo-symbol">
-                    ◆
-                </div>
+<main class="start-container">
 
-                <h1>
-                    SOUL STONE RPG
-                </h1>
+    <div class="start-panel">
 
-                <p>
-                    Capture. Battle. Become Legendary.
-                </p>
 
+        <!-- ==================================================
+             LOGO
+             ================================================== -->
+
+        <div class="start-logo">
+
+            <div class="logo-symbol">
+                ◆
             </div>
 
+            <h1>
+                SOUL STONE RPG
+            </h1>
 
-            <!-- ==================================================
-                 CONTINUE GAME
-                 ================================================== -->
-
-            <section class="start-section">
-
-                <h2>
-                    CONTINUE YOUR JOURNEY
-                </h2>
-
-                <p class="section-description">
-                    Enter your Battle Code to continue a saved game.
-                </p>
-
-
-                <form method="post">
-
-                    <label for="battle_code">
-                        BATTLE CODE
-                    </label>
-
-                    <input
-                        type="text"
-                        id="battle_code"
-                        name="battle_code"
-                        placeholder="SS-XXXX-XXXX"
-                        maxlength="11"
-                        autocomplete="off"
-                    >
-
-                    <button
-                        type="submit"
-                        name="continue_game"
-                        class="start-btn continue-btn"
-                    >
-                        CONTINUE GAME
-                    </button>
-
-                </form>
-
-            </section>
-
-
-            <div class="divider">
-                <span>OR</span>
-            </div>
-
-
-            <!-- ==================================================
-                 NEW GAME
-                 ================================================== -->
-
-            <section class="start-section new-game-section">
-
-                <h2>
-                    BEGIN A NEW JOURNEY
-                </h2>
-
-                <p class="section-description">
-                    Start a completely new Soul Stone adventure.
-                </p>
-
-
-                <form method="post">
-
-                    <button
-                        type="submit"
-                        name="new_game"
-                        class="start-btn new-game-btn"
-                    >
-                        NEW GAME
-                    </button>
-
-                </form>
-
-            </section>
-
-
-            <?php if ($message): ?>
-
-                <div class="start-message <?php echo $messageType; ?>">
-
-                    <?php echo htmlspecialchars($message); ?>
-
-                </div>
-
-            <?php endif; ?>
-
+            <p>
+                Capture. Battle. Become Legendary.
+            </p>
 
         </div>
 
-    </main>
+
+        <!-- ==================================================
+             CONTINUE GAME
+             ================================================== -->
+
+        <section class="start-section">
+
+            <h2>
+                CONTINUE YOUR JOURNEY
+            </h2>
+
+            <p class="section-description">
+
+                Enter your Battle Code to continue
+                a saved game.
+
+            </p>
+
+
+            <form method="post">
+
+                <label for="battle_code">
+                    BATTLE CODE
+                </label>
+
+
+                <input
+                    type="text"
+                    id="battle_code"
+                    name="battle_code"
+                    placeholder="SS-XXXX-XXXX"
+                    maxlength="11"
+                    autocomplete="off"
+                >
+
+
+                <button
+                    type="submit"
+                    name="continue_game"
+                    class="start-btn continue-btn"
+                >
+                    CONTINUE GAME
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ==================================================
+             DIVIDER
+             ================================================== -->
+
+        <div class="divider">
+
+            <span>
+                OR
+            </span>
+
+        </div>
+
+
+        <!-- ==================================================
+             NEW GAME
+             ================================================== -->
+
+        <section class="start-section new-game-section">
+
+            <h2>
+                BEGIN A NEW JOURNEY
+            </h2>
+
+
+            <p class="section-description">
+
+                Start a completely new
+                Soul Stone adventure.
+
+            </p>
+
+
+            <form method="post">
+
+                <button
+                    type="submit"
+                    name="new_game"
+                    class="start-btn new-game-btn"
+                >
+                    NEW GAME
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ==================================================
+             MESSAGE
+             ================================================== -->
+
+        <?php if (!empty($message)): ?>
+
+            <div
+                class="start-message
+                <?php echo htmlspecialchars($messageType); ?>"
+            >
+
+                <?php echo
+                    htmlspecialchars($message);
+                ?>
+
+            </div>
+
+        <?php endif; ?>
+
+
+    </div>
+
+</main>
+
 
 </body>
 
