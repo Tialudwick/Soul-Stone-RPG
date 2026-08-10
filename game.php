@@ -1582,7 +1582,8 @@ $pmXP =
             </div>
 
 
-            <!-- gold -->
+            <!-- gold
+              -->
 
             <div class="gold-box">
 
