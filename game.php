@@ -971,26 +971,14 @@ $pmXP =
      ======================================================== -->
 
 <nav class="top-nav">
-
     <div class="logo">
-
-        <a href="index.php">
-            <strong>SOUL STONE RPG</strong>
-        </a>
-
+        <a href="index.php"><strong>SOUL STONE RPG</strong></a>
     </div>
-    <div class="nav-link">
-        <a href="shop.php">
-        <strong>SHOP</strong>
-    </a>
+    <div class="nav-links">
+        <a href="bestiary.php">BESTIARY</a>
+        <a href="shop.php">SHOP</a>
+        <a href="index.php">HOME</a>
     </div>
-
-    <div class="nav-link">
-        <a href="bestiary.php">
-        <strong>BESTIARY</strong>
-        </a>
-    </div>
-
 </nav>
 
 
