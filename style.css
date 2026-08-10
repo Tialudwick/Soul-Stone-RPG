@@ -368,3 +368,793 @@ body {
         height: auto;
     }
 }
+
+/* =========================================================
+   10. INFINITE MONSTER ROSTER
+   ========================================================= */
+
+.roster-section {
+    width: 100%;
+}
+
+
+.roster-scroll {
+
+    /*
+     * The player can have unlimited monsters,
+     * but the UI stays a reasonable height.
+     */
+
+    max-height: 430px;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding: 8px;
+
+    background: rgba(0, 0, 0, 0.15);
+
+    border-radius: 8px;
+
+    scrollbar-width: thin;
+}
+
+
+/* Chrome / Edge scrollbar */
+
+.roster-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+.roster-scroll::-webkit-scrollbar-track {
+    background: #1c2833;
+    border-radius: 10px;
+}
+
+
+.roster-scroll::-webkit-scrollbar-thumb {
+    background: #d4a72c;
+    border-radius: 10px;
+}
+
+
+.roster-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+}
+
+
+/* Individual monster */
+
+.roster-card {
+
+    min-width: 0;
+
+    background: #f4e4bc;
+
+    border: 2px solid #7f8c8d;
+
+    padding: 8px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    position: relative;
+
+    transition: 0.2s;
+
+}
+
+
+.roster-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #d4a72c;
+
+}
+
+
+.roster-card img {
+
+    width: 50px;
+
+    height: 50px;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+
+}
+
+
+.roster-info {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.roster-name {
+
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.roster-level {
+
+    font-size: 0.7rem;
+
+    color: #7f8c8d;
+
+    margin: 3px 0;
+
+}
+
+
+.roster-level span {
+
+    padding: 2px 5px;
+
+    border-radius: 3px;
+
+    color: white;
+
+}
+
+
+.active-slot {
+
+    border-color: #3498db;
+
+    box-shadow:
+        0 0 10px
+        rgba(52, 152, 219, 0.5);
+
+    background: #ebf5fb;
+
+}
+
+
+.fainted-img {
+
+    filter:
+        grayscale(100%)
+        opacity(0.5);
+
+}
+
+/* =========================================================
+   NEW GAME / STARTER SELECTION
+   ========================================================= */
+
+.new-game-page {
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #263238 0%,
+            #15171a 45%,
+            #0d0e10 100%
+        );
+
+    color: #f4e4bc;
+
+}
+
+
+.new-game-container {
+
+    min-height:
+        calc(100vh - 75px);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 40px 20px;
+
+}
+
+
+/* =========================================================
+   TUTORIAL
+   ========================================================= */
+
+.tutorial-panel {
+
+    width: 100%;
+
+    max-width: 650px;
+
+    text-align: center;
+
+    background:
+        rgba(20, 22, 25, 0.96);
+
+    border:
+        3px solid #d4a72c;
+
+    border-radius: 18px;
+
+    padding: 50px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.7);
+
+}
+
+
+.tutorial-icon {
+
+    font-size: 4rem;
+
+    color: #d4a72c;
+
+    text-shadow:
+        0 0 20px
+        rgba(212, 167, 44, 0.6);
+
+}
+
+
+.tutorial-step {
+
+    color: #d4a72c;
+
+    font-size: 0.75rem;
+
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+}
+
+
+.tutorial-panel h1,
+.starter-selection h1 {
+
+    font-size: 2rem;
+
+    letter-spacing: 3px;
+
+}
+
+
+.tutorial-text {
+
+    color: #bdc3c7;
+
+    line-height: 1.7;
+
+    max-width: 550px;
+
+    margin:
+        15px auto;
+
+}
+
+
+.tutorial-btn {
+
+    margin-top: 25px;
+
+    padding:
+        16px 30px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #27ae60;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+}
+
+
+.tutorial-btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 5px 20px
+        rgba(39, 174, 96, 0.35);
+
+}
+
+
+/* =========================================================
+   STARTER SELECTION
+   ========================================================= */
+
+.starter-selection {
+
+    width: 100%;
+
+    max-width: 1000px;
+
+    text-align: center;
+
+}
+
+
+.starter-stones {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 25px;
+
+    margin-top: 35px;
+
+}
+
+
+.starter-stone-form {
+
+    width: 100%;
+
+}
+
+
+.starter-stone {
+
+    width: 100%;
+
+    min-height: 340px;
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    border: 3px solid #34495e;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1c2833,
+            #111820
+        );
+
+    color: #f4e4bc;
+
+    cursor: pointer;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    transition: 0.25s;
+
+}
+
+
+.starter-stone:hover {
+
+    transform:
+        translateY(-8px);
+
+    border-color:
+        #d4a72c;
+
+    box-shadow:
+        0 15px 35px
+        rgba(0, 0, 0, 0.5);
+
+}
+
+
+.starter-stone img {
+
+    width: 150px;
+
+    height: 150px;
+
+    object-fit: contain;
+
+    margin:
+        15px 0;
+
+}
+
+
+.starter-stone strong {
+
+    font-size: 1.4rem;
+
+    text-transform: lowercase;
+
+}
+
+
+.starter-stone span {
+
+    color: #7f8c8d;
+
+    font-size: 0.75rem;
+
+    margin-top: 5px;
+
+}
+
+
+.stone-glow {
+
+    font-size: 2.5rem;
+
+}
+
+
+.stone-type {
+
+    font-size: 0.75rem;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* Element-specific glow */
+
+.starter-stone.fire:hover {
+
+    box-shadow:
+        0 0 35px
+        rgba(230, 126, 34, 0.35);
+
+}
+
+
+.starter-stone.water:hover {
+
+    box-shadow:
+        0 0 35px
+        rgba(52, 152, 219, 0.35);
+
+}
+
+
+.starter-stone.earth:hover {
+
+    box-shadow:
+        0 0 35px
+        rgba(39, 174, 96, 0.35);
+
+}
+
+
+.tutorial-tip {
+
+    margin-top: 30px;
+
+    padding: 15px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(212, 167, 44, 0.08);
+
+    border:
+        1px solid
+        rgba(212, 167, 44, 0.3);
+
+    color: #bdc3c7;
+
+}
+
+
+.tutorial-tip strong {
+
+    color: #d4a72c;
+
+}
+
+
+/* =========================================================
+   STARTER PREVIEW
+   ========================================================= */
+
+.starter-preview {
+
+    width: 100%;
+
+    max-width: 600px;
+
+    text-align: center;
+
+}
+
+
+.preview-card {
+
+    position: relative;
+
+    background: #f4e4bc;
+
+    color: #3d2b1f;
+
+    border:
+        4px solid #d4a72c;
+
+    border-radius: 15px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, 0.6);
+
+}
+
+
+.preview-card h1 {
+
+    text-transform: lowercase;
+
+    font-size: 2rem;
+
+}
+
+
+.preview-type {
+
+    display: inline-block;
+
+    padding:
+        6px 15px;
+
+    border-radius: 20px;
+
+    color: white;
+
+    font-weight: bold;
+
+    font-size: 0.75rem;
+
+}
+
+
+.preview-image {
+
+    height: 250px;
+
+    background: white;
+
+    border:
+        3px solid #3d2b1f;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.preview-image img {
+
+    width: 80%;
+
+    height: 90%;
+
+    object-fit: contain;
+
+}
+
+
+.preview-description {
+
+    margin: 20px 0;
+
+    line-height: 1.6;
+
+}
+
+
+.preview-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 8px;
+
+}
+
+
+.preview-stats div {
+
+    background: #ead8a8;
+
+    border-radius: 6px;
+
+    padding: 10px;
+
+}
+
+
+.preview-stats span {
+
+    display: block;
+
+    font-size: 0.65rem;
+
+    color: #7f8c8d;
+
+}
+
+
+.preview-stats strong {
+
+    display: block;
+
+    margin-top: 4px;
+
+    text-transform: lowercase;
+
+}
+
+
+/* =========================================================
+   STARTER BUTTONS
+   ========================================================= */
+
+.starter-actions {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+
+.starter-actions form {
+
+    margin: 0;
+
+}
+
+
+.choose-starter-btn,
+.another-starter-btn {
+
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.choose-starter-btn {
+
+    background: #27ae60;
+
+}
+
+
+.another-starter-btn {
+
+    background: #34495e;
+
+}
+
+
+.choose-starter-btn:hover,
+.another-starter-btn:hover {
+
+    opacity: 0.85;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 750px) {
+
+    .starter-stones {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .starter-stone {
+
+        min-height: 260px;
+
+    }
+
+
+    .preview-stats {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .starter-actions {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .tutorial-panel {
+
+        padding: 30px 20px;
+
+    }
+
+}

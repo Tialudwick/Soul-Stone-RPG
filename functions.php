@@ -975,4 +975,197 @@ function getFirstUsableMonster($game): ?int {
     return null;
 }
 
+// ============================================================
+// NEW GAME / STARTER MONSTER SYSTEM
+// ============================================================
+
+function getStarterMonsters($allMonsters): array
+{
+    /*
+     * These are the three starter monsters.
+     *
+     * Change the names here if you decide to use different
+     * starter creatures later.
+     */
+
+    $starterNames = [
+        'emberling',
+        'tidepup',
+        'gravhorn'
+    ];
+
+    $starters = [];
+
+    foreach ($allMonsters as $monster) {
+
+        $monsterName = strtolower(
+            $monster['name'] ?? ''
+        );
+
+        if (
+            in_array(
+                $monsterName,
+                $starterNames,
+                true
+            )
+        ) {
+
+            $starters[$monsterName] = $monster;
+        }
+    }
+
+    return $starters;
+}
+
+
+// ------------------------------------------------------------
+// Get a single starter monster
+// ------------------------------------------------------------
+
+function getStarterMonster(
+    $allMonsters,
+    string $name
+): ?array {
+
+    $name = strtolower(trim($name));
+
+    foreach ($allMonsters as $monster) {
+
+        if (
+            strtolower(
+                $monster['name'] ?? ''
+            ) === $name
+        ) {
+
+            return $monster;
+        }
+    }
+
+    return null;
+}
+
+
+// ------------------------------------------------------------
+// Prepare starter monster for a new game
+// ------------------------------------------------------------
+
+function prepareStarterMonster(
+    array $monster
+): array {
+
+    /*
+     * Starter monsters always begin at level 1.
+     */
+
+    $monster['xp'] = 0;
+
+    $monster['hp'] =
+        $monster['max_hp'];
+
+    /*
+     * Every monster gets a unique ID.
+     */
+
+    $monster['id'] =
+        generateMonsterId();
+
+    /*
+     * Make sure the starter has a moves array.
+     */
+
+    if (!isset($monster['moves'])) {
+
+        $monster['moves'] = [];
+    }
+
+    return $monster;
+}
+
+
+// ------------------------------------------------------------
+// Create a completely fresh game
+// ------------------------------------------------------------
+
+function createNewGame(): array
+{
+    return [
+
+        'player' => [
+
+            'roster' => [],
+
+            'active' => 0,
+
+            'gold' => 500,
+
+            'discovered' => []
+        ],
+
+        'inventory' => [
+
+            'potions' => 0,
+
+            'super_potions' => 0,
+
+            'max_potions' => 0,
+
+            'basic' => 0,
+
+            'greater' => 0,
+
+            'ancient' => 0
+        ],
+
+        'currentBattle' => null,
+
+        'message' =>
+            'Welcome to Soul Stone RPG!',
+
+        'battle_code' => null,
+
+        'game_started' => false,
+
+        'starter_chosen' => false
+    ];
+}
+
+
+// ------------------------------------------------------------
+// Add starter monster to new game
+// ------------------------------------------------------------
+
+function startGameWithStarter(
+    array &$game,
+    array $starter
+): void {
+
+    $starter =
+        prepareStarterMonster(
+            $starter
+        );
+
+    $game['player']['roster'] = [
+        $starter
+    ];
+
+    $game['player']['active'] = 0;
+
+    $game['player']['gold'] = 500;
+
+    $game['player']['discovered'] = [
+        $starter['name']
+    ];
+
+    $game['currentBattle'] = null;
+
+    $game['game_started'] = true;
+
+    $game['starter_chosen'] = true;
+
+    $game['message'] =
+        "Your journey has begun! "
+        . $starter['name']
+        . " has joined your team.";
+}
+
 ?>

@@ -581,7 +581,91 @@ saveGame($game);
 
                 <div class="section-title">MONSTER ROSTER</div>
                 <div class="roster-grid">
-                    <?php for($i=0; $i<8; $i++): ?>
+                    <?php for($i=0; $i<8; $i++): ?><?php foreach ($game['player']['roster'] as $i => $m): ?>
+
+    <?php
+
+    $hpP =
+        ($m['hp'] / $m['max_hp']) * 100;
+
+    $stats =
+        getXPStats(
+            $m['xp'] ?? 0
+        );
+
+    ?>
+
+    <button
+        name="switch_to"
+        value="<?php echo $i; ?>"
+        class="roster-card
+        <?php echo
+            $i == $game['player']['active']
+            ? 'active-slot'
+            : '';
+        ?>"
+    >
+
+        <img
+            src="images/monsters/<?php echo htmlspecialchars($m['image']); ?>"
+            class="<?php echo
+                $m['hp'] <= 0
+                ? 'fainted-img'
+                : '';
+            ?>"
+        >
+
+
+        <div class="roster-info">
+
+            <div class="roster-name">
+
+                <?php echo htmlspecialchars(
+                    $m['name']
+                ); ?>
+
+            </div>
+
+
+            <div class="roster-level">
+
+                Lv.<?php echo $stats['level']; ?>
+
+                <span
+                    class="<?php echo htmlspecialchars($m['type']); ?>"
+                >
+
+                    <?php echo htmlspecialchars(
+                        $m['type']
+                    ); ?>
+
+                </span>
+
+            </div>
+
+
+            <div class="hp-bar">
+
+                <div
+                    class="hp-fill"
+                    style="width:<?php echo
+                        max(
+                            0,
+                            min(
+                                100,
+                                $hpP
+                            )
+                        );
+                    ?>%"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </button>
+
+<?php endforeach; ?>
                         <?php if(isset($game['player']['roster'][$i])): 
                             $m = $game['player']['roster'][$i];
                             $hpP = ($m['hp'] / $m['max_hp']) * 100;
