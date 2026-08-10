@@ -31,7 +31,7 @@ $moves = [
 
 // Monster Database
 $allMonsters = [
-    // --- BASIC (Common) ---
+   // --- BASIC (Common) ---
 ["name" => "emberling", "type" => "fire", "max_hp" => 50, "attack" => 12, "rarity" => "basic", "image" => "emberling.png"],
 ["name" => "tidepup", "type" => "water", "max_hp" => 60, "attack" => 10, "rarity" => "basic", "image" => "tidepup.png"],
 ["name" => "gravhorn", "type" => "earth", "max_hp" => 70, "attack" => 8, "rarity" => "basic", "image" => "gravhorn.png"],
@@ -78,6 +78,7 @@ $allMonsters = [
 ["name" => "chronole", "type" => "water", "max_hp" => 600, "attack" => 40, "rarity" => "ancient", "image" => "chronole.png"],
 ["name" => "nebulagon", "type" => "water", "max_hp" => 420, "attack" => 58, "rarity" => "ancient", "image" => "nebulagon.png"],
 ["name" => "omegaruct", "type" => "earth", "max_hp" => 550, "attack" => 48, "rarity" => "ancient", "image" => "omegaruct.png"]
+];
 
 /*pawns a fresh monster with moves and sets HP
  
