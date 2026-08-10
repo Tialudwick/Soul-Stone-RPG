@@ -1,10 +1,5 @@
-```php
 <?php
-// ============================================================
-// SOUL STONE RPG
-// START.PHP
-// Main Menu + Starter Selection
-// ============================================================
+
 
 session_start();
 
@@ -12,25 +7,19 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/monsters.php';
 
 
-// ============================================================
-// VARIABLES
-// ============================================================
+// Variables
 
 $message = '';
 $messageType = '';
 
 
-// ============================================================
-// CHECK IF WE ARE SELECTING A STARTER
-// ============================================================
+// Starter Selection
 
 $selectingStarter = isset($_SESSION['selecting_starter'])
     && $_SESSION['selecting_starter'] === true;
 
 
-// ============================================================
-// HANDLE NEW GAME
-// ============================================================
+// New Game Handle Logic
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST'
@@ -47,9 +36,7 @@ if (
 }
 
 
-// ============================================================
-// HANDLE STARTER SELECTION
-// ============================================================
+// Starter selection logic
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST'
@@ -77,26 +64,18 @@ if (
 
     } else {
 
-        // ----------------------------------------------------
-        // Create a completely fresh game
-        // ----------------------------------------------------
+        // Make a completely createNewGame
 
         $game = createNewGame();
 
-
-        // ----------------------------------------------------
-        // Add selected starter
-        // ----------------------------------------------------
+        //Starter selction
 
         startGameWithStarter(
             $game,
             $starters[$starterName]
         );
 
-
-        // ----------------------------------------------------
-        // Give player starting inventory
-        // ----------------------------------------------------
+        // Starter Inventory for new game
 
         $game['inventory']['basic_potion'] = 3;
         $game['inventory']['greater_potion'] = 1;
@@ -106,10 +85,7 @@ if (
         $game['inventory']['greater'] = 1;
         $game['inventory']['ancient'] = 0;
 
-
-        // ----------------------------------------------------
-        // Create Battle Code
-        // ----------------------------------------------------
+        // Battle Code
 
         try {
 
@@ -129,10 +105,7 @@ if (
             $battleCode = null;
         }
 
-
-        // ----------------------------------------------------
-        // Start game
-        // ----------------------------------------------------
+        // Start Game
 
         if ($battleCode !== null) {
 
@@ -153,9 +126,7 @@ if (
 }
 
 
-// ============================================================
-// HANDLE CANCEL STARTER SELECTION
-// ============================================================
+// Cancle Starter selction logic
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST'
@@ -174,9 +145,7 @@ if (
 }
 
 
-// ============================================================
-// HANDLE CONTINUE GAME
-// ============================================================
+// continue game logic
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST'
@@ -195,10 +164,7 @@ if (
         $battleCode
     );
 
-
-    // --------------------------------------------------------
-    // Make sure something was entered
-    // --------------------------------------------------------
+    // ensure something is entered in battle code slot
 
     if ($battleCode === '') {
 
@@ -210,9 +176,7 @@ if (
 
     } else {
 
-        // ----------------------------------------------------
-        // Try to load saved game
-        // ----------------------------------------------------
+        // load saved game
 
         $savedGame =
             loadBattleSave($battleCode);
@@ -260,9 +224,7 @@ if (
 }
 
 
-// ============================================================
-// GET STARTERS
-// ============================================================
+// get the starters
 
 $starters = getStarterMonsters(
     $allMonsters
@@ -271,113 +233,48 @@ $starters = getStarterMonsters(
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Soul Stone RPG
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <title>Soul Stone RPG</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
 
-<!-- ========================================================
-     NAVIGATION
-     ======================================================== -->
-
+<!-- Navigation Section -->
 <nav class="top-nav">
-
     <div class="logo">
-
         <a href="start.php">
-
-            <strong>
-                SOUL STONE RPG
-            </strong>
-
+            <strong>SOUL STONE RPG</strong>
         </a>
-
     </div>
-
 </nav>
 
-
-<!-- ========================================================
-     MAIN
-     ======================================================== -->
+<!-- Main section -->
 
 <main class="start-panel">
 
-
 <?php if (!$selectingStarter): ?>
-
-
-    <!-- ====================================================
-         MAIN MENU
-         ==================================================== -->
+    <!-- Main menue -->
 
     <div class="start-logo">
-
-        <div class="logo-symbol">
-            ◆
-        </div>
-
-        <h1>
-            SOUL STONE RPG
-        </h1>
-
-        <p>
-            Capture. Battle. Become Legendary.
-        </p>
-
+        <div class="logo-symbol">◆</div>
+        <h1>SOUL STONE RPG</h1>
+        <p>Capture. Battle. Become Legendary.</p>
     </div>
-
-
-    <!-- ====================================================
-         CONTINUE GAME
-         ==================================================== -->
-
+    
+    <!-- Continue Game -->
     <section class="start-section">
+        <h2>CONTINUE YOUR JOURNEY</h2>
+        <p class="section-description">Enter your Battle Code to continue a saved game.</p>
 
-        <h2>
-            CONTINUE YOUR JOURNEY
-        </h2>
-
-        <p class="section-description">
-
-            Enter your Battle Code to continue
-            a saved game.
-
-        </p>
-
-
-        <form
-            method="post"
-            action="start.php"
-        >
-
-            <label for="battle_code">
-                BATTLE CODE
-            </label>
-
-
+        <form method="post" action="start.php">
+            <label for="battle_code">BATTLE CODE</label>
             <input
                 type="text"
                 id="battle_code"
@@ -387,140 +284,73 @@ $starters = getStarterMonsters(
                 autocomplete="off"
             >
 
-
             <button
                 type="submit"
                 name="continue_game"
                 class="start-btn continue-btn"
             >
-
                 CONTINUE GAME
-
             </button>
-
         </form>
-
     </section>
 
 
-    <!-- ====================================================
-         DIVIDER
-         ==================================================== -->
-
+    <!-- Divider -->
     <div class="divider">
-
-        <span>
-            OR
-        </span>
-
+        <span>OR</span>
     </div>
 
-
-    <!-- ====================================================
-         NEW GAME
-         ==================================================== -->
+    <!-- New Game -->
 
     <section class="start-section new-game-section">
-
-        <h2>
-            BEGIN A NEW JOURNEY
-        </h2>
-
-        <p class="section-description">
-
-            Start a completely new
-            Soul Stone adventure.
-
-        </p>
-
+        <h2>BEGIN A NEW JOURNEY</h2>
+        <p class="section-description">Start a completely new Soul Stone adventure.</p>
 
         <form
             method="post"
             action="start.php"
         >
-
             <button
                 type="submit"
                 name="new_game"
                 class="start-btn new-game-btn"
             >
-
                 NEW GAME
 
             </button>
-
         </form>
-
     </section>
 
 
 <?php else: ?>
 
 
-    <!-- ====================================================
-         STARTER SELECTION
-         ==================================================== -->
+    <!-- Starter Selection -->
 
     <div class="start-logo">
-
-        <div class="logo-symbol">
-            ◆
-        </div>
-
-        <h1>
-            CHOOSE YOUR SOUL MONSTER
-        </h1>
-
-        <p>
-            Your journey begins with one choice.
-        </p>
-
+        <div class="logo-symbol">◆</div>
+        <h1>CHOOSE YOUR SOUL MONSTER</h1>
+        <p>Your journey begins with one choice.</p>
     </div>
 
-
     <section class="starter-selection">
-
-        <h2>
-            CHOOSE YOUR STARTER
-        </h2>
-
-        <p class="section-description">
-
-            Choose the Soul Monster that will
-            accompany you on your adventure.
-
-        </p>
-
+        <h2>CHOOSE YOUR STARTER</h2>
+        <p class="section-description">Choose the Soul Monster that will accompany you on your adventure.</p>
 
         <div class="starter-grid">
-
-
             <?php foreach ($starters as $starter): ?>
-
-
                 <?php
-
                 $starterKey =
                     strtolower(
                         $starter['name']
                     );
 
                 ?>
-
-
                 <div class="starter-card">
-
-
-                    <!-- ======================================
-                         STONE
-                         ====================================== -->
-
+                    <!-- Stone -->
                     <div class="starter-stone">
-
                         <?php
-
                         $stoneSymbol = '◆';
-
                         if ($starter['type'] === 'fire') {
 
                             $stoneSymbol = '♦';
@@ -541,81 +371,49 @@ $starters = getStarterMonsters(
                         </span>
 
                     </div>
-
-
-                    <!-- ======================================
-                         MONSTER IMAGE
-                         ====================================== -->
+                    <!-- Monster Image -->
 
                     <div class="starter-image">
-
                         <?php if (!empty($starter['image'])): ?>
-
                             <img
                                 src="images/monsters/<?php echo htmlspecialchars($starter['image']); ?>"
                                 alt="<?php echo htmlspecialchars($starter['name']); ?>"
                             >
-
                         <?php endif; ?>
-
                     </div>
 
 
-                    <!-- ======================================
-                         INFORMATION
-                         ====================================== -->
-
+                    <!-- Information -->
                     <h3>
-
                         <?php echo htmlspecialchars(
                             $starter['name']
                         ); ?>
-
                     </h3>
-
 
                     <div
                         class="type-badge <?php echo htmlspecialchars($starter['type']); ?>"
                     >
-
                         <?php echo strtoupper(
                             htmlspecialchars($starter['type'])
                         ); ?>
-
                     </div>
 
-
                     <div class="starter-stats">
-
-                        <div>
-                            <strong>
-                                HP
-                            </strong>
-
+                        <div><strong>HP</strong>
                             <?php echo (int) $starter['max_hp']; ?>
                         </div>
 
-
-                        <div>
-                            <strong>
-                                ATK
-                            </strong>
-
+                        <div><strong>ATK</strong>
                             <?php echo (int) $starter['attack']; ?>
                         </div>
-
                     </div>
 
 
-                    <!-- ======================================
-                         CHOOSE
-                         ====================================== -->
-
+                    <!-- Choice of Starter code -->
                     <form
                         method="post"
                         action="start.php"
                     >
-
                         <input
                             type="hidden"
                             name="starter"
@@ -632,10 +430,7 @@ $starters = getStarterMonsters(
                             CHOOSE
 
                         </button>
-
                     </form>
-
-
                 </div>
 
 
@@ -645,9 +440,7 @@ $starters = getStarterMonsters(
         </div>
 
 
-        <!-- ================================================
-             BACK BUTTON
-             ================================================ -->
+        <!-- Back Button -->
 
         <form
             method="post"
@@ -664,18 +457,14 @@ $starters = getStarterMonsters(
                 BACK
 
             </button>
-
         </form>
-
     </section>
 
 
 <?php endif; ?>
 
 
-<!-- ========================================================
-     MESSAGE
-     ======================================================== -->
+<!-- Message -->
 
 <?php if (!empty($message)): ?>
 
@@ -692,8 +481,7 @@ $starters = getStarterMonsters(
 
 </main>
 
-
 </body>
 
 </html>
-```
+
