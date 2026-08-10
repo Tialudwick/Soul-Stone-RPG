@@ -29,7 +29,7 @@ if (
     // Clear any previous game session
     unset($_SESSION['battle_code']);
 
-    // Tell start.php to display starter selection
+    // Tell index.php to display starter selection
     $_SESSION['selecting_starter'] = true;
 
     $selectingStarter = true;
@@ -249,7 +249,7 @@ $starters = getStarterMonsters(
 <!-- Navigation Section -->
 <nav class="top-nav">
     <div class="logo">
-        <a href="start.php">
+        <a href="index.php">
             <strong>SOUL STONE RPG</strong>
         </a>
     </div>
@@ -273,7 +273,7 @@ $starters = getStarterMonsters(
         <h2>CONTINUE YOUR JOURNEY</h2>
         <p class="section-description">Enter your Battle Code to continue a saved game.</p>
 
-        <form method="post" action="start.php">
+        <form method="post" action="index.php">
             <label for="battle_code">BATTLE CODE</label>
             <input
                 type="text"
@@ -308,7 +308,7 @@ $starters = getStarterMonsters(
 
         <form
             method="post"
-            action="start.php"
+            action="index.php"
         >
             <button
                 type="submit"
@@ -412,7 +412,7 @@ $starters = getStarterMonsters(
                     <!-- Choice of Starter code -->
                     <form
                         method="post"
-                        action="start.php"
+                        action="index.php"
                     >
                         <input
                             type="hidden"
@@ -444,7 +444,7 @@ $starters = getStarterMonsters(
 
         <form
             method="post"
-            action="start.php"
+            action="index.php"
             class="starter-cancel-form"
         >
 

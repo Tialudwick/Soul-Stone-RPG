@@ -39,7 +39,7 @@ if (!$battleCode) {
         empty($game['player']['roster']) ||
         empty($game['starter_chosen'])
     ) {
-        header("Location: start.php");
+        header("Location: index.php");
         exit;
     }
 }
@@ -974,7 +974,7 @@ $pmXP =
 
     <div class="logo">
 
-        <a href="start.php">
+        <a href="index.php">
             <strong>SOUL STONE RPG</strong>
         </a>
 

@@ -244,7 +244,7 @@ $descriptions = [
 
     <div class="logo">
 
-        <a href="start.php">
+        <a href="index.php">
 
             <strong>
                 SOUL STONE RPG
