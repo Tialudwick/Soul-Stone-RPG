@@ -20,85 +20,408 @@ if (!empty($game['player']['roster'])) {
     }
 }
 
-// --- HANDLE ACTIONS ---
+// ============================================================
+// BATTLE ACTION SYSTEM
+// ============================================================
+
+$action = $_POST['action'] ?? '';
+
 if ($game['currentBattle']) {
-    $pm = &$game['player']['roster'][$game['player']['active']];
+
+    $activeIndex = $game['player']['active'];
+    $pm = &$game['player']['roster'][$activeIndex];
     $em = &$game['currentBattle'];
 
-    if ($pm['hp'] <= 0) {
-        $game['message'] = "Your monster has fainted! Switch to another or use a potion.";
-    } elseif (str_starts_with($action, "attack_")) {
-        $idx = (int)str_replace("attack_", "", $action);
-        $move = $pm['moves'][$idx];
-        
-        $dmg = floor(rand($pm['attack']-2, $pm['attack']+2) * $move['power'] * getTypeMultiplier($move['type'], $em['type']));
-        $em['hp'] -= $dmg;
-        
-        if ($em['hp'] <= 0) {
-            $em['hp'] = 0; 
-            $lvlMsg = gainXP($pm, 80); 
-            $game['player']['gold'] += rand(50, 100);
-            $game['message'] = "Victory! " . ($lvlMsg ?: "");
-            $game['currentBattle'] = null;
-        } else {
-            $eMove = $em['moves'][rand(0,3)];
-            $pm['hp'] -= floor(rand($em['attack']-2, $em['attack']+2) * $eMove['power']);
-            if ($pm['hp'] < 0) { $pm['hp'] = 0; } 
+    // --------------------------------------------------------
+    // Helper: Enemy attacks player
+    // --------------------------------------------------------
+    function enemyTurn(&$pm, &$em) {
+
+        if ($em['hp'] <= 0 || $pm['hp'] <= 0) {
+            return;
         }
+
+        // Pick a random enemy move
+        $moveIndex = rand(0, count($em['moves']) - 1);
+        $move = $em['moves'][$moveIndex];
+
+        // Calculate damage
+        $baseDamage = rand(
+            max(1, $em['attack'] - 2),
+            $em['attack'] + 2
+        );
+
+        $multiplier = getTypeMultiplier(
+            $move['type'],
+            $pm['type']
+        );
+
+        $damage = max(
+            1,
+            floor($baseDamage * $move['power'] * $multiplier)
+        );
+
+        $pm['hp'] -= $damage;
+
+        if ($pm['hp'] < 0) {
+            $pm['hp'] = 0;
+        }
+
+        return [
+            'damage' => $damage,
+            'move' => $move['name']
+        ];
     }
-}
 
-// --- ITEM & CATCH LOGIC ---
-if (str_starts_with($action, "use_pot_")) {
-    $type = str_replace("use_pot_", "", $action);
-    $healAmt = ["basic" => 30, "greater" => 80, "ancient" => 200][$type];
-    if (($game['inventory'][$type."_potion"] ?? 0) > 0) {
-        $pm = &$game['player']['roster'][$game['player']['active']];
-        $pm['hp'] = min($pm['max_hp'], $pm['hp'] + $healAmt);
-        $game['inventory'][$type."_potion"]--;
-        $game['message'] = "Used " . ucfirst($type) . " Potion!";
-    }
-}
 
-if (str_starts_with($action, "catch_")) {
-    $stoneType = str_replace("catch_", "", $action);
-    
-    if (($game['inventory'][$stoneType] ?? 0) > 0) {
-        $game['inventory'][$stoneType]--;
-        
-        $em = &$game['currentBattle'];
-        $hpPercent = $em['hp'] / $em['max_hp'];
-        $stonePower = ["basic" => 0.3, "greater" => 0.6, "ancient" => 1.0][$stoneType];
-        
-        $catchChance = (1 - $hpPercent) + $stonePower;
-        $roll = rand(0, 100) / 100;
+    // --------------------------------------------------------
+    // ATTACK
+    // --------------------------------------------------------
+    if (str_starts_with($action, 'attack_')) {
 
-        if ($roll < $catchChance) {
-            if (count($game['player']['roster']) < 8) {
-                $newMonster = $em;
-                $newMonster['hp'] = $newMonster['max_hp'];
-                $game['player']['roster'][] = $newMonster;
-                $game['message'] = "Gotcha! {$em['name']} was caught!";
-                $game['currentBattle'] = null;
+        if ($pm['hp'] <= 0) {
+
+            $game['message'] =
+                "Your {$pm['name']} has fainted! Choose another monster.";
+
+        } else {
+
+            $idx = (int)str_replace('attack_', '', $action);
+
+            if (!isset($pm['moves'][$idx])) {
+
+                $game['message'] = "Invalid move.";
+
             } else {
-                $game['message'] = "Roster full! Could not keep {$em['name']}.";
-                $game['currentBattle'] = null;
+
+                $move = $pm['moves'][$idx];
+
+                // Player damage
+                $baseDamage = rand(
+                    max(1, $pm['attack'] - 2),
+                    $pm['attack'] + 2
+                );
+
+                $multiplier = getTypeMultiplier(
+                    $move['type'],
+                    $em['type']
+                );
+
+                $damage = max(
+                    1,
+                    floor(
+                        $baseDamage *
+                        $move['power'] *
+                        $multiplier
+                    )
+                );
+
+                $em['hp'] -= $damage;
+
+                if ($em['hp'] < 0) {
+                    $em['hp'] = 0;
+                }
+
+
+                // ------------------------------------------------
+                // ENEMY DEFEATED
+                // ------------------------------------------------
+                if ($em['hp'] <= 0) {
+
+                    $xpMessage = gainXP($pm, 80);
+
+                    $goldReward = rand(50, 100);
+
+                    $game['player']['gold'] += $goldReward;
+
+                    $game['message'] =
+                        "{$pm['name']} used {$move['name']}! "
+                        . "Dealt {$damage} damage! "
+                        . "Wild {$em['name']} fainted! "
+                        . "+{$goldReward} gold. "
+                        . ($xpMessage ?: '');
+
+                    $game['currentBattle'] = null;
+
+                } else {
+
+                    // Enemy counter attack
+                    $enemyResult = enemyTurn($pm, $em);
+
+                    $game['message'] =
+                        "{$pm['name']} used {$move['name']} "
+                        . "and dealt {$damage} damage! ";
+
+                    if ($enemyResult) {
+
+                        $game['message'] .=
+                            "Wild {$em['name']} used "
+                            . "{$enemyResult['move']} "
+                            . "and dealt "
+                            . "{$enemyResult['damage']} damage!";
+                    }
+
+
+                    // Player fainted
+                    if ($pm['hp'] <= 0) {
+
+                        $game['message'] .=
+                            " {$pm['name']} fainted! Choose another monster.";
+                    }
+                }
             }
-        } else {
-            $game['message'] = "Oh no! The {$em['name']} broke free!";
-            $eMove = $em['moves'][rand(0,3)];
-            $pm = &$game['player']['roster'][$game['player']['active']];
-            $pm['hp'] -= floor(rand($em['attack']-2, $em['attack']+2) * $eMove['power']);
-            if ($pm['hp'] < 0) { $pm['hp'] = 0; }
         }
-    } else {
-        $game['message'] = "You don't have any $stoneType stones!";
+    }
+
+
+    // --------------------------------------------------------
+    // POTION
+    // --------------------------------------------------------
+    elseif (str_starts_with($action, 'use_pot_')) {
+
+        $type = str_replace('use_pot_', '', $action);
+
+        $healing = [
+            'basic' => 30,
+            'greater' => 80,
+            'ancient' => 200
+        ];
+
+        $inventoryKey = $type . '_potion';
+
+        if (!isset($healing[$type])) {
+
+            $game['message'] = "Invalid potion.";
+
+        } elseif (($game['inventory'][$inventoryKey] ?? 0) <= 0) {
+
+            $game['message'] =
+                "You don't have any {$type} potions.";
+
+        } elseif ($pm['hp'] >= $pm['max_hp']) {
+
+            $game['message'] =
+                "{$pm['name']} already has full HP.";
+
+        } elseif ($pm['hp'] <= 0) {
+
+            $game['message'] =
+                "{$pm['name']} has fainted. Switch monsters first.";
+
+        } else {
+
+            $oldHP = $pm['hp'];
+
+            $pm['hp'] = min(
+                $pm['max_hp'],
+                $pm['hp'] + $healing[$type]
+            );
+
+            $actualHeal = $pm['hp'] - $oldHP;
+
+            $game['inventory'][$inventoryKey]--;
+
+            $game['message'] =
+                "Used a " . ucfirst($type) .
+                " Potion! {$pm['name']} recovered "
+                . "{$actualHeal} HP.";
+
+            // Enemy gets a turn
+            $enemyResult = enemyTurn($pm, $em);
+
+            if ($enemyResult) {
+
+                $game['message'] .=
+                    " Wild {$em['name']} used "
+                    . "{$enemyResult['move']} and dealt "
+                    . "{$enemyResult['damage']} damage!";
+            }
+        }
+    }
+
+
+    // --------------------------------------------------------
+    // SOUL STONE / CATCH
+    // --------------------------------------------------------
+    elseif (str_starts_with($action, 'catch_')) {
+
+        $stoneType = str_replace('catch_', '', $action);
+
+        $stonePower = [
+            'basic' => 0.30,
+            'greater' => 0.60,
+            'ancient' => 1.00
+        ];
+
+        if (!isset($stonePower[$stoneType])) {
+
+            $game['message'] = "Invalid Soul Stone.";
+
+        } elseif (($game['inventory'][$stoneType] ?? 0) <= 0) {
+
+            $game['message'] =
+                "You don't have any {$stoneType} Soul Stones.";
+
+        } else {
+
+            $game['inventory'][$stoneType]--;
+
+            $hpPercent =
+                $em['hp'] / $em['max_hp'];
+
+            /*
+             * Lower enemy HP = higher catch chance
+             */
+            $catchChance =
+                (1 - $hpPercent) * 0.70
+                + $stonePower[$stoneType];
+
+            // Never exceed 95%
+            $catchChance =
+                min(0.95, $catchChance);
+
+            $roll = mt_rand(1, 100) / 100;
+
+            if ($roll <= $catchChance) {
+
+                // Successful capture
+                if (count($game['player']['roster']) < 8) {
+
+                    $newMonster = $em;
+
+                    $newMonster['hp'] =
+                        $newMonster['max_hp'];
+
+                    $newMonster['xp'] = 0;
+
+                    $game['player']['roster'][] =
+                        $newMonster;
+
+                    $game['message'] =
+                        "Gotcha! {$em['name']} was captured!";
+
+                    $game['currentBattle'] = null;
+
+                } else {
+
+                    $game['message'] =
+                        "The Soul Stone worked, but your roster "
+                        . "is full!";
+                }
+
+            } else {
+
+                // Capture failed
+                $game['message'] =
+                    "{$em['name']} broke free!";
+
+                // Enemy gets attack
+                $enemyResult =
+                    enemyTurn($pm, $em);
+
+                if ($enemyResult) {
+
+                    $game['message'] .=
+                        " {$em['name']} used "
+                        . "{$enemyResult['move']} and dealt "
+                        . "{$enemyResult['damage']} damage!";
+                }
+
+                if ($pm['hp'] <= 0) {
+
+                    $game['message'] .=
+                        " {$pm['name']} fainted!";
+                }
+            }
+        }
+    }
+
+
+    // --------------------------------------------------------
+    // SWITCH MONSTER
+    // --------------------------------------------------------
+    elseif ($action === 'switch') {
+
+        $newIndex =
+            isset($_POST['monster_index'])
+            ? (int)$_POST['monster_index']
+            : -1;
+
+        if (!isset($game['player']['roster'][$newIndex])) {
+
+            $game['message'] =
+                "That monster does not exist.";
+
+        } elseif (
+            $newIndex === $activeIndex
+        ) {
+
+            $game['message'] =
+                "{$pm['name']} is already active.";
+
+        } elseif (
+            $game['player']['roster'][$newIndex]['hp'] <= 0
+        ) {
+
+            $game['message'] =
+                "That monster has fainted.";
+
+        } else {
+
+            $game['player']['active'] =
+                $newIndex;
+
+            $newMonster =
+                &$game['player']['roster'][$newIndex];
+
+            $game['message'] =
+                "Go, {$newMonster['name']}!";
+
+            // Enemy gets a free attack
+            $enemyResult =
+                enemyTurn($newMonster, $em);
+
+            if ($enemyResult) {
+
+                $game['message'] .=
+                    " Wild {$em['name']} used "
+                    . "{$enemyResult['move']} and dealt "
+                    . "{$enemyResult['damage']} damage!";
+            }
+        }
+    }
+
+
+    // --------------------------------------------------------
+    // RUN
+    // --------------------------------------------------------
+    elseif ($action === 'run') {
+
+        $game['currentBattle'] = null;
+
+        $game['message'] =
+            "You escaped safely!";
     }
 }
 
-if ($action === "start_battle") { $game['currentBattle'] = spawnMonster($allMonsters); }
-if (isset($_POST['switch_to'])) { $game['player']['active'] = (int)$_POST['switch_to']; }
-if ($action === "run") { $game['currentBattle'] = null; }
+
+// ============================================================
+// START NEW BATTLE
+// ============================================================
+
+if ($action === 'start_battle') {
+
+    $game['currentBattle'] =
+        spawnMonster($allMonsters);
+
+    $game['message'] =
+        "A wild {$game['currentBattle']['name']} appeared!";
+}
+
+
+// ============================================================
+// SAVE GAME
+// ============================================================
 
 saveGame($game);
 ?>

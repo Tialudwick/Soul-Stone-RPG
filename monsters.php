@@ -80,7 +80,7 @@ $allMonsters = [
 ["name" => "omegaruct", "type" => "earth", "max_hp" => 550, "attack" => 48, "rarity" => "ancient", "image" => "omegaruct.png"]
 ];
 
-/*pawns a fresh monster with moves and sets HP
+/*spawns a fresh monster with moves and sets HP
  
 function spawnMonster($database) {
     global $moves;
