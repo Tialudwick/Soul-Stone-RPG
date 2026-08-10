@@ -1,14 +1,9 @@
 <?php
 
-// ============================================================
-// SOUL STONE RPG
-// FUNCTIONS / SAVE SYSTEM
-// ============================================================
+// functions & save logic
 
 
-// ============================================================
-// DEFAULT GAME STRUCTURE
-// ============================================================
+// default game structure
 
 function getDefaultGame(): array
 {
@@ -59,9 +54,7 @@ function getDefaultGame(): array
 }
 
 
-// ============================================================
-// GAME SAVE / LOAD SYSTEM
-// ============================================================
+// game save & load logic
 
 function loadGame($file = "save.json")
 {
@@ -84,9 +77,7 @@ function loadGame($file = "save.json")
 }
 
 
-// ============================================================
-// OLD SAVE FUNCTION
-// ============================================================
+// old save function
 
 function saveGame($game, $file = "save.json")
 {
@@ -100,9 +91,7 @@ function saveGame($game, $file = "save.json")
 }
 
 
-// ============================================================
-// BATTLE CODE SYSTEM
-// ============================================================
+// battle code system
 
 function generateBattleCode(): string
 {
@@ -128,9 +117,7 @@ function generateBattleCode(): string
 }
 
 
-// ============================================================
-// NORMALIZE BATTLE CODE
-// ============================================================
+// battle code normalization
 
 function normalizeBattleCode($code): string
 {
@@ -146,9 +133,7 @@ function normalizeBattleCode($code): string
 }
 
 
-// ============================================================
-// BATTLE SAVE PATH
-// ============================================================
+// save battle path
 
 function getBattleSavePath(string $code): string
 {
@@ -169,9 +154,7 @@ function getBattleSavePath(string $code): string
 }
 
 
-// ============================================================
-// CHECK BATTLE CODE
-// ============================================================
+// checks battle code
 
 function battleCodeExists(string $code): bool
 {
@@ -181,9 +164,7 @@ function battleCodeExists(string $code): bool
 }
 
 
-// ============================================================
-// CREATE NEW BATTLE SAVE
-// ============================================================
+// create new battle save
 
 function createBattleSave(array $game): string
 {
@@ -238,9 +219,7 @@ function createBattleSave(array $game): string
 }
 
 
-// ============================================================
-// LOAD BATTLE SAVE
-// ============================================================
+// load battle save
 
 function loadBattleSave(string $code): ?array
 {
@@ -278,9 +257,7 @@ function loadBattleSave(string $code): ?array
 }
 
 
-// ============================================================
-// SAVE EXISTING BATTLE GAME
-// ============================================================
+// save exsiting battle 
 
 function saveBattleGame(
     string $code,
@@ -318,9 +295,7 @@ function saveBattleGame(
 }
 
 
-// ============================================================
-// MONSTER IDS
-// ============================================================
+// monster ID's
 
 function generateMonsterId(): string
 {
@@ -331,9 +306,7 @@ function generateMonsterId(): string
 }
 
 
-// ============================================================
-// CAPTURE TRACKING
-// ============================================================
+// capture tracking logic
 
 function recordCapture(
     &$game,
@@ -364,9 +337,7 @@ function recordCapture(
 }
 
 
-// ============================================================
-// TYPE EFFECTIVENESS
-// ============================================================
+// type effectiveness multiplier
 
 function getTypeMultiplier(
     $attackerType,
@@ -409,9 +380,7 @@ function getTypeMultiplier(
 }
 
 
-// ============================================================
-// SPAWN WILD MONSTER
-// ============================================================
+// wild monster spawn logic
 
 function spawnMonster($allMonsters)
 {
@@ -501,9 +470,7 @@ function spawnMonster($allMonsters)
 }
 
 
-// ============================================================
-// BATTLE REWARDS
-// ============================================================
+// nattle rewards
 
 function getBattleRewards(&$game)
 {
@@ -533,9 +500,7 @@ function getBattleRewards(&$game)
 }
 
 
-// ============================================================
-// XP SYSTEM
-// ============================================================
+// XP system
 
 function getXPForLevel($level)
 {
@@ -553,9 +518,7 @@ function getXPForLevel($level)
 }
 
 
-// ============================================================
-// GET LEVEL
-// ============================================================
+// get level logic
 
 function getLevel($xp)
 {
@@ -577,9 +540,7 @@ function getLevel($xp)
 }
 
 
-// ============================================================
-// XP PROGRESS
-// ============================================================
+// xp progress
 
 function getXPStats($xp)
 {
@@ -642,9 +603,7 @@ function getXPStats($xp)
 }
 
 
-// ============================================================
-// GIVE XP
-// ============================================================
+// give XP
 
 function gainXP(
     &$monster,
@@ -733,9 +692,7 @@ function gainXP(
 }
 
 
-// ============================================================
-// SHOP
-// ============================================================
+// shop
 
 function buyItem(
     &$game,
@@ -773,9 +730,7 @@ function buyItem(
 }
 
 
-// ============================================================
-// REMOVE MONSTER
-// ============================================================
+// remove monster logic
 
 function discardFromRoster(
     &$game,
@@ -829,9 +784,7 @@ function discardFromRoster(
 }
 
 
-// ============================================================
-// CAPTURE
-// ============================================================
+// capture
 
 function attemptCatch(
     $h,
@@ -870,9 +823,7 @@ function attemptCatch(
 }
 
 
-// ============================================================
-// POTION LOGIC
-// ============================================================
+// potion logic
 
 function usePotion(&$game, $type = 'basic_potion')
 {
@@ -941,9 +892,7 @@ function usePotion(&$game, $type = 'basic_potion')
     return true;
 }
 
-// ============================================================
-// SWITCH MONSTER
-// ============================================================
+// switch monster
 
 function switchActiveMonster(
     &$game,
@@ -977,9 +926,7 @@ function switchActiveMonster(
 }
 
 
-// ============================================================
-// HAS USABLE MONSTER
-// ============================================================
+// has usable monster logic
 
 function hasUsableMonster($game): bool
 {
@@ -1001,9 +948,7 @@ function hasUsableMonster($game): bool
 }
 
 
-// ============================================================
-// FIRST USABLE MONSTER
-// ============================================================
+// first usable monster
 
 function getFirstUsableMonster($game): ?int
 {
@@ -1025,9 +970,7 @@ function getFirstUsableMonster($game): ?int
 }
 
 
-// ============================================================
-// STARTER MONSTER SYSTEM
-// ============================================================
+// started monster system
 
 function getStarterMonsters(
     $allMonsters
@@ -1074,9 +1017,7 @@ function getStarterMonsters(
 }
 
 
-// ============================================================
-// GET STARTER
-// ============================================================
+// get starter
 
 function getStarterMonster(
     $allMonsters,
@@ -1108,9 +1049,7 @@ function getStarterMonster(
 }
 
 
-// ============================================================
-// PREPARE STARTER
-// ============================================================
+// prep starter
 
 function prepareStarterMonster(
     array $monster
@@ -1150,9 +1089,7 @@ function prepareStarterMonster(
 }
 
 
-// ============================================================
-// CREATE COMPLETELY NEW GAME
-// ============================================================
+// create completely new game
 
 function createNewGame(): array
 {
@@ -1204,9 +1141,7 @@ function createNewGame(): array
 }
 
 
-// ============================================================
-// START GAME WITH STARTER
-// ============================================================
+// start game with starter
 
 function startGameWithStarter(
     array &$game,

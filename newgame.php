@@ -1,10 +1,7 @@
 ```php
 <?php
 
-// ============================================================
-// SOUL STONE RPG
-// NEW GAME / STARTER SELECTION
-// ============================================================
+// new game & starter selection
 
 // Load game functions
 require_once __DIR__ . '/functions.php';
@@ -13,9 +10,7 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/monsters.php';
 
 
-// ============================================================
-// INITIAL SETUP
-// ============================================================
+// initial game setup
 
 // Get the three starter monsters
 $starters = getStarterMonsters($allMonsters);
@@ -30,18 +25,14 @@ $selectedStarter = null;
 $message = '';
 
 
-// ============================================================
-// HANDLE FORM ACTIONS
-// ============================================================
+// form action handler
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $action = $_POST['action'] ?? '';
 
 
-    // --------------------------------------------------------
-    // BEGIN NEW GAME
-    // --------------------------------------------------------
+    // new game
 
     if ($action === 'begin') {
 
@@ -49,9 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    // --------------------------------------------------------
-    // VIEW STARTER
-    // --------------------------------------------------------
+    // view starter
 
     elseif ($action === 'view_starter') {
 
@@ -79,9 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    // --------------------------------------------------------
-    // PICK ANOTHER STARTER
-    // --------------------------------------------------------
+    // pick a different starter
 
     elseif ($action === 'pick_another') {
 
@@ -93,9 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    // --------------------------------------------------------
-    // CHOOSE STARTER
-    // --------------------------------------------------------
+    // choose a starter
 
     elseif ($action === 'choose_starter') {
 
@@ -131,16 +116,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } else {
 
-            // ------------------------------------------------
-            // CREATE BRAND NEW GAME
-            // ------------------------------------------------
+            // creates a brand new game
 
             $game = createNewGame();
 
 
-            // ------------------------------------------------
-            // ADD STARTER
-            // ------------------------------------------------
+            // adds a starter
 
             startGameWithStarter(
                 $game,
@@ -148,9 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
 
-            // ------------------------------------------------
-            // CREATE BATTLE CODE
-            // ------------------------------------------------
+            // generates a battle code
 
             $battleCode =
                 createBattleSave($game);
@@ -170,9 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
 
-            // ------------------------------------------------
-            // SEND PLAYER TO MAIN GAME
-            // ------------------------------------------------
+            // sends player to main game
 
             header(
                 'Location: main.php?code=' .
@@ -185,9 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 
-// ============================================================
-// STARTER DESCRIPTIONS
-// ============================================================
+// starter descriptions
 
 $descriptions = [
 
@@ -202,9 +177,7 @@ $descriptions = [
 ];
 
 
-// ============================================================
-// PAGE
-// ============================================================
+// actual page html
 
 ?>
 
@@ -236,9 +209,7 @@ $descriptions = [
 <body>
 
 
-<!-- =====================================================
-     NAVIGATION
-     ===================================================== -->
+<!-- nav-->
 
 <nav class="top-nav">
 
@@ -257,9 +228,7 @@ $descriptions = [
 </nav>
 
 
-<!-- =====================================================
-     MAIN NEW GAME CONTAINER
-     ===================================================== -->
+<!-- game container -->
 
 <main class="new-game-container">
 
@@ -267,9 +236,7 @@ $descriptions = [
 <?php if ($step === 'intro'): ?>
 
 
-    <!-- =================================================
-         INTRODUCTION
-         ================================================= -->
+    <!-- introduction -->
 
     <section class="tutorial-panel">
 
@@ -353,9 +320,7 @@ $descriptions = [
 <?php elseif ($step === 'selection'): ?>
 
 
-    <!-- =================================================
-         CHOOSE STARTER
-         ================================================= -->
+    <!-- choose starter -->
 
     <section class="starter-selection">
 
@@ -507,9 +472,7 @@ $descriptions = [
 <?php elseif ($step === 'preview' && $selectedStarter !== null): ?>
 
 
-    <!-- =================================================
-         STARTER PREVIEW
-         ================================================= -->
+    <!-- starter preview -->
 
     <?php
 
@@ -547,7 +510,7 @@ $descriptions = [
         <div class="preview-card">
 
 
-            <!-- TYPE -->
+            <!-- type -->
 
             <div
                 class="preview-type <?php echo htmlspecialchars($starter['type']); ?>"
@@ -571,7 +534,7 @@ $descriptions = [
             </h1>
 
 
-            <!-- IMAGE -->
+            <!-- image -->
 
             <div class="preview-image">
 
@@ -583,7 +546,7 @@ $descriptions = [
             </div>
 
 
-            <!-- DESCRIPTION -->
+            <!-- description -->
 
             <div class="preview-description">
 
@@ -594,7 +557,7 @@ $descriptions = [
             </div>
 
 
-            <!-- STATS -->
+            <!-- stats -->
 
             <div class="preview-stats">
 
@@ -656,9 +619,7 @@ $descriptions = [
             </div>
 
 
-            <!-- =================================================
-                 ACTION BUTTONS
-                 ================================================= -->
+            <!-- action buttons -->
 
             <div class="starter-actions">
 

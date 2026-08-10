@@ -5,9 +5,7 @@ include "monsters.php";
 
 $game = loadGame();
 
-// Track which monsters the player has ever owned (using the 'pokedex' or 'discovered' logic)
-// To make this better, you should ideally add a 'pokedex' array to your save.json 
-// For now, we check the current roster.
+
 $discovered = [];
 if (!empty($game['player']['roster'])) {
     foreach ($game['player']['roster'] as $m) {
@@ -22,10 +20,6 @@ if (!empty($game['player']['roster'])) {
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1d; margin: 0; color: #fff; }
         
-        /* NAVIGATION */
-        .top-nav { background: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #3498db; color: #333; }
-        .nav-links a { text-decoration: none; color: #2c3e50; font-weight: bold; margin-left: 20px; transition: 0.3s; }
-        .nav-links a:hover { color: #3498db; }
 
         .header-area { text-align: center; padding: 40px 0; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/library_bg.jpg'); background-size: cover; border-bottom: 4px solid #34495e; }
         h1 { margin: 0; font-size: 3em; letter-spacing: 5px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
@@ -101,7 +95,7 @@ if (!empty($game['player']['roster'])) {
 
 <div class="container">
     <?php 
-    // Group monsters by rarity for a cleaner layout
+    //Group monsters by rarity
     $grouped = ['basic' => [], 'greater' => [], 'ancient' => []];
     foreach($allMonsters as $m) { $grouped[$m['rarity']][] = $m; }
 
