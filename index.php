@@ -1,9 +1,39 @@
 <?php
+
 session_start();
+
 include "functions.php";
 include "monsters.php";
 
-$game = loadGame();
+
+// ============================================================
+// LOAD CURRENT BATTLE CODE
+// ============================================================
+
+$battleCode = $_SESSION['battle_code'] ?? null;
+
+if (!$battleCode) {
+
+    header('Location: start.php');
+    exit;
+}
+
+
+// ============================================================
+// LOAD SAVED GAME
+// ============================================================
+
+$game = loadBattleSave($battleCode);
+
+if ($game === null) {
+
+    unset($_SESSION['battle_code']);
+
+    header('Location: start.php');
+    exit;
+}
+
+
 $action = $_POST['action'] ?? null;
 
 // --- DATA REPAIR & SYNC ---
@@ -436,7 +466,11 @@ saveGame($game);
 <body>
 
 <div class="top-nav">
-    <div class="logo"><strong>SOUL STONE RPG</strong></div>
+    <div class="logo">
+    <a href="start.php">
+        <strong>SOUL STONE RPG</strong>
+    </a>
+</div>
     <div class="nav-links">
         <a href="bestiary.php">BESTIARY</a>
         <a href="shop.php">SHOP</a>
@@ -572,7 +606,11 @@ saveGame($game);
                     <?php endfor; ?>
                 </div>
             </div>
+            <div class="battle-code-box">
 
+                <span class="battle-code-label">BATTLE CODE</span>
+                    <strong><?php echo htmlspecialchars($battleCode); ?></strong>
+                    <small>Save this code to continue your game later.</small></div>
             <div class="gold-box">
                 GOLD AMOUNT: <?php echo number_format($game['player']['gold']); ?>
             </div>
