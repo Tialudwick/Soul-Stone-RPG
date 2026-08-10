@@ -979,8 +979,8 @@ $pmXP =
         </a>
 
     </div>
-    <div href="shop.php">Shop</div>
-    <div href="bestiary.php">bestiary</div>
+    <div href="shop.php"><Strong>Shop</Strong></div>
+    <div href="bestiary.php"><strong>Bestiary</strong></div>
 </div>
 
 </nav>

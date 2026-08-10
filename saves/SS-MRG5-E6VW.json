@@ -87,7 +87,7 @@
         "ancient": 0
     },
     "currentBattle": null,
-    "message": "Amazing! Magmaag was captured!",
+    "message": "There is no wild monster to capture.",
     "battle_code": "SS-MRG5-E6VW",
     "game_started": true,
     "starter_chosen": true
