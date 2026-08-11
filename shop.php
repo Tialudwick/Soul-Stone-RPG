@@ -1,144 +1,981 @@
+```php
 <?php
+
 session_start();
-include "functions.php";
-include "monsters.php";
+
+require_once __DIR__ . '/functions.php';
+require_once __DIR__ . '/monsters.php';
 
 
-$game = loadGame();
-$message = "";
+/*
+|--------------------------------------------------------------------------
+| Make sure a game has been selected
+|--------------------------------------------------------------------------
+*/
 
-// Handle Purchases (Mmake sure this matches logic from index.php inventory keys)
-if (isset($_POST['buy'])) {
-    $item = $_POST['buy'];
-    $prices = [
-        'basic_potion' => 50, 'greater_potion' => 150, 'ancient_potion' => 500,
-        'basic' => 100, 'greater' => 300, 'ancient' => 1000
-    ];
+if (empty($_SESSION['save_file'])) {
 
-    $cost = $prices[$item] ?? 999999;
-
-    if ($game['player']['gold'] >= $cost) {
-        $game['player']['gold'] -= $cost;
-        $game['inventory'][$item] = ($game['inventory'][$item] ?? 0) + 1;
-        $message = "You obtained the " . str_replace('_', ' ', $item) . "!";
-    } else {
-        $message = "Not enough gold, traveler!";
-    }
-    saveGame($game);
+    header('Location: index.php');
+    exit;
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| Load the SAME player save used by game.php
+|--------------------------------------------------------------------------
+*/
+
+$saveFile = basename($_SESSION['save_file']);
+
+$savePath = __DIR__ . '/saves/' . $saveFile;
+
+
+if (!is_file($savePath)) {
+
+    unset(
+        $_SESSION['save_file'],
+        $_SESSION['game']
+    );
+
+    header('Location: index.php');
+    exit;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Load player's individual game
+|--------------------------------------------------------------------------
+*/
+
+$game = loadPlayerGame($saveFile);
+
+
+/*
+|--------------------------------------------------------------------------
+| Safety checks
+|--------------------------------------------------------------------------
+*/
+
+if (!isset($game['player'])) {
+    $game['player'] = [];
+}
+
+if (!isset($game['player']['gold'])) {
+    $game['player']['gold'] = 500;
+}
+
+if (!isset($game['player']['roster'])) {
+    $game['player']['roster'] = [];
+}
+
+if (!isset($game['inventory'])) {
+    $game['inventory'] = [];
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Make sure inventory keys exist
+|--------------------------------------------------------------------------
+*/
+
+$inventoryDefaults = [
+
+    'basic_potion'   => 0,
+    'greater_potion' => 0,
+    'ancient_potion' => 0,
+
+    'basic'          => 0,
+    'greater'        => 0,
+    'ancient'        => 0
+
+];
+
+
+foreach ($inventoryDefaults as $item => $amount) {
+
+    if (!isset($game['inventory'][$item])) {
+
+        $game['inventory'][$item] = $amount;
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Shop prices
+|--------------------------------------------------------------------------
+*/
+
+$prices = [
+
+    'basic_potion'   => 50,
+
+    'greater_potion' => 150,
+
+    'ancient_potion' => 500,
+
+    'basic'          => 100,
+
+    'greater'        => 300,
+
+    'ancient'        => 1000
+
+];
+
+
+/*
+|--------------------------------------------------------------------------
+| Shop purchase
+|--------------------------------------------------------------------------
+*/
+
+$message = '';
+
+$messageType = '';
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $item = $_POST['buy'] ?? '';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Make sure the item actually exists
+    |--------------------------------------------------------------------------
+    */
+
+    if (!isset($prices[$item])) {
+
+        $message = 'That item is not available.';
+
+        $messageType = 'error';
+
+    } else {
+
+        $cost = $prices[$item];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Make sure gold is numeric
+        |--------------------------------------------------------------------------
+        */
+
+        $game['player']['gold'] =
+            (int) $game['player']['gold'];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Check gold
+        |--------------------------------------------------------------------------
+        */
+
+        if ($game['player']['gold'] < $cost) {
+
+            $message =
+                "Not enough gold, traveler!";
+
+            $messageType = 'error';
+
+        } else {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Remove gold
+            |--------------------------------------------------------------------------
+            */
+
+            $game['player']['gold'] -= $cost;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Add item to inventory
+            |--------------------------------------------------------------------------
+            */
+
+            if (!isset($game['inventory'][$item])) {
+
+                $game['inventory'][$item] = 0;
+            }
+
+
+            $game['inventory'][$item]++;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Save the player's EXISTING save file
+            |--------------------------------------------------------------------------
+            */
+
+            $saved = savePlayerGame(
+                $game,
+                $saveFile
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Make sure save succeeded
+            |--------------------------------------------------------------------------
+            */
+
+            if ($saved === false) {
+
+                /*
+                | Undo purchase if save failed
+                */
+
+                $game['player']['gold'] += $cost;
+
+                $game['inventory'][$item]--;
+
+                $message =
+                    "The purchase could not be saved. Please try again.";
+
+                $messageType = 'error';
+
+            } else {
+
+                $prettyName =
+                    str_replace(
+                        '_',
+                        ' ',
+                        $item
+                    );
+
+
+                $message =
+                    "You obtained the "
+                    . ucfirst($prettyName)
+                    . "!";
+
+
+                $messageType = 'success';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Keep session data synchronized
+                |--------------------------------------------------------------------------
+                */
+
+                $_SESSION['game'] = $game;
+
+                $_SESSION['save_file'] = $saveFile;
+            }
+        }
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Make sure session has newest game data
+|--------------------------------------------------------------------------
+*/
+
+$_SESSION['game'] = $game;
+
 ?>
+
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Soul Stone RPG - The Emporium</title>
-    <link rel="stylesheet" href="style.css">
-    <style>       
-        .shop-header { text-align: center; padding: 40px 0; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/shop_bg.jpg'); background-size: cover; }
-        .gold-pouch { display: inline-block; background: #f1c40f; color: #000; padding: 10px 25px; border-radius: 50px; font-weight: bold; font-size: 1.4em; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); border: 3px solid #d4ac0d; }
 
-        .display-case { max-width: 1100px; margin: -30px auto 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; }
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
-        /* ITEM CARD STYLES */
-        .item-display { background: #2c3e50; border: 4px solid #8e44ad; border-radius: 12px; position: relative; padding: 20px; text-align: center; transition: transform 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .item-display:hover { transform: translateY(-10px); }
-        
-        .item-display.potions { border-color: #27ae60; }
-        .item-display.stones { border-color: #8e44ad; }
+    <style>
 
-        .item-title { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; color: #ecf0f1; }
-        
-        .item-icon { width: 80px; height: 80px; background: #fff; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; border: 4px solid #bdc3c7; }
-        .item-icon img { width: 50px; height: 50px; object-fit: contain; }
+        .shop-header {
+            text-align: center;
+            padding: 40px 0;
+            background:
+                linear-gradient(
+                    rgba(0,0,0,0.6),
+                    rgba(0,0,0,0.6)
+                ),
+                url('images/shop_bg.jpg');
+            background-size: cover;
+            background-position: center;
+        }
 
-        .item-desc { font-size: 0.9em; color: #bdc3c7; height: 40px; margin-bottom: 15px; }
 
-        .price-tag { font-size: 1.5em; font-weight: bold; color: #f1c40f; margin-bottom: 15px; display: block; }
-        
-        .btn-buy { width: 100%; background: #e74c3c; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; border-bottom: 4px solid #c0392b; }
-        .btn-buy:hover { background: #ff5e4d; }
-        .btn-buy:active { border-bottom: 0; transform: translateY(2px); }
+        .gold-pouch {
+            display: inline-block;
+            background: #f1c40f;
+            color: #000;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.4em;
+            box-shadow:
+                0 4px 15px
+                rgba(241, 196, 15, 0.3);
+            border: 3px solid #d4ac0d;
+        }
 
-        .toast { position: fixed; top: 80px; right: 20px; background: #2ecc71; padding: 15px 30px; border-radius: 5px; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 100; animation: slideIn 0.5s forwards; }
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        .display-case {
+            max-width: 1100px;
+            margin: -30px auto 50px;
+            display: grid;
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(280px, 1fr)
+                );
+            gap: 30px;
+            padding: 20px;
+        }
+
+
+        .item-display {
+            background: #2c3e50;
+            border: 4px solid #8e44ad;
+            border-radius: 12px;
+            position: relative;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+            box-shadow:
+                0 10px 20px
+                rgba(0,0,0,0.5);
+        }
+
+
+        .item-display:hover {
+            transform: translateY(-10px);
+        }
+
+
+        .item-display.potions {
+            border-color: #27ae60;
+        }
+
+
+        .item-display.stones {
+            border-color: #8e44ad;
+        }
+
+
+        .item-title {
+            background:
+                rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ecf0f1;
+        }
+
+
+        .item-icon {
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #bdc3c7;
+        }
+
+
+        .item-icon img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+
+        .item-desc {
+            font-size: 0.9em;
+            color: #bdc3c7;
+            height: 40px;
+            margin-bottom: 15px;
+        }
+
+
+        .price-tag {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f1c40f;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+
+        .btn-buy {
+            width: 100%;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 4px solid #c0392b;
+        }
+
+
+        .btn-buy:hover {
+            background: #ff5e4d;
+        }
+
+
+        .btn-buy:active {
+            border-bottom: 0;
+            transform: translateY(2px);
+        }
+
+
+        .btn-buy:disabled {
+            background: #555;
+            border-bottom-color: #333;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            box-shadow:
+                0 5px 15px
+                rgba(0,0,0,0.3);
+            z-index: 100;
+            animation:
+                slideIn 0.5s forwards;
+        }
+
+
+        .toast.error {
+            background: #e74c3c;
+        }
+
+
+        @keyframes slideIn {
+
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+
+        }
+
     </style>
+
 </head>
+
+
 <body>
 
-<!--nav -->
 
-<!-- nav -->
+<!-- NAVIGATION -->
+
 <nav class="top-nav">
-    <a href="index.php" class="logo-image-link">
-        <img src="images/logo.png" alt="Soul Stone RPG Logo" class="game-logo">
+
+    <a
+        href="index.php"
+        class="logo-image-link"
+    >
+
+        <img
+            src="images/logo.png"
+            alt="Soul Stone RPG Logo"
+            class="game-logo"
+        >
+
     </a>
 
+
     <div class="nav-links">
-        <a href="bestiary.php" >BESTIARY</a>
-        <a href="shop.php" >SHOP</a>
-        <a href="index.php">HOME</a>
+
+        <a href="bestiary.php">
+            BESTIARY
+        </a>
+
+        <a href="shop.php">
+            SHOP
+        </a>
+
+        <a href="index.php">
+            HOME
+        </a>
+
     </div>
+
 </nav>
 
+
+<!-- SHOP HEADER -->
+
 <div class="shop-header">
-    <h1 style="margin-top:0; font-size: 3em;">THE MAGIC EMPORIUM</h1>
-    <div class="gold-pouch">💰 <?php echo number_format($game['player']['gold']); ?> GOLD</div>
+
+    <h1
+        style="
+            margin-top:0;
+            font-size:3em;
+        "
+    >
+        THE MAGIC EMPORIUM
+    </h1>
+
+
+    <div class="gold-pouch">
+
+        💰
+
+        <?php
+        echo number_format(
+            (int) $game['player']['gold']
+        );
+        ?>
+
+        GOLD
+
+    </div>
+
 </div>
 
-<?php if($message): ?>
-    <div class="toast"><?php echo $message; ?></div>
+
+<!-- PURCHASE MESSAGE -->
+
+<?php if ($message): ?>
+
+    <div
+        class="toast
+        <?php
+        echo $messageType === 'error'
+            ? 'error'
+            : '';
+        ?>"
+    >
+
+        <?php
+        echo htmlspecialchars(
+            $message
+        );
+        ?>
+
+    </div>
+
 <?php endif; ?>
 
+
+<!-- SHOP -->
+
 <form method="post">
+
     <div class="display-case">
-        <div class="item-display potions">
-            <div class="item-title">Basic Potion</div>
-            <div class="item-icon"><img src="images/items/pot_basic.png" alt="Pot"></div>
-            <div class="item-desc">A standard brew. Restores 30 HP.</div>
-            <span class="price-tag">50g</span>
-            <button name="buy" value="basic_potion" class="btn-buy">PURCHASE</button>
-        </div>
+
+
+        <!-- BASIC POTION -->
 
         <div class="item-display potions">
-            <div class="item-title">Greater Potion</div>
-            <div class="item-icon"><img src="images/items/pot_greater.png" alt="Pot"></div>
-            <div class="item-desc">A concentrated elixir. Restores 80 HP.</div>
-            <span class="price-tag">150g</span>
-            <button name="buy" value="greater_potion" class="btn-buy">PURCHASE</button>
+
+            <div class="item-title">
+                Basic Potion
+            </div>
+
+
+            <div class="item-icon">
+
+                <img
+                    src="images/items/pot_basic.png"
+                    alt="Basic Potion"
+                >
+
+            </div>
+
+
+            <div class="item-desc">
+                A standard brew.
+                Restores 30 HP.
+            </div>
+
+
+            <span class="price-tag">
+                50g
+            </span>
+
+
+            <div style="
+                color:#bdc3c7;
+                margin-bottom:10px;
+            ">
+
+                Owned:
+
+                <?php
+                echo (int)
+                    $game['inventory']['basic_potion'];
+                ?>
+
+            </div>
+
+
+            <button
+                name="buy"
+                value="basic_potion"
+                class="btn-buy"
+                <?php
+                echo $game['player']['gold'] < 50
+                    ? 'disabled'
+                    : '';
+                ?>
+            >
+                PURCHASE
+            </button>
+
         </div>
+
+
+        <!-- GREATER POTION -->
 
         <div class="item-display potions">
-            <div class="item-title">Ancient Potion</div>
-            <div class="item-icon"><img src="images/items/pot_ancient.png" alt="Pot"></div>
-            <div class="item-desc">Brewed by elders. Fully restores HP.</div>
-            <span class="price-tag">500g</span>
-            <button name="buy" value="ancient_potion" class="btn-buy">PURCHASE</button>
+
+            <div class="item-title">
+                Greater Potion
+            </div>
+
+
+            <div class="item-icon">
+
+                <img
+                    src="images/items/pot_greater.png"
+                    alt="Greater Potion"
+                >
+
+            </div>
+
+
+            <div class="item-desc">
+                A concentrated elixir.
+                Restores 80 HP.
+            </div>
+
+
+            <span class="price-tag">
+                150g
+            </span>
+
+
+            <div style="
+                color:#bdc3c7;
+                margin-bottom:10px;
+            ">
+
+                Owned:
+
+                <?php
+                echo (int)
+                    $game['inventory']['greater_potion'];
+                ?>
+
+            </div>
+
+
+            <button
+                name="buy"
+                value="greater_potion"
+                class="btn-buy"
+                <?php
+                echo $game['player']['gold'] < 150
+                    ? 'disabled'
+                    : '';
+                ?>
+            >
+                PURCHASE
+            </button>
+
         </div>
 
-        <div class="item-display stones">
-            <div class="item-title">Basic Stone</div>
-            <div class="item-icon"><img src="images/items/stone_basic.png" alt="Stone"></div>
-            <div class="item-desc">Used to capture weak wild monsters.</div>
-            <span class="price-tag">100g</span>
-            <button name="buy" value="basic" class="btn-buy">PURCHASE</button>
+
+        <!-- ANCIENT POTION -->
+
+        <div class="item-display potions">
+
+            <div class="item-title">
+                Ancient Potion
+            </div>
+
+
+            <div class="item-icon">
+
+                <img
+                    src="images/items/pot_ancient.png"
+                    alt="Ancient Potion"
+                >
+
+            </div>
+
+
+            <div class="item-desc">
+                Brewed by elders.
+                Fully restores HP.
+            </div>
+
+
+            <span class="price-tag">
+                500g
+            </span>
+
+
+            <div style="
+                color:#bdc3c7;
+                margin-bottom:10px;
+            ">
+
+                Owned:
+
+                <?php
+                echo (int)
+                    $game['inventory']['ancient_potion'];
+                ?>
+
+            </div>
+
+
+            <button
+                name="buy"
+                value="ancient_potion"
+                class="btn-buy"
+                <?php
+                echo $game['player']['gold'] < 500
+                    ? 'disabled'
+                    : '';
+                ?>
+            >
+                PURCHASE
+            </button>
+
         </div>
 
-        <div class="item-display stones">
-            <div class="item-title">Greater Stone</div>
-            <div class="item-icon"><img src="images/items/stone_greater.png" alt="Stone"></div>
-            <div class="item-desc">Higher success rate for mid-tier foes.</div>
-            <span class="price-tag">300g</span>
-            <button name="buy" value="greater" class="btn-buy">PURCHASE</button>
-        </div>
+
+        <!-- BASIC STONE -->
 
         <div class="item-display stones">
-            <div class="item-title">Ancient Stone</div>
-            <div class="item-icon"><img src="images/items/stone_ancient.png" alt="Stone"></div>
-            <div class="item-desc">The ultimate vessel. Catches almost anything.</div>
-            <span class="price-tag">1,000g</span>
-            <button name="buy" value="ancient" class="btn-buy">PURCHASE</button>
+
+            <div class="item-title">
+                Basic Stone
+            </div>
+
+
+            <div class="item-icon">
+
+                <img
+                    src="images/items/stone_basic.png"
+                    alt="Basic Soul Stone"
+                >
+
+            </div>
+
+
+            <div class="item-desc">
+                Used to capture
+                weak wild monsters.
+            </div>
+
+
+            <span class="price-tag">
+                100g
+            </span>
+
+
+            <div style="
+                color:#bdc3c7;
+                margin-bottom:10px;
+            ">
+
+                Owned:
+
+                <?php
+                echo (int)
+                    $game['inventory']['basic'];
+                ?>
+
+            </div>
+
+
+            <button
+                name="buy"
+                value="basic"
+                class="btn-buy"
+                <?php
+                echo $game['player']['gold'] < 100
+                    ? 'disabled'
+                    : '';
+                ?>
+            >
+                PURCHASE
+            </button>
+
         </div>
+
+
+        <!-- GREATER STONE -->
+
+        <div class="item-display stones">
+
+            <div class="item-title">
+                Greater Stone
+            </div>
+
+
+            <div class="item-icon">
+
+                <img
+                    src="images/items/stone_greater.png"
+                    alt="Greater Soul Stone"
+                >
+
+            </div>
+
+
+            <div class="item-desc">
+                Higher success rate
+                for mid-tier foes.
+            </div>
+
+
+            <span class="price-tag">
+                300g
+            </span>
+
+
+            <div style="
+                color:#bdc3c7;
+                margin-bottom:10px;
+            ">
+
+                Owned:
+
+                <?php
+                echo (int)
+                    $game['inventory']['greater'];
+                ?>
+
+            </div>
+
+
+            <button
+                name="buy"
+                value="greater"
+                class="btn-buy"
+                <?php
+                echo $game['player']['gold'] < 300
+                    ? 'disabled'
+                    : '';
+                ?>
+            >
+                PURCHASE
+            </button>
+
+        </div>
+
+
+        <!-- ANCIENT STONE -->
+
+        <div class="item-display stones">
+
+            <div class="item-title">
+                Ancient Stone
+            </div>
+
+
+            <div class="item-icon">
+
+                <img
+                    src="images/items/stone_ancient.png"
+                    alt="Ancient Soul Stone"
+                >
+
+            </div>
+
+
+            <div class="item-desc">
+                The ultimate vessel.
+                Catches almost anything.
+            </div>
+
+
+            <span class="price-tag">
+                1,000g
+            </span>
+
+
+            <div style="
+                color:#bdc3c7;
+                margin-bottom:10px;
+            ">
+
+                Owned:
+
+                <?php
+                echo (int)
+                    $game['inventory']['ancient'];
+                ?>
+
+            </div>
+
+
+            <button
+                name="buy"
+                value="ancient"
+                class="btn-buy"
+                <?php
+                echo $game['player']['gold'] < 1000
+                    ? 'disabled'
+                    : '';
+                ?>
+            >
+                PURCHASE
+            </button>
+
+        </div>
+
+
     </div>
+
 </form>
 
+
 </body>
+
 </html>
+```

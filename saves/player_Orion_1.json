@@ -259,40 +259,40 @@
     },
     "currentBattle": {
         "enemy": {
-            "name": "rivewt",
-            "type": "water",
-            "max_hp": 65,
-            "attack": 11,
-            "rarity": "basic",
-            "image": "rivewt.png",
-            "hp": 65,
+            "name": "rootan",
+            "type": "earth",
+            "max_hp": 500,
+            "attack": 35,
+            "rarity": "ancient",
+            "image": "rootan.png",
+            "hp": 500,
             "moves": [
                 {
-                    "name": "Splash",
+                    "name": "Pebble Toss",
                     "power": 1,
-                    "type": "water"
+                    "type": "earth"
                 },
                 {
-                    "name": "Water Gun",
+                    "name": "Mud Slap",
                     "power": 1.2,
-                    "type": "water"
+                    "type": "earth"
                 },
                 {
-                    "name": "Aqua Tail",
+                    "name": "Rock Slide",
                     "power": 1.5,
-                    "type": "water"
+                    "type": "earth"
                 },
                 {
-                    "name": "Hydro Cannon",
+                    "name": "Earthquake",
                     "power": 2,
-                    "type": "water"
+                    "type": "earth"
                 }
             ],
-            "id": "monster_6a7bb4fcf1f937.62000901",
+            "id": "monster_6a7bb595581ee0.87460421",
             "xp": 0
         }
     },
-    "message": "A wild Rivewt appeared!",
+    "message": "A wild Rootan appeared!",
     "game_started": true,
     "starter_chosen": true,
     "_save_file": "player_Orion_1.json"
