@@ -31,6 +31,7 @@ if (isset($_POST['buy'])) {
 <html>
 <head>
     <title>Soul Stone RPG - The Emporium</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #1a1a1d; margin: 0; color: #fff; }
         

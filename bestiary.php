@@ -17,6 +17,7 @@ if (!empty($game['player']['roster'])) {
 <html>
 <head>
     <title>Soul Stone RPG - Bestiary</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1d; margin: 0; color: #fff; }
         
