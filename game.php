@@ -1,4 +1,3 @@
-```php
 <?php
 
 
@@ -902,9 +901,7 @@ $pmXP =
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Soul Stone RPG
-    </title>
+    <title>Soul Stone RPG</title>
 
     <link
         rel="stylesheet"
@@ -1230,8 +1227,6 @@ $pmXP =
                     ); ?>
 
                 </h3>
-
-
                 <form method="post">
 
                     <button
@@ -1244,14 +1239,9 @@ $pmXP =
                             padding:15px 40px;
                             font-size:1.3em;
                         "
-                    >
-
-                        EXPLORE GRASS
-
+                    >EXPLORE GRASS
                     </button>
-
                 </form>
-
             </div>
 
 
@@ -1275,16 +1265,12 @@ $pmXP =
                 justify-content:space-between;
             "
         >
-
-
             <div>
 
 
                 <!-- potions -->
 
-                <div class="section-title">
-                    POTIONS
-                </div>
+                <div class="section-title">POTIONS</div>
 
 
                 <div class="btn-grid">
@@ -1314,10 +1300,7 @@ $pmXP =
                     >
 
                         Great
-                        (
-                        <?php echo
-                            $game['inventory']['greater_potion'];
-                        ?>
+                        (<?php echo $game['inventory']['greater_potion'];?>
                         )
 
                     </button>
@@ -1331,26 +1314,16 @@ $pmXP =
                     >
 
                         Ancient
-                        (
-                        <?php echo
-                            $game['inventory']['ancient_potion'];
-                        ?>
-                        )
+                        (<?php echo $game['inventory']['ancient_potion'];?>)
 
                     </button>
-
                 </div>
 
 
                 <!-- soul stones -->
 
-                <div class="section-title">
-                    SOUL STONES
-                </div>
-
-
+                <div class="section-title">SOUL STONES</div>
                 <div class="btn-grid">
-
 
                     <button
                         type="submit"
@@ -1360,14 +1333,9 @@ $pmXP =
                     >
 
                         Basic
-                        (
-                        <?php echo
-                            $game['inventory']['basic'];
-                        ?>
-                        )
+                        (<?php echo $game['inventory']['basic'];?>)
 
                     </button>
-
 
                     <button
                         type="submit"
@@ -1377,14 +1345,9 @@ $pmXP =
                     >
 
                         Great
-                        (
-                        <?php echo
-                            $game['inventory']['greater'];
-                        ?>
-                        )
+                        (<?php echo $game['inventory']['greater'];?>)
 
                     </button>
-
 
                     <button
                         type="submit"
@@ -1394,14 +1357,8 @@ $pmXP =
                     >
 
                         Ancient
-                        (
-                        <?php echo
-                            $game['inventory']['ancient'];
-                        ?>
-                        )
-
+                        (<?php echo $game['inventory']['ancient']; ?>)
                     </button>
-
                 </div>
 
 
@@ -1411,45 +1368,29 @@ $pmXP =
                     MONSTER ROSTER
                 </div>
 
-
                 <div class="roster-grid">
-
-
                     <?php for (
                         $i = 0;
                         $i < 8;
                         $i++
                     ): ?>
 
-
                         <?php if (
                             isset(
                                 $game['player']['roster'][$i]
                             )
                         ): ?>
-
-
                             <?php
 
                             $m =
                                 $game['player']['roster'][$i];
 
                             $hpP =
-                                ($m['max_hp'] > 0)
-                                ? (
-                                    $m['hp']
-                                    / $m['max_hp']
-                                ) * 100
-                                : 0;
+                                ($m['max_hp'] > 0)? ($m['hp'] / $m['max_hp'] ) * 100 : 0;
 
-                            $stats =
-                                getXPStats(
-                                    $m['xp'] ?? 0
-                                );
+                            $stats = getXPStats($m['xp'] ?? 0 );
 
                             ?>
-
-
                             <button
                                 type="submit"
                                 name="switch_to"
@@ -1460,152 +1401,69 @@ $pmXP =
                                         $i == $game['player']['active']
                                         ? 'active-slot'
                                         : '';
-                                    ?>
-                                "
-                            >
-
-
+                                    ?>">
                                 <img
                                     src="images/monsters/<?php echo htmlspecialchars($m['image']); ?>"
                                     class="<?php echo
                                         $m['hp'] <= 0
                                         ? 'fainted-img'
                                         : '';
-                                    ?>"
-                                    alt="<?php echo htmlspecialchars($m['name']); ?>"
-                                >
-
+                                    ?>"alt="<?php echo htmlspecialchars($m['name']); ?>">
 
                                 <div class="roster-info">
 
-
                                     <div class="roster-name">
 
-                                        <?php echo htmlspecialchars(
-                                            $m['name']
-                                        ); ?>
+                                        <?php echo htmlspecialchars($m['name']); ?>
 
                                     </div>
-
 
                                     <div class="roster-level">
 
                                         Lv.<?php echo $stats['level']; ?>
 
-
-                                        <span
-                                            class="<?php echo htmlspecialchars($m['type']); ?>"
-                                        >
-
-                                            <?php echo strtoupper(
-                                                htmlspecialchars($m['type'])
-                                            ); ?>
-
+                                        <span class="<?php echo htmlspecialchars($m['type']); ?>">
+                                            <?php echo strtoupper(htmlspecialchars($m['type'])); ?>
                                         </span>
-
                                     </div>
-
-
                                     <div class="hp-bar">
-
-                                        <div
-                                            class="hp-fill"
-                                            style="
-                                                width:<?php echo
-                                                    max(
-                                                        0,
-                                                        min(
-                                                            100,
-                                                            $hpP
-                                                        )
-                                                    );
-                                                ?>%;
-                                            "
-                                        ></div>
-
+                                        <div class="hp-fill"
+                                            style="width:<?php echo max(0, min(100, $hpP)); ?>%; "></div>
                                     </div>
-
-
                                 </div>
-
-
                             </button>
-
-
                         <?php else: ?>
 
-
-                            <div class="roster-card empty-slot">
-
-                                EMPTY
-
-                            </div>
-
-
+                            <div class="roster-card empty-slot">EMPTY</div>
                         <?php endif; ?>
-
-
                     <?php endfor; ?>
-
-
                 </div>
-
-
             </div>
-
 
             <!-- battle code -->
-
             <div class="battle-code-box">
+                <span class="battle-code-label">BATTLE CODE</span>
 
-                <span class="battle-code-label">
-                    BATTLE CODE
-                </span>
-
-
-                <strong>
-
-                    <?php echo htmlspecialchars(
-                        $battleCode
-                    ); ?>
+                <strong><?php echo htmlspecialchars($battleCode); ?>
 
                 </strong>
-
-
                 <small>
-
                     Save this code to continue
                     your game later.
-
                 </small>
-
             </div>
 
-
-            <!-- gold
-              -->
-
+            <!-- gold -->
             <div class="gold-box">
-
                 GOLD AMOUNT:
-
                 <?php echo number_format(
                     $game['player']['gold']
                 ); ?>
-
             </div>
-
-
         </form>
-
-
     </div>
 
-
 </main>
-
-
 </body>
-
 </html>
-```
+
