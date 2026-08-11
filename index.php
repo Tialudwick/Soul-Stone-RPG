@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -19,12 +20,12 @@ $messageType = '';
 // =========================================
 
 $selectingStarter =
-    isset($_SESSION['selecting_starter'])
-    && $_SESSION['selecting_starter'] === true;
+    isset($_SESSION['selecting_starter']) &&
+    $_SESSION['selecting_starter'] === true;
 
 $hasPlayerName =
-    isset($_SESSION['player_name'])
-    && trim($_SESSION['player_name']) !== '';
+    isset($_SESSION['player_name']) &&
+    trim($_SESSION['player_name']) !== '';
 
 
 // =========================================
@@ -32,8 +33,8 @@ $hasPlayerName =
 // =========================================
 
 if (
-    $_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['login_game'])
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['login_game'])
 ) {
 
     $filename = basename(
@@ -44,8 +45,8 @@ if (
 
 
     if (
-        $filename === ''
-        || !is_file($savePath)
+        $filename === '' ||
+        !is_file($savePath)
     ) {
 
         $message = 'That saved game could not be found.';
@@ -57,26 +58,51 @@ if (
 
 
         if (
-            !is_array($game)
-            || empty($game['game_started'])
-            || empty($game['player']['roster'])
+            !is_array($game) ||
+            !isset($game['player'])
         ) {
 
-            $message = 'That saved game is incomplete.';
+            $message = 'That saved game is invalid.';
             $messageType = 'error';
 
         } else {
 
+            // Make sure important structures exist
+            if (!isset($game['player']['roster'])) {
+                $game['player']['roster'] = [];
+            }
+
+            if (!isset($game['player']['gold'])) {
+                $game['player']['gold'] = 0;
+            }
+
+            if (!isset($game['inventory'])) {
+                $game['inventory'] = [];
+            }
+
+            if (!isset($game['currentBattle'])) {
+                $game['currentBattle'] = null;
+            }
+
+            // Remember the exact save file
+            $game['_save_file'] = $filename;
+
+            // Regenerate session ID for login
             session_regenerate_id(true);
 
+            // Store the exact save file in session
             $_SESSION['save_file'] = $filename;
+
+            // Store the complete game in session
             $_SESSION['game'] = $game;
 
+            // Clear temporary new-game information
             unset(
                 $_SESSION['selecting_starter'],
                 $_SESSION['player_name']
             );
 
+            // Go to game
             header('Location: game.php');
             exit;
         }
@@ -89,12 +115,12 @@ if (
 // =========================================
 
 if (
-    $_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['new_game'])
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['new_game'])
 ) {
 
-    // Do NOT delete any existing save files.
-    // Only clear the temporary new-game session.
+    // Only clear temporary new-game session data.
+    // NEVER delete existing save files.
 
     unset(
         $_SESSION['save_file'],
@@ -114,8 +140,8 @@ if (
 // =========================================
 
 if (
-    $_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['create_player'])
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['create_player'])
 ) {
 
     $playerName = trim(
@@ -133,7 +159,6 @@ if (
         $selectingStarter = true;
         $hasPlayerName = false;
 
-
     } elseif (mb_strlen($playerName) > 20) {
 
         $message =
@@ -145,7 +170,6 @@ if (
 
         $selectingStarter = true;
         $hasPlayerName = false;
-
 
     } else {
 
@@ -163,26 +187,22 @@ if (
 // =========================================
 
 if (
-    $_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['choose_starter'])
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['choose_starter'])
 ) {
 
     $starterName = strtolower(
         trim($_POST['starter'] ?? '')
     );
 
-
     $playerName = trim(
         $_SESSION['player_name'] ?? ''
     );
 
-
     $starters = getStarterMonsters($allMonsters);
 
 
-    // -----------------------------------------
     // PLAYER NAME REQUIRED
-    // -----------------------------------------
 
     if ($playerName === '') {
 
@@ -197,13 +217,11 @@ if (
         $hasPlayerName = false;
 
 
-    // -----------------------------------------
     // INVALID STARTER
-    // -----------------------------------------
 
     } elseif (
-        $starterName === ''
-        || !isset($starters[$starterName])
+        $starterName === '' ||
+        !isset($starters[$starterName])
     ) {
 
         $message =
@@ -217,26 +235,20 @@ if (
         $hasPlayerName = true;
 
 
-    // -----------------------------------------
     // CREATE GAME
-    // -----------------------------------------
 
     } else {
 
-        // Create completely fresh game data.
+        // Create completely fresh game
         $game = createNewGame();
 
 
-        // -----------------------------------------
         // PLAYER NAME
-        // -----------------------------------------
 
         $game['player']['name'] = $playerName;
 
 
-        // -----------------------------------------
         // STARTER MONSTER
-        // -----------------------------------------
 
         startGameWithStarter(
             $game,
@@ -244,61 +256,56 @@ if (
         );
 
 
-        // -----------------------------------------
         // STARTING GOLD
-        // -----------------------------------------
 
         $game['player']['gold'] = 500;
 
 
-        // -----------------------------------------
         // STARTING POTIONS
-        // -----------------------------------------
 
         $game['inventory']['basic_potion'] = 3;
         $game['inventory']['greater_potion'] = 1;
         $game['inventory']['ancient_potion'] = 0;
 
 
-        // -----------------------------------------
         // STARTING SOUL STONES
-        // -----------------------------------------
 
         $game['inventory']['basic'] = 5;
         $game['inventory']['greater'] = 1;
         $game['inventory']['ancient'] = 0;
 
 
-        // -----------------------------------------
-        // GAME STARTED FLAG
-        // -----------------------------------------
+        // GAME STARTED
 
         $game['game_started'] = true;
+        $game['starter_chosen'] = true;
 
 
-        // -----------------------------------------
-        // SAVE FILE
-        // -----------------------------------------
+        // =====================================
+        // CREATE UNIQUE SAVE FILE
+        // =====================================
 
         $saveFilename =
-            getUniqueSaveFilename($playerName);
+            getUniqueSaveFileName($playerName);
 
 
-        // -----------------------------------------
+        // =====================================
         // SAVE GAME
-        // -----------------------------------------
+        // =====================================
 
-        if (
-            !savePlayerGame(
+        $savedFile =
+            savePlayerGame(
                 $game,
                 $saveFilename
-            )
-        ) {
+            );
+
+
+        if ($savedFile === false) {
 
             $message =
-                'The game could not be saved. '
-                . 'Please check that the saves folder '
-                . 'exists and is writable.';
+                'The game could not be saved. ' .
+                'Please check that the saves folder exists ' .
+                'and is writable.';
 
             $messageType = 'error';
 
@@ -310,29 +317,37 @@ if (
 
         } else {
 
-            // -------------------------------------
-            // LOG INTO NEW GAME
-            // -------------------------------------
+            // =================================
+            // STORE EXACT SAVE FILE
+            // =================================
+
+            $filenameOnly = basename($savedFile);
+
+            $game['_save_file'] = $filenameOnly;
+
+
+            // =================================
+            // LOGIN TO NEW GAME
+            // =================================
 
             session_regenerate_id(true);
 
-            $_SESSION['save_file'] =
-                $saveFilename;
+            $_SESSION['save_file'] = $filenameOnly;
 
-            $_SESSION['game'] =
-                $game;
+            $_SESSION['game'] = $game;
 
 
-            // Clear temporary setup data.
+            // Clear temporary setup data
+
             unset(
                 $_SESSION['selecting_starter'],
                 $_SESSION['player_name']
             );
 
 
-            // -------------------------------------
+            // =================================
             // GO TO GAME
-            // -------------------------------------
+            // =================================
 
             header('Location: game.php');
             exit;
@@ -346,8 +361,8 @@ if (
 // =========================================
 
 if (
-    $_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['cancel_starter'])
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['cancel_starter'])
 ) {
 
     unset(
@@ -375,9 +390,7 @@ $starters =
 $savedGames =
     getSavedGames();
 
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -400,24 +413,17 @@ $savedGames =
 
 </head>
 
-
 <body>
-
 
 <main class="start-panel backgroundBody body_box">
 
-
 <?php if (!$selectingStarter): ?>
-
 
     <!-- =====================================
          MAIN MENU
     ====================================== -->
 
     <div class="black-box">
-
-
-        <!-- LOGO -->
 
         <div class="start-logo">
 
@@ -435,7 +441,6 @@ $savedGames =
 
         </div>
 
-
         <br>
 
 
@@ -445,11 +450,9 @@ $savedGames =
 
         <section class="start-section">
 
-
             <h2 class="subFont">
                 YOUR GAMES
             </h2>
-
 
             <p class="section-description">
                 Select a saved game to continue your journey.
@@ -458,26 +461,38 @@ $savedGames =
 
             <?php if (empty($savedGames)): ?>
 
-
                 <p class="section-description">
                     You do not have any saved games yet.
                 </p>
 
-
             <?php else: ?>
-
 
                 <div class="saved-games">
 
-
                     <?php foreach ($savedGames as $saved): ?>
-
 
                         <?php
 
+                        $playerName =
+                            $saved['name']
+                            ?? 'Player';
+
+                        $gold =
+                            $saved['gold']
+                            ?? 0;
+
+                        $rosterCount =
+                            $saved['roster_count']
+                            ?? 0;
+
+                        /*
+                         * Load the actual save here so the
+                         * start page can display its monster.
+                         */
                         $savedGame =
-                            $saved['game']
-                            ?? [];
+                            loadPlayerGame(
+                                $saved['file']
+                            );
 
                         $player =
                             $savedGame['player']
@@ -495,7 +510,6 @@ $savedGames =
                             $roster[$activeIndex]
                             ?? ($roster[0] ?? null);
 
-
                         $activeXP =
                             $activeMonster
                             ? getXPStats(
@@ -507,9 +521,7 @@ $savedGames =
 
                         ?>
 
-
                         <div class="saved-game-card">
-
 
                             <!-- PLAYER NAME -->
 
@@ -518,8 +530,7 @@ $savedGames =
                                 <?php
 
                                 echo htmlspecialchars(
-                                    $player['name']
-                                    ?? 'Player'
+                                    $playerName
                                 );
 
                                 ?>
@@ -528,9 +539,6 @@ $savedGames =
 
 
                             <?php if ($activeMonster): ?>
-
-
-                                <!-- ACTIVE MONSTER -->
 
                                 <p>
 
@@ -551,8 +559,6 @@ $savedGames =
                                 </p>
 
 
-                                <!-- LEVEL -->
-
                                 <p>
 
                                     Level:
@@ -570,8 +576,27 @@ $savedGames =
 
                                 </p>
 
-
                             <?php endif; ?>
+
+
+                            <!-- ROSTER -->
+
+                            <p>
+
+                                Monsters:
+
+                                <strong>
+
+                                    <?php
+
+                                    echo (int)
+                                        $rosterCount;
+
+                                    ?>
+
+                                </strong>
+
+                            </p>
 
 
                             <!-- GOLD -->
@@ -585,10 +610,7 @@ $savedGames =
                                     <?php
 
                                     echo number_format(
-                                        (int)(
-                                            $player['gold']
-                                            ?? 0
-                                        )
+                                        (int)$gold
                                     );
 
                                     ?>
@@ -611,14 +633,13 @@ $savedGames =
                                     value="<?php
 
                                     echo htmlspecialchars(
-                                        $saved['filename'],
+                                        $saved['file'],
                                         ENT_QUOTES,
                                         'UTF-8'
                                     );
 
                                     ?>"
                                 >
-
 
                                 <button
                                     type="submit"
@@ -632,18 +653,13 @@ $savedGames =
 
                             </form>
 
-
                         </div>
-
 
                     <?php endforeach; ?>
 
-
                 </div>
 
-
             <?php endif; ?>
-
 
         </section>
 
@@ -666,20 +682,15 @@ $savedGames =
              NEW GAME
         ================================== -->
 
-        <section
-            class="start-section new-game-section"
-        >
-
+        <section class="start-section new-game-section">
 
             <h2 class="subFont">
                 BEGIN A NEW JOURNEY
             </h2>
 
-
             <p class="section-description">
                 Start a completely new Soul Stone adventure.
             </p>
-
 
             <form
                 method="post"
@@ -698,15 +709,12 @@ $savedGames =
 
             </form>
 
-
         </section>
-
 
     </div>
 
 
 <?php elseif (!$hasPlayerName): ?>
-
 
     <!-- =====================================
          PLAYER NAME
@@ -714,35 +722,28 @@ $savedGames =
 
     <div class="black-box">
 
-
         <div class="start-logo">
-
 
             <div class="logo-symbol">
                 ◆
             </div>
 
-
             <h1 class="bigFont">
                 NEW JOURNEY
             </h1>
 
-
             <p>
                 Every legend needs a name.
             </p>
-
 
         </div>
 
 
         <section class="start-section">
 
-
             <h2 class="subFont">
                 ENTER YOUR NAME
             </h2>
-
 
             <p class="section-description">
                 This name will be used for your saved game.
@@ -775,11 +776,9 @@ $savedGames =
                 action="index.php"
             >
 
-
                 <label for="player_name">
                     PLAYER NAME
                 </label>
-
 
                 <input
                     type="text"
@@ -791,7 +790,6 @@ $savedGames =
                     placeholder="Enter your name"
                 >
 
-
                 <button
                     type="submit"
                     name="create_player"
@@ -801,7 +799,6 @@ $savedGames =
                     CONTINUE
 
                 </button>
-
 
             </form>
 
@@ -826,15 +823,12 @@ $savedGames =
 
             </form>
 
-
         </section>
-
 
     </div>
 
 
 <?php else: ?>
-
 
     <!-- =====================================
          STARTER SELECTION
@@ -842,24 +836,19 @@ $savedGames =
 
     <div class="black-box">
 
-
         <div class="start-logo">
-
 
             <div class="logo-symbol">
                 ◆
             </div>
 
-
             <h1 class="bigFont">
                 CHOOSE YOUR SOUL MONSTER
             </h1>
 
-
             <p>
                 Your journey begins with one choice.
             </p>
-
 
         </div>
 
@@ -887,12 +876,9 @@ $savedGames =
 
         <section class="starter-selection">
 
-
             <div class="starter-grid">
 
-
                 <?php foreach ($starters as $starter): ?>
-
 
                     <?php
 
@@ -901,9 +887,7 @@ $savedGames =
                             $starter['name']
                         );
 
-
                     $stoneSymbol = '◆';
-
 
                     if (
                         $starter['type'] === 'fire'
@@ -922,24 +906,19 @@ $savedGames =
                     ) {
 
                         $stoneSymbol = '◆';
+
                     }
 
                     ?>
 
-
                     <div class="starter-card">
-
-
-                        <!-- STONE -->
 
                         <div class="starter-stone">
 
                             <span>
 
                                 <?php
-
                                 echo $stoneSymbol;
-
                                 ?>
 
                             </span>
@@ -947,17 +926,13 @@ $savedGames =
                         </div>
 
 
-                        <!-- MONSTER IMAGE -->
-
                         <div class="starter-image">
-
 
                             <?php if (
                                 !empty(
                                     $starter['image']
                                 )
                             ): ?>
-
 
                                 <img
                                     src="images/monsters/<?php
@@ -976,14 +951,10 @@ $savedGames =
                                     ?>"
                                 >
 
-
                             <?php endif; ?>
-
 
                         </div>
 
-
-                        <!-- NAME -->
 
                         <h3>
 
@@ -997,8 +968,6 @@ $savedGames =
 
                         </h3>
 
-
-                        <!-- TYPE -->
 
                         <div
                             class="type-badge <?php
@@ -1023,10 +992,7 @@ $savedGames =
                         </div>
 
 
-                        <!-- STATS -->
-
                         <div class="starter-stats">
-
 
                             <div>
 
@@ -1059,17 +1025,13 @@ $savedGames =
 
                             </div>
 
-
                         </div>
 
-
-                        <!-- CHOOSE -->
 
                         <form
                             method="post"
                             action="index.php"
                         >
-
 
                             <input
                                 type="hidden"
@@ -1083,7 +1045,6 @@ $savedGames =
                                 ?>"
                             >
 
-
                             <button
                                 type="submit"
                                 name="choose_starter"
@@ -1094,15 +1055,11 @@ $savedGames =
 
                             </button>
 
-
                         </form>
-
 
                     </div>
 
-
                 <?php endforeach; ?>
-
 
             </div>
 
@@ -1115,7 +1072,6 @@ $savedGames =
                 class="starter-cancel-form"
             >
 
-
                 <button
                     type="submit"
                     name="cancel_starter"
@@ -1126,15 +1082,11 @@ $savedGames =
 
                 </button>
 
-
             </form>
-
 
         </section>
 
-
     </div>
-
 
 <?php endif; ?>
 
@@ -1144,10 +1096,9 @@ $savedGames =
 ====================================== -->
 
 <?php if (
-    !empty($message)
-    && $hasPlayerName
+    !empty($message) &&
+    $hasPlayerName
 ): ?>
-
 
     <div
         class="start-message <?php echo htmlspecialchars(
@@ -1165,12 +1116,10 @@ $savedGames =
 
     </div>
 
-
 <?php endif; ?>
-
 
 </main>
 
-
 </body>
 </html>
+
