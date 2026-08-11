@@ -35,9 +35,6 @@ if (isset($_POST['buy'])) {
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #1a1a1d; margin: 0; color: #fff; }
         
-        /* Nav matches index.php */
-        .top-nav { background: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #3498db; color: #333; }
-        .nav-links a { text-decoration: none; color: #2c3e50; font-weight: bold; margin-left: 20px; }
 
         .shop-header { text-align: center; padding: 40px 0; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/shop_bg.jpg'); background-size: cover; }
         .gold-pouch { display: inline-block; background: #f1c40f; color: #000; padding: 10px 25px; border-radius: 50px; font-weight: bold; font-size: 1.4em; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); border: 3px solid #d4ac0d; }
