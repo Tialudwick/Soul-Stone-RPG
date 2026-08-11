@@ -77,10 +77,10 @@ if (!empty($game['player']['roster'])) {
 </head>
 <body>
 
+<!--nav -->
+
 <nav class="top-nav">
-    <div class="logo">
-        <a href="index.php"><strong>SOUL STONE RPG</strong></a>
-    </div>
+        <a href="index.php" class="logo-image-link"><img src="images/logo.png" alt="Soul Stone RPG Logo" class="game-logo"></a>
     <div class="nav-links">
         <a href="bestiary.php">BESTIARY</a>
         <a href="shop.php">SHOP</a>
