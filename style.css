@@ -45,11 +45,11 @@ body {
 }
 /* Font fixes */
 .bigFont{
-    font-size: 70px;
+    font-size: 70%;
 }
 
 .subFont{
-    font-size: 40px;
+    font-size: 40%;
 }
 
 /* Nav */
