@@ -19,9 +19,6 @@ if (!empty($game['player']['roster'])) {
     <title>Soul Stone RPG - Bestiary</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1d; margin: 0; color: #fff; }
-        
-
         .header-area { text-align: center; padding: 40px 0; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/library_bg.jpg'); background-size: cover; border-bottom: 4px solid #34495e; }
         h1 { margin: 0; font-size: 3em; letter-spacing: 5px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
 
