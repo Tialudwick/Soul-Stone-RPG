@@ -54,40 +54,40 @@
     },
     "currentBattle": {
         "enemy": {
-            "name": "mudig",
-            "type": "earth",
-            "max_hp": 75,
-            "attack": 9,
+            "name": "dewlug",
+            "type": "water",
+            "max_hp": 90,
+            "attack": 5,
             "rarity": "basic",
-            "image": "mudig.png",
-            "hp": 75,
+            "image": "dewlug.png",
+            "hp": 90,
             "moves": [
                 {
-                    "name": "Pebble Toss",
+                    "name": "Splash",
                     "power": 1,
-                    "type": "earth"
+                    "type": "water"
                 },
                 {
-                    "name": "Mud Slap",
+                    "name": "Water Gun",
                     "power": 1.2,
-                    "type": "earth"
+                    "type": "water"
                 },
                 {
-                    "name": "Rock Slide",
+                    "name": "Aqua Tail",
                     "power": 1.5,
-                    "type": "earth"
+                    "type": "water"
                 },
                 {
-                    "name": "Earthquake",
+                    "name": "Hydro Cannon",
                     "power": 2,
-                    "type": "earth"
+                    "type": "water"
                 }
             ],
-            "id": "monster_6a7b68cb777382.01106204",
+            "id": "monster_6a7b6aeda4a644.88124508",
             "xp": 0
         }
     },
-    "message": "A wild Mudig appeared!",
+    "message": "A wild Dewlug appeared!",
     "battle_code": "SS-GGDY-BH8G",
     "game_started": true,
     "starter_chosen": true
