@@ -678,7 +678,8 @@ body {
     box-shadow:
         0 8px 20px rgba(0, 0, 0, 0.5);
 
-    overflow: hidden;
+    position:relative;
+    overflow: visible;
 
     transition:
         transform 0.25s ease,
@@ -886,17 +887,11 @@ body {
 
 .type-badge {
     display: inline-block;
-
     padding: 6px 18px;
-
     margin-bottom: 15px;
-
     border-radius: 20px;
-
     font-size: clamp(12px, 1.2vw, 16px);
-
     font-weight: bold;
-
     letter-spacing: 1px;
 }
 
