@@ -267,6 +267,7 @@ $starters = getStarterMonsters(
         <h1>SOUL STONE RPG</h1>
         <p>Capture. Battle. Become Legendary.</p>
     </div>
+    <br>
     
     <!-- Continue Game -->
     <section class="start-section">
@@ -293,6 +294,7 @@ $starters = getStarterMonsters(
             </button>
         </form>
     </section>
+    <br>
 
 
     <!-- Divider -->
