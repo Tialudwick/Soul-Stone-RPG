@@ -899,14 +899,16 @@ $pmXP =
 </head>
 <body>
 
-<!--nav -->
-
+<!-- nav -->
 <nav class="top-nav">
-        <a href="index.php" class="logo-image-link"><img src="images/logo.png" alt="Soul Stone RPG Logo" class="game-logo"></a>
+    <a href="index.php" class="logo-image-link">
+        <img src="images/logo.png" alt="Soul Stone RPG Logo" class="game-logo">
+    </a>
+
     <div class="nav-links">
-        <a href="bestiary.php">BESTIARY</a>
-        <a href="shop.php">SHOP</a>
-        <a href="index.php">HOME</a>
+        <a href="bestiary.php" target="_blank" rel="noopener noreferrer">BESTIARY</a>
+        <a href="shop.php" target="_blank" rel="noopener noreferrer">SHOP</a>
+        <a href="index.php" target="_blank" rel="noopener noreferrer">HOME</a>
     </div>
 </nav>
 
