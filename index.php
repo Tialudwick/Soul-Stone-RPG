@@ -260,7 +260,7 @@ $starters = getStarterMonsters(
     
 <?php if (!$selectingStarter): ?>
     <!-- Main menue -->
-
+    <div class="black-box">
     <div class="start-logo">
         <div class="logo-symbol">◆</div>
         <h1>SOUL STONE RPG</h1>
@@ -321,6 +321,7 @@ $starters = getStarterMonsters(
             </button>
         </form>
     </section>
+    </div>
 
 
 <?php else: ?>

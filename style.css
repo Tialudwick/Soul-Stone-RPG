@@ -26,9 +26,13 @@ body {
     background-attachment: fixed;
 }
 
+.black-box {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 25px;
+    border-radius: 12px;
+}
+
 .backgroundBody {
-    background-color:#0d0e10;
-    opacity: 3;
     min-height: calc(100vh - 80px);
     width: 100%;
     box-sizing: border-box;
