@@ -270,7 +270,7 @@ $starters = getStarterMonsters(
     
     <!-- Continue Game -->
     <section class="start-section">
-        <h2>CONTINUE YOUR JOURNEY</h2>
+        <h2 class="subFont">CONTINUE YOUR JOURNEY</h2>
         <p class="section-description">Enter your Battle Code to continue a saved game.</p>
 
         <form method="post" action="index.php">
@@ -304,7 +304,7 @@ $starters = getStarterMonsters(
     <!-- New Game -->
 
     <section class="start-section new-game-section">
-        <h2>BEGIN A NEW JOURNEY</h2>
+        <h2 class="subFont">BEGIN A NEW JOURNEY</h2>
         <p class="section-description">Start a completely new Soul Stone adventure.</p>
 
         <form
