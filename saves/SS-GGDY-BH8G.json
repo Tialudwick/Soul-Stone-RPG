@@ -54,40 +54,40 @@
     },
     "currentBattle": {
         "enemy": {
-            "name": "abyssalay",
-            "type": "water",
-            "max_hp": 145,
-            "attack": 27,
-            "rarity": "greater",
-            "image": "abyssalay.png",
-            "hp": 145,
+            "name": "gustirp",
+            "type": "fire",
+            "max_hp": 35,
+            "attack": 15,
+            "rarity": "basic",
+            "image": "gustirp.png",
+            "hp": 35,
             "moves": [
                 {
-                    "name": "Splash",
+                    "name": "Ember",
                     "power": 1,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Water Gun",
+                    "name": "Flame Dash",
                     "power": 1.2,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Aqua Tail",
+                    "name": "Fire Blast",
                     "power": 1.5,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Hydro Cannon",
+                    "name": "Overheat",
                     "power": 2,
-                    "type": "water"
+                    "type": "fire"
                 }
             ],
-            "id": "monster_6a7b6d7e5601c9.36363500",
+            "id": "monster_6a7b6deb3481d9.66173523",
             "xp": 0
         }
     },
-    "message": "A wild Abyssalay appeared!",
+    "message": "A wild Gustirp appeared!",
     "battle_code": "SS-GGDY-BH8G",
     "game_started": true,
     "starter_chosen": true
