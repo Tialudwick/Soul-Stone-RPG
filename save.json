@@ -262,7 +262,7 @@
             }
         ],
         "active": 5,
-        "gold": 342,
+        "gold": 42,
         "discovered": [
             "Emberling",
             "Pebbleback"
@@ -271,7 +271,7 @@
     "inventory": {
         "potions": 0,
         "basic": 1,
-        "greater": 0,
+        "greater": 1,
         "ancient": 1,
         "greater_potion": 0,
         "basic_potion": 0
