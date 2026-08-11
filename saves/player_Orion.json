@@ -88,7 +88,7 @@
         "ancient": 0
     },
     "currentBattle": null,
-    "message": "You have no usable monsters. Visit the roster and heal your team.",
+    "message": "That monster cannot battle right now.",
     "game_started": true,
     "starter_chosen": true,
     "_save_file": "player_Orion.json"

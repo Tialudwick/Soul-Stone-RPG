@@ -73,9 +73,9 @@ if (isset($_POST['buy'])) {
     </a>
 
     <div class="nav-links">
-        <a href="bestiary.php" target="_blank" rel="noopener noreferrer">BESTIARY</a>
-        <a href="shop.php" target="_blank" rel="noopener noreferrer">SHOP</a>
-        <a href="index.php" target="_blank" rel="noopener noreferrer">HOME</a>
+        <a href="bestiary.php" >BESTIARY</a>
+        <a href="shop.php" >SHOP</a>
+        <a href="index.php">HOME</a>
     </div>
 </nav>
 

@@ -1067,24 +1067,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
         <a
             href="bestiary.php"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
+                >
             BESTIARY
         </a>
 
         <a
             href="shop.php"
-            target="_blank"
-            rel="noopener noreferrer"
+            
         >
             SHOP
         </a>
 
         <a
             href="index.php"
-            target="_blank"
-            rel="noopener noreferrer"
+
         >
             HOME
         </a>
