@@ -46,11 +46,11 @@ body {
 /* Responsive Font*/
 
 .bigFont {
-    font-size: clamp(18px, 3vw, 30px);
+    font-size: clamp(18px, 3vw, 60px);
 }
 
 .subFont {
-    font-size: clamp(12px, 1.5vw, 18px);
+    font-size: clamp(12px, 1.5vw, 40px);
 }
 
 /* Nav */
