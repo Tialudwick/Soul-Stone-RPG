@@ -27,6 +27,8 @@ body {
 }
 
 .backgroundBody {
+    background-color:#0d0e10;
+    opacity: 3;
     min-height: calc(100vh - 80px);
     width: 100%;
     box-sizing: border-box;
@@ -34,7 +36,7 @@ body {
 
 /* Nav */
 
- .top-nav { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #eff0f0; color: #333; }
+ .top-nav {  font-size: large;   padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #eff0f0; color: #333; }
 .nav-links a { text-decoration: none; color: #eceded; font-weight: bold; margin-left: 20px; }
 
 
