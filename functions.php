@@ -91,7 +91,221 @@ function saveGame($game, $file = "save.json")
     );
 }
 
+// =========================================================
+// MULTIPLE PLAYER SAVE SYSTEM
+// =========================================================
 
+/**
+ * Get a unique filename for a player's save.
+ *
+ * Example:
+ *   saves/player_John.json
+ *   saves/player_John_1.json
+ *   saves/player_John_2.json
+ */
+function getUniqueSaveFileName(string $playerName): string
+{
+    $saveDirectory = __DIR__ . '/saves';
+
+    // Create the saves directory if it does not exist
+    if (!is_dir($saveDirectory)) {
+        mkdir($saveDirectory, 0777, true);
+    }
+
+    // Clean the player name so it is safe to use as a filename
+    $safeName = preg_replace(
+        '/[^a-zA-Z0-9_-]/',
+        '_',
+        trim($playerName)
+    );
+
+    // Prevent an empty filename
+    if ($safeName === '') {
+        $safeName = 'Player';
+    }
+
+    $baseFileName = 'player_' . $safeName;
+    $fileName = $baseFileName . '.json';
+
+    $counter = 1;
+
+    // Make sure we never overwrite an existing save
+    while (file_exists($saveDirectory . '/' . $fileName)) {
+        $fileName = $baseFileName . '_' . $counter . '.json';
+        $counter++;
+    }
+
+    return $saveDirectory . '/' . $fileName;
+}
+
+
+/**
+ * Save a player's game to a separate save file.
+ *
+ * If $file is supplied, that exact save file is updated.
+ * If no file is supplied, a new unique save file is created.
+ */
+function savePlayerGame(array $game, ?string $file = null): string|false
+{
+    $saveDirectory = __DIR__ . '/saves';
+
+    // Create saves directory if necessary
+    if (!is_dir($saveDirectory)) {
+        if (!mkdir($saveDirectory, 0777, true)) {
+            return false;
+        }
+    }
+
+    // Create a new unique save file if one wasn't provided
+    if ($file === null || $file === '') {
+        $playerName =
+            $game['player']['name']
+            ?? 'Player';
+
+        $file = getUniqueSaveFileName($playerName);
+    }
+
+    // Make sure the game knows which save file it belongs to
+    $game['_save_file'] = basename($file);
+
+    $json = json_encode(
+        $game,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+    );
+
+    if ($json === false) {
+        return false;
+    }
+
+    $result = file_put_contents(
+        $file,
+        $json,
+        LOCK_EX
+    );
+
+    if ($result === false) {
+        return false;
+    }
+
+    return $file;
+}
+
+
+/**
+ * Load a player's saved game.
+ */
+function loadPlayerGame(string $file): array
+{
+    // If only a filename was supplied, look inside /saves
+    if (
+        !str_contains($file, DIRECTORY_SEPARATOR) &&
+        !str_contains($file, '/')
+    ) {
+        $file = __DIR__ . '/saves/' . basename($file);
+    }
+
+    // Prevent attempts to load a directory
+    if (!is_file($file)) {
+        return getDefaultGame();
+    }
+
+    $contents = file_get_contents($file);
+
+    if ($contents === false || trim($contents) === '') {
+        return getDefaultGame();
+    }
+
+    $game = json_decode($contents, true);
+
+    if (!is_array($game)) {
+        return getDefaultGame();
+    }
+
+    // Remember which save file was loaded
+    $game['_save_file'] = basename($file);
+
+    return $game;
+}
+
+
+/**
+ * Get all saved games.
+ */
+function getSavedGames(): array
+{
+    $saveDirectory = __DIR__ . '/saves';
+
+    // No saves directory yet
+    if (!is_dir($saveDirectory)) {
+        return [];
+    }
+
+    $files = glob($saveDirectory . '/player_*.json');
+
+    if ($files === false) {
+        return [];
+    }
+
+    $savedGames = [];
+
+    foreach ($files as $file) {
+
+        if (!is_file($file)) {
+            continue;
+        }
+
+        $contents = file_get_contents($file);
+
+        if ($contents === false || trim($contents) === '') {
+            continue;
+        }
+
+        $game = json_decode($contents, true);
+
+        if (!is_array($game)) {
+            continue;
+        }
+
+        $savedGames[] = [
+            'file' => basename($file),
+
+            'name' =>
+                $game['player']['name']
+                ?? 'Unnamed Player',
+
+            'gold' =>
+                $game['player']['gold']
+                ?? 0,
+
+            'roster_count' =>
+                isset($game['player']['roster'])
+                && is_array($game['player']['roster'])
+                    ? count($game['player']['roster'])
+                    : 0,
+
+            'starter_chosen' =>
+                $game['starter_chosen']
+                ?? false,
+
+            'game_started' =>
+                $game['game_started']
+                ?? false,
+
+            'modified' =>
+                filemtime($file)
+        ];
+    }
+
+    // Newest saves first
+    usort(
+        $savedGames,
+        function ($a, $b) {
+            return $b['modified'] <=> $a['modified'];
+        }
+    );
+
+    return $savedGames;
+}
 
 
 // monster ID's
