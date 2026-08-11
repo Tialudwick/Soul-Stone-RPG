@@ -129,32 +129,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
 
-            // generates a battle code
-
-            $battleCode =
-                createBattleSave($game);
 
 
-            // Make sure the code exists in memory
-
-            $game['battle_code'] =
-                $battleCode;
 
 
-            // Save the completed new game
 
-            saveBattleGame(
-                $battleCode,
-                $game
-            );
 
 
             // sends player to main game
 
-            header(
-                'Location: main.php?code=' .
-                urlencode($battleCode)
-            );
 
             exit;
         }

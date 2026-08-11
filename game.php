@@ -6,36 +6,28 @@ session_start();
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/monsters.php';
 
-
-//load & intialize game
-
-$battleCode = $_SESSION['battle_code'] ?? null;
-
-if ($battleCode) {
-
-    $game = loadBattleSave($battleCode);
-
-    if ($game === null) {
-        unset($_SESSION['battle_code']);
-        $battleCode = null;
-    }
+// A game must be selected from index.php first.
+if (empty($_SESSION['save_file'])) {
+    header('Location: index.php');
+    exit;
 }
 
-if (!$battleCode) {
+$saveFile = basename($_SESSION['save_file']);
+$savePath = __DIR__ . '/saves/' . $saveFile;
 
-    $game = createNewGame();
+if (!is_file($savePath)) {
+    unset($_SESSION['save_file'], $_SESSION['game']);
+    header('Location: index.php');
+    exit;
+}
 
-    /*
-     * If game.php is reached directly without going through
-     * newgame.php, send the player back to the start screen.
-     */
-    if (
-        empty($game['player']['roster']) ||
-        empty($game['starter_chosen'])
-    ) {
-        header("Location: index.php");
-        exit;
-    }
+// Load the logged-in player's individual save.
+$game = loadPlayerGame($saveFile);
+
+if (!isset($game['player']) || !isset($game['player']['roster'])) {
+    unset($_SESSION['save_file'], $_SESSION['game']);
+    header('Location: index.php');
+    exit;
 }
 
 
@@ -770,27 +762,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $game['message'] =
             "Nothing happened.";
     }
-
-
-    // save game
-
-    if ($battleCode) {
-
-        saveBattleGame(
-            $battleCode,
-            $game
-        );
-    }
 }
 
+// Save every POST action to the logged-in player's individual file.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    savePlayerGame($game, $saveFile);
+}
 
-// display data
-
-$battleCode =
-    $game['battle_code']
-    ?? $battleCode
-    ?? '';
-
+$_SESSION['game'] = $game;
 
 
 // Active player monster
@@ -1425,19 +1404,6 @@ $pmXP =
                 </div>
             </div>
 
-            <!-- battle code -->
-            <div class="battle-code-box">
-                <span class="battle-code-label">BATTLE CODE</span>
-
-                <strong><?php echo htmlspecialchars($battleCode); ?>
-
-                </strong>
-                <small>
-                    Save this code to continue
-                    your game later.
-                </small>
-            </div>
-
             <!-- gold -->
             <div class="gold-box">
                 GOLD AMOUNT:
@@ -1451,4 +1417,3 @@ $pmXP =
 </main>
 </body>
 </html>
-

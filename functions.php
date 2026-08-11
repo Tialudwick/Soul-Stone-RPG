@@ -11,6 +11,8 @@ function getDefaultGame(): array
 
         'player' => [
 
+            'name' => '',
+
             'roster' => [],
 
             'active' => 0,
@@ -45,7 +47,6 @@ function getDefaultGame(): array
 
         'message' => 'Welcome to Soul Stone RPG!',
 
-        'battle_code' => null,
 
         'game_started' => false,
 
@@ -91,208 +92,6 @@ function saveGame($game, $file = "save.json")
 }
 
 
-// battle code system
-
-function generateBattleCode(): string
-{
-    $characters =
-        'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-
-    $code = '';
-
-    for ($i = 0; $i < 8; $i++) {
-
-        $code .= $characters[
-            random_int(
-                0,
-                strlen($characters) - 1
-            )
-        ];
-    }
-
-    return 'SS-'
-        . substr($code, 0, 4)
-        . '-'
-        . substr($code, 4, 4);
-}
-
-
-// battle code normalization
-
-function normalizeBattleCode($code): string
-{
-    $code = strtoupper(trim($code));
-
-    $code = str_replace(
-        ' ',
-        '',
-        $code
-    );
-
-    return $code;
-}
-
-
-// save battle path
-
-function getBattleSavePath(string $code): string
-{
-    $code =
-        normalizeBattleCode($code);
-
-    $safeCode =
-        preg_replace(
-            '/[^A-Z0-9-]/',
-            '',
-            $code
-        );
-
-    return __DIR__
-        . '/saves/'
-        . $safeCode
-        . '.json';
-}
-
-
-// checks battle code
-
-function battleCodeExists(string $code): bool
-{
-    return file_exists(
-        getBattleSavePath($code)
-    );
-}
-
-
-// create new battle save
-
-function createBattleSave(array $game): string
-{
-    $saveDirectory =
-        __DIR__ . '/saves';
-
-
-    if (!is_dir($saveDirectory)) {
-
-        mkdir(
-            $saveDirectory,
-            0755,
-            true
-        );
-    }
-
-
-    do {
-
-        $code =
-            generateBattleCode();
-
-        $path =
-            getBattleSavePath($code);
-
-    } while (file_exists($path));
-
-
-    $game['battle_code'] =
-        $code;
-
-
-    $result =
-        file_put_contents(
-            $path,
-            json_encode(
-                $game,
-                JSON_PRETTY_PRINT
-            )
-        );
-
-
-    if ($result === false) {
-
-        throw new RuntimeException(
-            'Unable to create Battle Code save.'
-        );
-    }
-
-
-    return $code;
-}
-
-
-// load battle save
-
-function loadBattleSave(string $code): ?array
-{
-    $code =
-        normalizeBattleCode($code);
-
-    $path =
-        getBattleSavePath($code);
-
-
-    if (!file_exists($path)) {
-
-        return null;
-    }
-
-
-    $data =
-        json_decode(
-            file_get_contents($path),
-            true
-        );
-
-
-    if (!is_array($data)) {
-
-        return null;
-    }
-
-
-    $data['battle_code'] =
-        $code;
-
-
-    return $data;
-}
-
-
-// save exsiting battle 
-
-function saveBattleGame(
-    string $code,
-    array $game
-): bool
-{
-    $code =
-        normalizeBattleCode($code);
-
-    $path =
-        getBattleSavePath($code);
-
-
-    if (!file_exists($path)) {
-
-        return false;
-    }
-
-
-    $game['battle_code'] =
-        $code;
-
-
-    $result =
-        file_put_contents(
-            $path,
-            json_encode(
-                $game,
-                JSON_PRETTY_PRINT
-            )
-        );
-
-
-    return $result !== false;
-}
 
 
 // monster ID's
@@ -1097,6 +896,8 @@ function createNewGame(): array
 
         'player' => [
 
+            'name' => '',
+
             'roster' => [],
 
             'active' => 0,
@@ -1132,7 +933,6 @@ function createNewGame(): array
         'message' =>
             'Welcome to Soul Stone RPG!',
 
-        'battle_code' => null,
 
         'game_started' => false,
 
