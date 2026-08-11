@@ -804,12 +804,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 } else {
 
-                                    $game['currentBattle'] = null;
+    // All monsters have fainted.
+    // Automatically heal the entire roster.
 
-                                    $game['message'] =
-                                        "All of your monsters have fainted. "
-                                        . "You need to heal your team.";
-                                }
+    foreach ($game['player']['roster'] as &$monster) {
+        if (isset($monster['max_hp'])) {
+            $monster['hp'] = $monster['max_hp'];
+        }
+    }
+    unset($monster);
+
+    // Reset active monster to the first monster.
+    $game['player']['active'] = 0;
+
+    // End the battle.
+    $game['currentBattle'] = null;
+
+    $game['message'] =
+        "All of your monsters have fainted. "
+        . "Your entire team has been fully healed!";
+}
 
                             } else {
 
