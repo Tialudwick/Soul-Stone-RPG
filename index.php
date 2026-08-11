@@ -257,7 +257,7 @@ $starters = getStarterMonsters(
 
 <!-- Main section -->
 
-<main class="start-panel">
+<main class="start-panel body_box">
 
 <?php if (!$selectingStarter): ?>
     <!-- Main menue -->

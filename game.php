@@ -979,7 +979,7 @@ $pmXP =
 
                     <div class="image-well">
 
-                        <img
+      c                  <img
                             src="images/monsters/<?php echo htmlspecialchars($pm['image']); ?>"
                             alt="<?php echo htmlspecialchars($pm['name']); ?>"
                         >
