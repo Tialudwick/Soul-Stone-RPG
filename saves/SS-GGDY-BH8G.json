@@ -54,40 +54,40 @@
     },
     "currentBattle": {
         "enemy": {
-            "name": "gustirp",
-            "type": "fire",
-            "max_hp": 35,
-            "attack": 15,
+            "name": "rivewt",
+            "type": "water",
+            "max_hp": 65,
+            "attack": 11,
             "rarity": "basic",
-            "image": "gustirp.png",
-            "hp": 35,
+            "image": "rivewt.png",
+            "hp": 65,
             "moves": [
                 {
-                    "name": "Ember",
+                    "name": "Splash",
                     "power": 1,
-                    "type": "fire"
+                    "type": "water"
                 },
                 {
-                    "name": "Flame Dash",
+                    "name": "Water Gun",
                     "power": 1.2,
-                    "type": "fire"
+                    "type": "water"
                 },
                 {
-                    "name": "Fire Blast",
+                    "name": "Aqua Tail",
                     "power": 1.5,
-                    "type": "fire"
+                    "type": "water"
                 },
                 {
-                    "name": "Overheat",
+                    "name": "Hydro Cannon",
                     "power": 2,
-                    "type": "fire"
+                    "type": "water"
                 }
             ],
-            "id": "monster_6a7b6deb3481d9.66173523",
+            "id": "monster_6a7b6df8a038a7.43976982",
             "xp": 0
         }
     },
-    "message": "A wild Gustirp appeared!",
+    "message": "A wild Rivewt appeared!",
     "battle_code": "SS-GGDY-BH8G",
     "game_started": true,
     "starter_chosen": true
