@@ -69,14 +69,16 @@ if (isset($_POST['buy'])) {
 </head>
 <body>
 
-<div class="top-nav">
-    <div class="logo"><strong>SOUL STONE RPG</strong></div>
+<nav class="top-nav">
+    <div class="logo">
+        <a href="index.php"><strong>SOUL STONE RPG</strong></a>
+    </div>
     <div class="nav-links">
         <a href="bestiary.php">BESTIARY</a>
         <a href="shop.php">SHOP</a>
         <a href="index.php">HOME</a>
     </div>
-</div>
+</nav>
 
 <div class="shop-header">
     <h1 style="margin-top:0; font-size: 3em;">THE MAGIC EMPORIUM</h1>

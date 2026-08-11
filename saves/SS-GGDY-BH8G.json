@@ -8,7 +8,7 @@
                 "attack": 10,
                 "rarity": "basic",
                 "image": "tidepup.png",
-                "xp": 0,
+                "xp": 25,
                 "hp": 60,
                 "id": "monster_6a7b66767dd5d9.66497455",
                 "moves": [
@@ -36,7 +36,7 @@
             }
         ],
         "active": 0,
-        "gold": 500,
+        "gold": 536,
         "discovered": [
             "tidepup"
         ]
@@ -54,40 +54,40 @@
     },
     "currentBattle": {
         "enemy": {
-            "name": "rivewt",
-            "type": "water",
-            "max_hp": 65,
-            "attack": 11,
-            "rarity": "basic",
-            "image": "rivewt.png",
-            "hp": 65,
+            "name": "magmaag",
+            "type": "fire",
+            "max_hp": 190,
+            "attack": 23,
+            "rarity": "greater",
+            "image": "magmaag.png",
+            "hp": 190,
             "moves": [
                 {
-                    "name": "Splash",
+                    "name": "Ember",
                     "power": 1,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Water Gun",
+                    "name": "Flame Dash",
                     "power": 1.2,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Aqua Tail",
+                    "name": "Fire Blast",
                     "power": 1.5,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Hydro Cannon",
+                    "name": "Overheat",
                     "power": 2,
-                    "type": "water"
+                    "type": "fire"
                 }
             ],
-            "id": "monster_6a7b6df8a038a7.43976982",
+            "id": "monster_6a7b6e60bac6e4.19591719",
             "xp": 0
         }
     },
-    "message": "A wild Rivewt appeared!",
+    "message": "A wild Magmaag appeared!",
     "battle_code": "SS-GGDY-BH8G",
     "game_started": true,
     "starter_chosen": true

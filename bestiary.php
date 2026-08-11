@@ -79,14 +79,16 @@ if (!empty($game['player']['roster'])) {
 </head>
 <body>
 
-<div class="top-nav">
-    <div class="logo"><strong>SOUL STONE RPG</strong></div>
+<nav class="top-nav">
+    <div class="logo">
+        <a href="index.php"><strong>SOUL STONE RPG</strong></a>
+    </div>
     <div class="nav-links">
         <a href="bestiary.php">BESTIARY</a>
         <a href="shop.php">SHOP</a>
         <a href="index.php">HOME</a>
     </div>
-</div>
+</nav>
 
 <div class="header-area">
     <h1>MONSTER BESTIARY</h1>
