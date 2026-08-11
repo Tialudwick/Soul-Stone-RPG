@@ -335,9 +335,6 @@ $starters = getStarterMonsters(
     </div>
 
     <section class="starter-selection">
-        <h2>CHOOSE YOUR STARTER</h2>
-        <p class="section-description">Choose the Soul Monster that will accompany you on your adventure.</p>
-
         <div class="starter-grid">
             <?php foreach ($starters as $starter): ?>
                 <?php
