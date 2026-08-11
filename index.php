@@ -243,7 +243,7 @@ $starters = getStarterMonsters(
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body backgroundBody>
+<body>
 
 
 <!-- Navigation Section -->
@@ -256,7 +256,7 @@ $starters = getStarterMonsters(
 </nav>
 
 <!-- Main section -->
-
+<div backgroundBody>
 <main class="start-panel body_box ">
     
 <?php if (!$selectingStarter): ?>
@@ -326,7 +326,7 @@ $starters = getStarterMonsters(
 
 <?php else: ?>
 
-
+</div>
     <!-- Starter Selection -->
 
     <div class="start-logo">
