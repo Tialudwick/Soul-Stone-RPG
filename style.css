@@ -43,6 +43,10 @@ body {
     width: 100%;
     box-sizing: border-box;
 }
+/* Font fixes */
+.bigFont{
+    font-size: 50px;
+}
 
 /* Nav */
 

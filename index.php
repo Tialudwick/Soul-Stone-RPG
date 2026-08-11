@@ -263,7 +263,7 @@ $starters = getStarterMonsters(
     <div class="black-box">
     <div class="start-logo">
         <div class="logo-symbol">◆</div>
-        <h1>SOUL STONE RPG</h1>
+        <h1 class="bigFont">SOUL STONE RPG</h1>
         <p>Capture. Battle. Become Legendary.</p>
     </div>
     <br>
