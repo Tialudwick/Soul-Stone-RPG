@@ -34,8 +34,8 @@ body {
 
 /* Nav */
 
- .top-nav { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #3498db; color: #333; }
-.nav-links a { text-decoration: none; color: #e5e7e8; font-weight: bold; margin-left: 20px; }
+ .top-nav { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #eff0f0; color: #333; }
+.nav-links a { text-decoration: none; color: #eceded; font-weight: bold; margin-left: 20px; }
 
 
 /* Single Screen Container Fit */
