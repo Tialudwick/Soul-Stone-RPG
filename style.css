@@ -57,7 +57,21 @@ body {
  .top-nav {  font-size: large;   padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #eff0f0; color: #333; }
 .nav-links a { text-decoration: none; color: #eceded; font-weight: bold; margin-left: 20px; }
 
+.logo-image-link {
+    display: inline-block;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
 
+.logo-image-link:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.6));
+}
+
+.game-logo {
+    height: 45px; /* Adjust height to fit your navbar */
+    width: auto;
+    object-fit: contain;
+}
 /* Single Screen Container Fit */
 
 .main-container {

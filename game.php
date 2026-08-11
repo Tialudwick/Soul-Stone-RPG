@@ -893,23 +893,16 @@ $pmXP =
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soul Stone RPG</title>
-
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
-
 
 <!--nav -->
 
 <nav class="top-nav">
-    <div class="logo">
-        <a href="index.php"><strong>SOUL STONE RPG</strong></a>
-    </div>
+        <a href="index.php" class="logo-image-link"><img src="images/logo.png" alt="Soul Stone RPG Logo" class="game-logo"></a>
     <div class="nav-links">
         <a href="bestiary.php">BESTIARY</a>
         <a href="shop.php">SHOP</a>
