@@ -45,7 +45,7 @@ body {
 }
 /* Font fixes */
 .bigFont{
-    font-size: clamp(14px, 1.2vw, 18px);
+    font-size: clamp(30px, 1.2vw, 18px);
 }
 
 .subFont{
