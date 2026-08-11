@@ -393,17 +393,11 @@ body {
      */
 
     max-height: 430px;
-
     overflow-y: auto;
-
     overflow-x: hidden;
-
     padding: 8px;
-
     background: rgba(0, 0, 0, 0.15);
-
     border-radius: 8px;
-
     scrollbar-width: thin;
 }
 
@@ -442,127 +436,88 @@ body {
 /* Individual monster */
 
 .roster-card {
-
     min-width: 0;
-
     background: #f4e4bc;
-
     border: 2px solid #7f8c8d;
-
     padding: 8px;
-
     border-radius: 6px;
-
     cursor: pointer;
-
     text-align: left;
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     position: relative;
-
     transition: 0.2s;
 
 }
 
 
 .roster-card:hover {
-
     transform: translateY(-2px);
-
     border-color: #d4a72c;
 
 }
 
 
 .roster-card img {
-
     width: 50px;
-
     height: 50px;
-
     object-fit: contain;
-
     flex-shrink: 0;
 
 }
 
 
 .roster-info {
-
     flex: 1;
-
     min-width: 0;
 
 }
 
 
 .roster-name {
-
     font-weight: bold;
-
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 
 }
 
 
 .roster-level {
-
     font-size: 0.7rem;
-
     color: #7f8c8d;
-
     margin: 3px 0;
-
 }
 
 
 .roster-level span {
-
     padding: 2px 5px;
-
     border-radius: 3px;
-
     color: white;
 
 }
 
 
 .active-slot {
-
     border-color: #3498db;
-
     box-shadow:
         0 0 10px
         rgba(52, 152, 219, 0.5);
-
     background: #ebf5fb;
-
 }
 
 
 .fainted-img {
-
     filter:
         grayscale(100%)
         opacity(0.5);
-
 }
 
 /* New Game & Starter Selection */
 
 .new-game-page {
-
     min-height: 100vh;
-
     background:
         radial-gradient(
             circle at center,
@@ -570,185 +525,237 @@ body {
             #15171a 45%,
             #0d0e10 100%
         );
-
     color: #f4e4bc;
 
 }
 
 
 .new-game-container {
-
     min-height:
         calc(100vh - 75px);
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     padding: 40px 20px;
-
 }
 
 
 /* Tutorial */
 
 .tutorial-panel {
-
     width: 100%;
-
     max-width: 650px;
-
     text-align: center;
-
     background:
         rgba(20, 22, 25, 0.96);
-
     border:
         3px solid #d4a72c;
-
     border-radius: 18px;
-
     padding: 50px;
-
     box-shadow:
         0 20px 60px
         rgba(0, 0, 0, 0.7);
-
 }
 
 
 .tutorial-icon {
-
     font-size: 4rem;
-
     color: #d4a72c;
-
     text-shadow:
         0 0 20px
         rgba(212, 167, 44, 0.6);
-
 }
 
 
 .tutorial-step {
-
     color: #d4a72c;
-
     font-size: 0.75rem;
-
     font-weight: bold;
-
     letter-spacing: 3px;
-
 }
 
 
 .tutorial-panel h1,
 .starter-selection h1 {
-
     font-size: 2rem;
-
     letter-spacing: 3px;
-
 }
 
 
 .tutorial-text {
-
     color: #bdc3c7;
-
     line-height: 1.7;
-
     max-width: 550px;
-
     margin:
         15px auto;
-
 }
 
 
 .tutorial-btn {
-
     margin-top: 25px;
-
     padding:
         16px 30px;
-
     border: none;
-
     border-radius: 8px;
-
     background: #27ae60;
-
     color: white;
-
     font-weight: bold;
-
     cursor: pointer;
-
     transition: 0.2s;
-
 }
 
 
 .tutorial-btn:hover {
-
     transform:
         translateY(-2px);
-
     box-shadow:
         0 5px 20px
         rgba(39, 174, 96, 0.35);
-
 }
-
-
-/* Starter Selection */
+/* =========================================================
+   STARTER SELECTION
+========================================================= */
 
 .starter-selection {
-
     width: 100%;
-
-    max-width: 1000px;
-
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
     text-align: center;
+}
 
+.starter-selection h2 {
+    margin-bottom: 10px;
+    font-size: clamp(24px, 3vw, 40px);
+}
+
+.section-description {
+    margin-bottom: 30px;
+    font-size: clamp(14px, 1.5vw, 18px);
 }
 
 
+/* =========================================================
+   STARTER GRID
+========================================================= */
+
+.starter-grid,
 .starter-stones {
-
     display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
+    grid-template-columns: repeat(3, 1fr);
     gap: 25px;
-
-    margin-top: 35px;
-
-}
-
-
-.starter-stone-form {
-
     width: 100%;
-
+    margin-top: 35px;
 }
 
+
+/* =========================================================
+   STARTER CARD
+========================================================= */
+
+.starter-card {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 25px 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(28, 40, 51, 0.97),
+            rgba(17, 24, 32, 0.97)
+        );
+
+    color: #f4e4bc;
+
+    border: 3px solid #34495e;
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.5);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.starter-card:hover {
+    transform: translateY(-8px);
+
+    border-color: #d4a72c;
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+
+/* =========================================================
+   STARTER STONE
+========================================================= */
 
 .starter-stone {
+    width: 75px;
+    height: 75px;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    border: 2px solid #777;
+
+    color: #f4e4bc;
+
+    font-size: 42px;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.starter-stone span {
+    line-height: 1;
+}
+
+.starter-stone img {
+    width: 150px;
+    height: 150px;
+
+    object-fit: contain;
+
+    margin: 15px 0;
+}
+
+
+/* =========================================================
+   OPTIONAL LARGE STONE SELECTION
+   Keeps compatibility with older .starter-stones layout
+========================================================= */
+
+.starter-stone-form {
     width: 100%;
+}
 
+.starter-stone-form .starter-stone {
+    width: 100%;
     min-height: 340px;
 
     padding: 25px;
 
     border-radius: 18px;
-
     border: 3px solid #34495e;
 
     background:
@@ -758,121 +765,277 @@ body {
             #111820
         );
 
-    color: #f4e4bc;
-
     cursor: pointer;
 
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     align-items: center;
-
-    transition: 0.25s;
-
 }
 
+.starter-stone-form .starter-stone:hover {
+    transform: translateY(-8px);
 
-.starter-stone:hover {
-
-    transform:
-        translateY(-8px);
-
-    border-color:
-        #d4a72c;
+    border-color: #d4a72c;
 
     box-shadow:
-        0 15px 35px
-        rgba(0, 0, 0, 0.5);
-
+        0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
 
-.starter-stone img {
+/* =========================================================
+   ELEMENT-SPECIFIC STONE GLOW
+========================================================= */
 
-    width: 150px;
+.starter-card .starter-stone.fire:hover,
+.starter-stone.fire:hover {
+    box-shadow:
+        0 0 35px rgba(230, 126, 34, 0.35);
+}
 
-    height: 150px;
+.starter-card .starter-stone.water:hover,
+.starter-stone.water:hover {
+    box-shadow:
+        0 0 35px rgba(52, 152, 219, 0.35);
+}
+
+.starter-card .starter-stone.earth:hover,
+.starter-stone.earth:hover {
+    box-shadow:
+        0 0 35px rgba(39, 174, 96, 0.35);
+}
+
+
+/* =========================================================
+   STONE INFORMATION
+========================================================= */
+
+.stone-glow {
+    font-size: 2.5rem;
+}
+
+.stone-type {
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.starter-stone strong {
+    font-size: 1.4rem;
+    text-transform: lowercase;
+}
+
+.starter-stone > span {
+    color: #7f8c8d;
+    font-size: 0.75rem;
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   MONSTER IMAGE
+========================================================= */
+
+.starter-image {
+    width: 100%;
+    height: 220px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.starter-image img {
+    width: 100%;
+    height: 100%;
 
     object-fit: contain;
 
-    margin:
-        15px 0;
-
+    display: block;
 }
 
 
-.starter-stone strong {
+/* =========================================================
+   MONSTER NAME
+========================================================= */
 
-    font-size: 1.4rem;
+.starter-card h3 {
+    width: 100%;
 
-    text-transform: lowercase;
+    margin: 5px 0 10px;
 
+    color: #fff;
+
+    font-size: clamp(20px, 2vw, 30px);
+
+    text-align: center;
 }
 
 
-.starter-stone span {
+/* =========================================================
+   TYPE BADGES
+========================================================= */
 
-    color: #7f8c8d;
+.type-badge {
+    display: inline-block;
 
-    font-size: 0.75rem;
+    padding: 6px 18px;
 
-    margin-top: 5px;
+    margin-bottom: 15px;
 
-}
+    border-radius: 20px;
 
-
-.stone-glow {
-
-    font-size: 2.5rem;
-
-}
-
-
-.stone-type {
-
-    font-size: 0.75rem;
+    font-size: clamp(12px, 1.2vw, 16px);
 
     font-weight: bold;
 
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+}
 
+.type-badge.fire {
+    background: #b83b32;
+    color: white;
+}
+
+.type-badge.water {
+    background: #2878b5;
+    color: white;
+}
+
+.type-badge.earth {
+    background: #795548;
+    color: white;
 }
 
 
-/* Element-specific glow */
+/* =========================================================
+   STARTER STATS
+========================================================= */
 
-.starter-stone.fire:hover {
+.starter-stats {
+    width: 100%;
 
-    box-shadow:
-        0 0 35px
-        rgba(230, 126, 34, 0.35);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.starter-stats div {
+    padding: 10px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border-radius: 8px;
+
+    font-size: clamp(13px, 1.3vw, 17px);
+}
+
+.starter-stats strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #d4af37;
+
+    font-size: 12px;
 }
 
 
-.starter-stone.water:hover {
+/* =========================================================
+   STARTER BUTTON
+========================================================= */
 
-    box-shadow:
-        0 0 35px
-        rgba(52, 152, 219, 0.35);
+.starter-card form {
+    width: 100%;
+    margin-top: auto;
+}
 
+.starter-card .start-btn {
+    width: 100%;
 }
 
 
-.starter-stone.earth:hover {
+/* =========================================================
+   STARTER ACTIONS
+========================================================= */
 
-    box-shadow:
-        0 0 35px
-        rgba(39, 174, 96, 0.35);
+.starter-actions {
+    display: grid;
 
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 20px;
 }
 
+.starter-actions form {
+    margin: 0;
+}
+
+.choose-starter-btn,
+.another-starter-btn {
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+    border-radius: 7px;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.choose-starter-btn {
+    background: #27ae60;
+}
+
+.another-starter-btn {
+    background: #34495e;
+}
+
+.choose-starter-btn:hover,
+.another-starter-btn:hover {
+    opacity: 0.85;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   BACK / CANCEL BUTTON
+========================================================= */
+
+.starter-cancel-form {
+    margin-top: 30px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   TUTORIAL TIP
+========================================================= */
 
 .tutorial-tip {
-
     margin-top: 30px;
 
     padding: 15px;
@@ -887,67 +1050,53 @@ body {
         rgba(212, 167, 44, 0.3);
 
     color: #bdc3c7;
-
 }
-
 
 .tutorial-tip strong {
-
     color: #d4a72c;
-
 }
 
 
-/* Starter Preview */
+/* =========================================================
+   STARTER PREVIEW
+========================================================= */
 
 .starter-preview {
-
     width: 100%;
-
     max-width: 600px;
 
-    text-align: center;
+    margin: 0 auto;
 
+    text-align: center;
 }
 
-
 .preview-card {
-
     position: relative;
+
+    padding: 30px;
 
     background: #f4e4bc;
 
     color: #3d2b1f;
 
-    border:
-        4px solid #d4a72c;
+    border: 4px solid #d4a72c;
 
     border-radius: 15px;
 
-    padding: 30px;
-
     box-shadow:
-        0 20px 50px
-        rgba(0, 0, 0, 0.6);
-
+        0 20px 50px rgba(0, 0, 0, 0.6);
 }
-
 
 .preview-card h1 {
-
-    text-transform: lowercase;
-
     font-size: 2rem;
 
+    text-transform: lowercase;
 }
 
-
 .preview-type {
-
     display: inline-block;
 
-    padding:
-        6px 15px;
+    padding: 6px 15px;
 
     border-radius: 20px;
 
@@ -956,13 +1105,14 @@ body {
     font-weight: bold;
 
     font-size: 0.75rem;
-
 }
 
-
 .preview-image {
-
     height: 250px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     background: white;
 
@@ -970,188 +1120,130 @@ body {
         3px solid #3d2b1f;
 
     border-radius: 8px;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
 }
 
-
 .preview-image img {
-
     width: 80%;
-
     height: 90%;
 
     object-fit: contain;
-
 }
 
-
 .preview-description {
-
     margin: 20px 0;
 
     line-height: 1.6;
-
 }
-
 
 .preview-stats {
-
     display: grid;
 
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     gap: 8px;
-
 }
 
-
 .preview-stats div {
+    padding: 10px;
 
     background: #ead8a8;
 
     border-radius: 6px;
-
-    padding: 10px;
-
 }
 
-
 .preview-stats span {
-
     display: block;
-
-    font-size: 0.65rem;
 
     color: #7f8c8d;
 
+    font-size: 0.65rem;
 }
 
-
 .preview-stats strong {
-
     display: block;
 
     margin-top: 4px;
 
     text-transform: lowercase;
-
 }
 
 
-/* Starter Buttons */
+/* =========================================================
+   TABLET
+========================================================= */
 
-.starter-actions {
+@media (max-width: 800px) {
 
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 10px;
-
-    margin-top: 20px;
-
-}
-
-
-.starter-actions form {
-
-    margin: 0;
-
-}
-
-
-.choose-starter-btn,
-.another-starter-btn {
-
-    width: 100%;
-
-    padding: 15px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    color: white;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-}
-
-
-.choose-starter-btn {
-
-    background: #27ae60;
-
-}
-
-
-.another-starter-btn {
-
-    background: #34495e;
-
-}
-
-
-.choose-starter-btn:hover,
-.another-starter-btn:hover {
-
-    opacity: 0.85;
-
-    transform:
-        translateY(-2px);
-
-}
-
-
-/* Mobil*/
-
-@media (max-width: 750px) {
-
+    .starter-grid,
     .starter-stones {
-
         grid-template-columns: 1fr;
-
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
+    .starter-card {
+        padding: 20px;
+    }
 
-    .starter-stone {
+    .starter-image {
+        height: 250px;
+    }
 
+    .starter-stone-form .starter-stone {
         min-height: 260px;
-
     }
-
 
     .preview-stats {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
+        grid-template-columns: repeat(2, 1fr);
     }
-
 
     .starter-actions {
-
         grid-template-columns: 1fr;
+    }
+}
 
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 450px) {
+
+    .starter-selection {
+        padding: 0 10px;
     }
 
+    .starter-card {
+        padding: 15px;
+    }
+
+    .starter-image {
+        height: 200px;
+    }
+
+    .starter-stone {
+        width: 60px;
+        height: 60px;
+
+        font-size: 32px;
+    }
+
+    .starter-stone-form .starter-stone {
+        min-height: 220px;
+    }
+
+    .preview-card {
+        padding: 20px;
+    }
+
+    .preview-stats {
+        grid-template-columns: 1fr 1fr;
+    }
 
     .tutorial-panel {
-
         padding: 30px 20px;
-
     }
-
 }
 
 /* shop.php styles  */
