@@ -5,20 +5,21 @@
     margin: 0;
     padding: 0;
 }
-.body_box{
-    align-items: center;
-    margin:5rem;
-    padding: 150px;
-}
 
+.body_box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+    padding: clamp(30px, 8vw, 150px);
+}
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #ededed;
     overflow-x: hidden;
-}
 
-body {
     background-image: url("../images/soulStoneBackground.png");
     background-size: cover;
     background-position: center center;
@@ -27,29 +28,29 @@ body {
 }
 
 .black-box {
-    background: rgba(0, 0, 0, 0.3);
     width: 90%;
     max-width: 1000px;
     min-height: auto;
     margin: 50px auto;
-    padding: 40px;
-    box-sizing: border-box;
+    padding: clamp(20px, 4vw, 40px);
+
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
 }
 
 .backgroundBody {
-    min-height: calc(100vh - 80px);
+    min-height: 100vh;
     width: 100%;
-    box-sizing: border-box;
-}
-/* Font fixes */
-.bigFont{
-    font-size: clamp(30px, 1.2vw, 18px);
 }
 
-.subFont{
-    font-size: 40%;
+/* Responsive Font*/
+
+.bigFont {
+    font-size: clamp(18px, 3vw, 30px);
+}
+
+.subFont {
+    font-size: clamp(12px, 1.5vw, 18px);
 }
 
 /* Nav */
