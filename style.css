@@ -190,6 +190,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #05023105D;
     font-weight: bold;
     font-size: 0.85em;
     border-bottom: 2px solid #3d2b1f;

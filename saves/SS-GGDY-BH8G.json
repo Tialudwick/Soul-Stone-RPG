@@ -54,13 +54,13 @@
     },
     "currentBattle": {
         "enemy": {
-            "name": "dewlug",
+            "name": "abyssalay",
             "type": "water",
-            "max_hp": 90,
-            "attack": 5,
-            "rarity": "basic",
-            "image": "dewlug.png",
-            "hp": 90,
+            "max_hp": 145,
+            "attack": 27,
+            "rarity": "greater",
+            "image": "abyssalay.png",
+            "hp": 145,
             "moves": [
                 {
                     "name": "Splash",
@@ -83,11 +83,11 @@
                     "type": "water"
                 }
             ],
-            "id": "monster_6a7b6aeda4a644.88124508",
+            "id": "monster_6a7b6d7e5601c9.36363500",
             "xp": 0
         }
     },
-    "message": "A wild Dewlug appeared!",
+    "message": "A wild Abyssalay appeared!",
     "battle_code": "SS-GGDY-BH8G",
     "game_started": true,
     "starter_chosen": true
