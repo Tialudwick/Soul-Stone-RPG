@@ -246,14 +246,14 @@ $starters = getStarterMonsters(
 <body>
 
 
-<!-- Navigation Section -->
+<!-- Navigation Section 
 <nav class="top-nav">
     <div class="logo">
         <a href="index.php">
             <strong>SOUL STONE RPG</strong>
         </a>
     </div>
-</nav>
+</nav> -->
 
 <!-- Main section -->
 <main class="start-panel backgroundBody body_box ">
