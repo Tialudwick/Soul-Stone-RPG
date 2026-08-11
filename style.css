@@ -106,7 +106,8 @@ body {
 .stage {
     position: relative;
     display: flex;
-    justify-content: space-around;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     flex: 1;
     min-height: 0; /* Allows container to shrink dynamically */
@@ -167,8 +168,22 @@ body {
     z-index: 2;
 }
 
+/* Position Player (Bottom Left) */
+.stage .monster-card:nth-child(1) {
+    align-self: flex-end;
+    margin-right: 20px;
+}
+
+/* Position Enemy (Top Right) */
 .stage .monster-card:nth-child(2) {
-    border-color: #b83b32;
+    align-self: flex-start;
+    margin-left: 20px;
+    border-color: #b83b32; /* Keeps your red enemy border */
+}
+
+/* Flips the enemy's image horizontally */
+.stage .monster-card:nth-child(2) .image-well img {
+    transform: scaleX(-1);
 }
 
 .card-header {

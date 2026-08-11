@@ -943,7 +943,7 @@ $pmXP =
 
             <!-- battlefield -->
 
-            <div class="battlefield">
+            <div class="stage">
 
 
                 <!-- PLAYER MONSTER -->
