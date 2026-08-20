@@ -8,16 +8,15 @@ require_once __DIR__ . '/monsters.php';
 
 
 
-// VARIABLES
+// Variables for messages to the player
 
 
 $message = '';
 $messageType = '';
 
 
-// =========================================
-// CURRENT NEW GAME STATE
-// =========================================
+// Current state of the new-game process
+
 
 $selectingStarter =
     isset($_SESSION['selecting_starter']) &&
@@ -28,9 +27,7 @@ $hasPlayerName =
     trim($_SESSION['player_name']) !== '';
 
 
-// =========================================
-// LOG INTO AN EXISTING GAME
-// =========================================
+// Log into the existing saved game if the player submitted the login form
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -110,9 +107,7 @@ if (
 }
 
 
-// =========================================
-// BEGIN NEW GAME
-// =========================================
+// Begin A new game if the player submitted the new-game form
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -135,9 +130,7 @@ if (
 }
 
 
-// =========================================
-// CREATE PLAYER NAME
-// =========================================
+// Player Name Creation & submission
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -182,9 +175,7 @@ if (
 }
 
 
-// =========================================
-// CHOOSE STARTER
-// =========================================
+// Choose Starter Monster & Create New Game
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -202,7 +193,7 @@ if (
     $starters = getStarterMonsters($allMonsters);
 
 
-    // PLAYER NAME REQUIRED
+    // Player Name Validation
 
     if ($playerName === '') {
 
@@ -217,7 +208,7 @@ if (
         $hasPlayerName = false;
 
 
-    // INVALID STARTER
+    // Invalid Starter Monster Validation
 
     } elseif (
         $starterName === '' ||
@@ -235,7 +226,7 @@ if (
         $hasPlayerName = true;
 
 
-    // CREATE GAME
+    // Create New Game with Starter Monster
 
     } else {
 
@@ -243,12 +234,12 @@ if (
         $game = createNewGame();
 
 
-        // PLAYER NAME
+        // Player Name
 
         $game['player']['name'] = $playerName;
 
 
-        // STARTER MONSTER
+        // Starter Monster
 
         startGameWithStarter(
             $game,
@@ -256,42 +247,41 @@ if (
         );
 
 
-        // STARTING GOLD
+        // Starting Gold
 
         $game['player']['gold'] = 500;
 
 
-        // STARTING POTIONS
+        // Starting Potions
 
         $game['inventory']['basic_potion'] = 3;
         $game['inventory']['greater_potion'] = 1;
         $game['inventory']['ancient_potion'] = 0;
 
 
-        // STARTING SOUL STONES
+        // Starting Soul Stones
 
         $game['inventory']['basic'] = 5;
         $game['inventory']['greater'] = 1;
         $game['inventory']['ancient'] = 0;
 
 
-        // GAME STARTED
+        // Game Started Logic
 
         $game['game_started'] = true;
         $game['starter_chosen'] = true;
 
 
-        // =====================================
-        // CREATE UNIQUE SAVE FILE
-        // =====================================
+
+        // Creates a Uniqu save file
+
 
         $saveFilename =
             getUniqueSaveFileName($playerName);
 
 
-        // =====================================
-        // SAVE GAME
-        // =====================================
+        // Save game to file and check for errors
+    
 
         $savedFile =
             savePlayerGame(
@@ -317,19 +307,13 @@ if (
 
         } else {
 
-            // =================================
-            // STORE EXACT SAVE FILE
-            // =================================
+            // Store exact filename in session for later use
 
             $filenameOnly = basename($savedFile);
 
             $game['_save_file'] = $filenameOnly;
 
-
-            // =================================
-            // LOGIN TO NEW GAME
-            // =================================
-
+            // Login the player into the new game
             session_regenerate_id(true);
 
             $_SESSION['save_file'] = $filenameOnly;
@@ -345,9 +329,9 @@ if (
             );
 
 
-            // =================================
-            // GO TO GAME
-            // =================================
+        
+            // Go to game page after successful creation
+           
 
             header('Location: game.php');
             exit;
@@ -356,9 +340,7 @@ if (
 }
 
 
-// =========================================
-// CANCEL NEW GAME / BACK
-// =========================================
+// Cancel Starter Selection & Return to Main Menu
 
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -375,17 +357,13 @@ if (
 }
 
 
-// =========================================
-// GET STARTERS
-// =========================================
+// Get starters
 
 $starters =
     getStarterMonsters($allMonsters);
 
+// Get saved games for display on the main menu
 
-// =========================================
-// GET SAVED GAMES
-// =========================================
 
 $savedGames =
     getSavedGames();

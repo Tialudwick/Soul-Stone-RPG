@@ -1362,9 +1362,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
             <div>
 
-                <!-- =================================================
-                     POTIONS
-                ================================================== -->
+                <!-- POTIONS -->
 
                 <div class="section-title">
                     POTIONS
@@ -1422,9 +1420,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
                 </div>
 
-                <!-- =================================================
-                     SOUL STONES
-                ================================================== -->
+                <!-- SOUL STONES -->
 
                 <div class="section-title">
                     SOUL STONES

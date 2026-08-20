@@ -1,7 +1,7 @@
 <?php
 
 
-// ELEMENT TYPE CHART
+// Element type chart for damage multipliers
 
 
 $typeChart = [
@@ -27,7 +27,7 @@ $typeChart = [
 
 
 
-// MOVE DEFINITIONS
+// Move definitions with their respective power and type
 
 
 $moves = [
@@ -118,13 +118,13 @@ $moves = [
 
 
 
-// MONSTER DATABASE
+// Monster definitions with their respective stats, rarity, and image
 
 
 $allMonsters = [
 
    
-    // BASIC
+    // Basic
    
 
     [
@@ -291,7 +291,7 @@ $allMonsters = [
 
 
     
-    // GREATER
+    // Greater
     
 
     [
@@ -421,9 +421,7 @@ $allMonsters = [
     ],
 
 
-    // ========================================================
-    // ANCIENT
-    // ========================================================
+    // Ancient
 
     [
         "name" => "hydraskorn",

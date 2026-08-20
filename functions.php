@@ -1,6 +1,6 @@
 <?php
 
-// DEFAULT GAME STRUCTURE
+// Default game structure
 
 
 function getDefaultGame(): array
@@ -74,8 +74,7 @@ function saveGame($game, $file = "save.json")
 
 
 
-// MULTIPLE PLAYER SAVE SYSTEM
-
+// Multiple Player Save Files
 function getUniqueSaveFileName(string $playerName): string
 {
     $saveDirectory = __DIR__ . '/saves';
@@ -110,7 +109,7 @@ function getUniqueSaveFileName(string $playerName): string
 
 
 
-// SAVE PLAYER GAME
+// Save player game data to a file
 
 
 function savePlayerGame(array $game, ?string $file = null): string|false
@@ -179,7 +178,7 @@ function savePlayerGame(array $game, ?string $file = null): string|false
 
 
 
-// LOAD PLAYER GAME
+// Load Player Game Data from a file
 
 
 function loadPlayerGame(string $file): array
@@ -234,7 +233,7 @@ function loadPlayerGame(string $file): array
 
 
 
-// GET ALL SAVED GAMES
+// Get All Saved Games
 
 
 function getSavedGames(): array
@@ -351,7 +350,7 @@ function getSavedGames(): array
 
 
 
-// MONSTER IDS
+// Mosnter ID Generation
 
 
 function generateMonsterId(): string
@@ -364,7 +363,7 @@ function generateMonsterId(): string
 
 
 
-// CAPTURE TRACKING
+// Capture Record & Logic
 
 
 function recordCapture(
@@ -394,7 +393,7 @@ function recordCapture(
 
 
 
-// TYPE EFFECTIVENESS
+// Type Effectiveness
 
 
 function getTypeMultiplier(
@@ -430,8 +429,7 @@ function getTypeMultiplier(
 
 
 
-// WILD MONSTER SPAWN
-
+// Wild Monster Spawning
 
 function spawnMonster($allMonsters)
 {
@@ -511,8 +509,7 @@ function spawnMonster($allMonsters)
 
 
 
-// BATTLE REWARDS
-
+// Battle Rewards
 
 function getBattleRewards(&$game)
 {
@@ -538,7 +535,7 @@ function getBattleRewards(&$game)
 
 
 
-// XP SYSTEM
+// XP System
 
 
 function getXPForLevel($level)
@@ -636,7 +633,7 @@ function getXPStats($xp)
 
 
 
-// GAIN XP
+// Gain XP
 
 
 function gainXP(
@@ -709,7 +706,7 @@ function gainXP(
 
 
 
-// SHOP
+// Shop
 
 
 function buyItem(
@@ -748,7 +745,7 @@ function buyItem(
 
 
 
-// REMOVE MONSTER
+// Remove Monster from Roster
 
 
 function discardFromRoster(
@@ -802,7 +799,7 @@ function discardFromRoster(
 
 
 
-// CAPTURE
+// Capture Attempt Logic
 
 
 function attemptCatch(
@@ -840,7 +837,7 @@ function attemptCatch(
 }
 
 
-// POTION SYSTEM
+// Potion Usage Logic
 
 function usePotion(
     &$game,
@@ -939,7 +936,7 @@ function usePotion(
 
 
 
-// SWITCH ACTIVE MONSTER
+// Switch Active Monster 
 
 
 function switchActiveMonster(
@@ -973,7 +970,7 @@ function switchActiveMonster(
 
 
 
-// HAS USABLE MONSTER
+// Has Usable Monster
 
 
 function hasUsableMonster($game): bool
@@ -995,7 +992,7 @@ function hasUsableMonster($game): bool
 }
 
 
-// FIRST USABLE MONSTER
+// First Usable Monster Index
 
 
 function getFirstUsableMonster($game): ?int
@@ -1018,7 +1015,7 @@ function getFirstUsableMonster($game): ?int
 
 
 
-// STARTER MONSTERS
+// Starter Monster Functions
 
 
 function getStarterMonsters(
@@ -1064,7 +1061,7 @@ function getStarterMonsters(
 
 
 
-// GET STARTER MONSTER
+// Get Starter Monster by Name
 
 
 function getStarterMonster(
@@ -1098,7 +1095,7 @@ function getStarterMonster(
 
 
 
-// PREPARE STARTER
+// Prepair Starter Monster for Player
 
 
 function prepareStarterMonster(
@@ -1138,7 +1135,7 @@ function prepareStarterMonster(
 
 
 
-// CREATE COMPLETELY NEW GAME
+// Create Completely New Game
 
 
 function createNewGame(): array
@@ -1197,7 +1194,7 @@ function createNewGame(): array
 
 
 
-// START GAME WITH STARTER
+// Start Game with a Starter Monster
 
 
 function startGameWithStarter(
