@@ -240,7 +240,7 @@
                 "attack": 23,
                 "rarity": "greater",
                 "image": "magmaag.png",
-                "hp": 152,
+                "hp": 30,
                 "moves": [
                     {
                         "name": "Ember",
@@ -265,10 +265,76 @@
                 ],
                 "id": "monster_6a7bb7443ed8c4.05186312",
                 "xp": 25
+            },
+            {
+                "name": "ironlem",
+                "type": "earth",
+                "max_hp": 260,
+                "attack": 20,
+                "rarity": "greater",
+                "image": "ironlem.png",
+                "hp": 260,
+                "moves": [
+                    {
+                        "name": "Pebble Toss",
+                        "power": 1,
+                        "type": "earth"
+                    },
+                    {
+                        "name": "Mud Slap",
+                        "power": 1.2,
+                        "type": "earth"
+                    },
+                    {
+                        "name": "Rock Slide",
+                        "power": 1.5,
+                        "type": "earth"
+                    },
+                    {
+                        "name": "Earthquake",
+                        "power": 2,
+                        "type": "earth"
+                    }
+                ],
+                "id": "monster_6a86fbe3e390a1.15054189",
+                "xp": 100
+            },
+            {
+                "name": "frostfangor",
+                "type": "water",
+                "max_hp": 140,
+                "attack": 19,
+                "rarity": "greater",
+                "image": "frostfangor.png",
+                "hp": 84,
+                "moves": [
+                    {
+                        "name": "Splash",
+                        "power": 1,
+                        "type": "water"
+                    },
+                    {
+                        "name": "Water Gun",
+                        "power": 1.2,
+                        "type": "water"
+                    },
+                    {
+                        "name": "Aqua Tail",
+                        "power": 1.5,
+                        "type": "water"
+                    },
+                    {
+                        "name": "Hydro Cannon",
+                        "power": 2,
+                        "type": "water"
+                    }
+                ],
+                "id": "monster_6a86fc031fe734.40867017",
+                "xp": 75
             }
         ],
-        "active": 7,
-        "gold": 101,
+        "active": 9,
+        "gold": 284,
         "discovered": [
             "gravhorn",
             "dustny",
@@ -277,7 +343,9 @@
             "dewlug",
             "pebbleback",
             "shadowalker",
-            "magmaag"
+            "magmaag",
+            "ironlem",
+            "frostfangor"
         ]
     },
     "inventory": {
@@ -287,46 +355,46 @@
         "basic_potion": 3,
         "greater_potion": 2,
         "ancient_potion": 0,
-        "basic": 1,
-        "greater": 1,
+        "basic": 0,
+        "greater": 0,
         "ancient": 0
     },
     "currentBattle": {
         "enemy": {
-            "name": "ironlem",
-            "type": "earth",
-            "max_hp": 250,
-            "attack": 15,
-            "rarity": "greater",
-            "image": "ironlem.png",
-            "hp": 20,
+            "name": "rivewt",
+            "type": "water",
+            "max_hp": 65,
+            "attack": 11,
+            "rarity": "basic",
+            "image": "rivewt.png",
+            "hp": 65,
             "moves": [
                 {
-                    "name": "Pebble Toss",
+                    "name": "Splash",
                     "power": 1,
-                    "type": "earth"
+                    "type": "water"
                 },
                 {
-                    "name": "Mud Slap",
+                    "name": "Water Gun",
                     "power": 1.2,
-                    "type": "earth"
+                    "type": "water"
                 },
                 {
-                    "name": "Rock Slide",
+                    "name": "Aqua Tail",
                     "power": 1.5,
-                    "type": "earth"
+                    "type": "water"
                 },
                 {
-                    "name": "Earthquake",
+                    "name": "Hydro Cannon",
                     "power": 2,
-                    "type": "earth"
+                    "type": "water"
                 }
             ],
-            "id": "monster_6a86f747322330.94092284",
+            "id": "monster_6a86fc9619d582.08862112",
             "xp": 0
         }
     },
-    "message": "Your roster is full.",
+    "message": "A wild Rivewt appeared!",
     "game_started": true,
     "starter_chosen": true,
     "_save_file": "player_Orion_1.json"
