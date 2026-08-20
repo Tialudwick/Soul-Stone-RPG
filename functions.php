@@ -1,13 +1,7 @@
 <?php
 
-// =========================================================
-// FUNCTIONS & SAVE LOGIC
-// =========================================================
-
-
-// =========================================================
 // DEFAULT GAME STRUCTURE
-// =========================================================
+
 
 function getDefaultGame(): array
 {
@@ -45,9 +39,7 @@ function getDefaultGame(): array
 }
 
 
-// =========================================================
-// OLD SINGLE SAVE SYSTEM
-// =========================================================
+
 
 function loadGame($file = "save.json")
 {
@@ -81,19 +73,9 @@ function saveGame($game, $file = "save.json")
 }
 
 
-// =========================================================
+
 // MULTIPLE PLAYER SAVE SYSTEM
-// =========================================================
 
-
-/**
- * Get a unique filename for a player's save.
- *
- * Example:
- * saves/player_John.json
- * saves/player_John_1.json
- * saves/player_John_2.json
- */
 function getUniqueSaveFileName(string $playerName): string
 {
     $saveDirectory = __DIR__ . '/saves';
@@ -127,9 +109,9 @@ function getUniqueSaveFileName(string $playerName): string
 }
 
 
-// =========================================================
+
 // SAVE PLAYER GAME
-// =========================================================
+
 
 function savePlayerGame(array $game, ?string $file = null): string|false
 {
@@ -142,19 +124,7 @@ function savePlayerGame(array $game, ?string $file = null): string|false
         }
     }
 
-    /*
-     * IMPORTANT:
-     *
-     * The game.php file passes:
-     *
-     *     player_Orion.json
-     *
-     * We MUST convert that into:
-     *
-     *     /saves/player_Orion.json
-     *
-     * Otherwise PHP saves the file in the wrong directory.
-     */
+
 
     if ($file === null || $file === '') {
 
@@ -167,7 +137,6 @@ function savePlayerGame(array $game, ?string $file = null): string|false
     } else {
 
         // Only use the filename portion.
-        // This prevents accidental directory changes.
         $file = basename($file);
 
         // Put the save file inside /saves/
@@ -209,21 +178,12 @@ function savePlayerGame(array $game, ?string $file = null): string|false
 }
 
 
-// =========================================================
+
 // LOAD PLAYER GAME
-// =========================================================
+
 
 function loadPlayerGame(string $file): array
 {
-    /*
-     * If only a filename was supplied:
-     *
-     * player_Orion.json
-     *
-     * convert it to:
-     *
-     * /saves/player_Orion.json
-     */
 
     if (
         !str_contains($file, DIRECTORY_SEPARATOR) &&
@@ -273,9 +233,9 @@ function loadPlayerGame(string $file): array
 }
 
 
-// =========================================================
+
 // GET ALL SAVED GAMES
-// =========================================================
+
 
 function getSavedGames(): array
 {
@@ -390,9 +350,9 @@ function getSavedGames(): array
 }
 
 
-// =========================================================
+
 // MONSTER IDS
-// =========================================================
+
 
 function generateMonsterId(): string
 {
@@ -403,9 +363,9 @@ function generateMonsterId(): string
 }
 
 
-// =========================================================
+
 // CAPTURE TRACKING
-// =========================================================
+
 
 function recordCapture(
     &$game,
@@ -433,9 +393,9 @@ function recordCapture(
 }
 
 
-// =========================================================
+
 // TYPE EFFECTIVENESS
-// =========================================================
+
 
 function getTypeMultiplier(
     $attackerType,
@@ -469,9 +429,9 @@ function getTypeMultiplier(
 }
 
 
-// =========================================================
+
 // WILD MONSTER SPAWN
-// =========================================================
+
 
 function spawnMonster($allMonsters)
 {
@@ -550,9 +510,9 @@ function spawnMonster($allMonsters)
 }
 
 
-// =========================================================
+
 // BATTLE REWARDS
-// =========================================================
+
 
 function getBattleRewards(&$game)
 {
@@ -577,9 +537,9 @@ function getBattleRewards(&$game)
 }
 
 
-// =========================================================
+
 // XP SYSTEM
-// =========================================================
+
 
 function getXPForLevel($level)
 {
@@ -675,9 +635,9 @@ function getXPStats($xp)
 }
 
 
-// =========================================================
+
 // GAIN XP
-// =========================================================
+
 
 function gainXP(
     &$monster,
@@ -748,9 +708,9 @@ function gainXP(
 }
 
 
-// =========================================================
+
 // SHOP
-// =========================================================
+
 
 function buyItem(
     &$game,
@@ -787,9 +747,9 @@ function buyItem(
 }
 
 
-// =========================================================
+
 // REMOVE MONSTER
-// =========================================================
+
 
 function discardFromRoster(
     &$game,
@@ -841,9 +801,9 @@ function discardFromRoster(
 }
 
 
-// =========================================================
+
 // CAPTURE
-// =========================================================
+
 
 function attemptCatch(
     $h,
@@ -880,9 +840,7 @@ function attemptCatch(
 }
 
 
-// =========================================================
 // POTION SYSTEM
-// =========================================================
 
 function usePotion(
     &$game,
@@ -980,9 +938,9 @@ function usePotion(
 }
 
 
-// =========================================================
+
 // SWITCH ACTIVE MONSTER
-// =========================================================
+
 
 function switchActiveMonster(
     &$game,
@@ -1014,9 +972,9 @@ function switchActiveMonster(
 }
 
 
-// =========================================================
+
 // HAS USABLE MONSTER
-// =========================================================
+
 
 function hasUsableMonster($game): bool
 {
@@ -1037,9 +995,8 @@ function hasUsableMonster($game): bool
 }
 
 
-// =========================================================
 // FIRST USABLE MONSTER
-// =========================================================
+
 
 function getFirstUsableMonster($game): ?int
 {
@@ -1060,9 +1017,9 @@ function getFirstUsableMonster($game): ?int
 }
 
 
-// =========================================================
+
 // STARTER MONSTERS
-// =========================================================
+
 
 function getStarterMonsters(
     $allMonsters
@@ -1106,9 +1063,9 @@ function getStarterMonsters(
 }
 
 
-// =========================================================
+
 // GET STARTER MONSTER
-// =========================================================
+
 
 function getStarterMonster(
     $allMonsters,
@@ -1140,9 +1097,9 @@ function getStarterMonster(
 }
 
 
-// =========================================================
+
 // PREPARE STARTER
-// =========================================================
+
 
 function prepareStarterMonster(
     array $monster
@@ -1180,9 +1137,9 @@ function prepareStarterMonster(
 }
 
 
-// =========================================================
+
 // CREATE COMPLETELY NEW GAME
-// =========================================================
+
 
 function createNewGame(): array
 {
@@ -1239,9 +1196,9 @@ function createNewGame(): array
 }
 
 
-// =========================================================
+
 // START GAME WITH STARTER
-// =========================================================
+
 
 function startGameWithStarter(
     array &$game,

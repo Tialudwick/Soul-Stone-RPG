@@ -106,6 +106,10 @@ body {
     justify-content: space-between;
 }
 
+.ui-column {
+    max-height: 85vh;
+}
+
 .explore-screen {
     height: 100%;
     display: flex;
@@ -415,40 +419,35 @@ body {
 
 
 .roster-scroll {
-
-    /*
-     * The player can have unlimited monsters,
-     * but the UI stays a reasonable height.
-     */
-
-    max-height: 430px;
+    width: 100%;
+    max-height: 500px;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 8px;
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    scrollbar-width: thin;
+    padding-right: 8px;
+    margin-bottom: 15px;
 }
 
 
 /* Chrome / Edge scrollbar */
 
 .roster-scroll::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
 }
 
-
 .roster-scroll::-webkit-scrollbar-track {
-    background: #1c2833;
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
 }
 
 
 .roster-scroll::-webkit-scrollbar-thumb {
-    background: #d4a72c;
+    background: rgba(255, 255, 255, 0.35);
     border-radius: 10px;
 }
 
+.roster-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.55);
+}
 
 .roster-grid {
 
