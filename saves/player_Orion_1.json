@@ -302,11 +302,11 @@
             {
                 "name": "frostfangor",
                 "type": "water",
-                "max_hp": 140,
-                "attack": 19,
+                "max_hp": 150,
+                "attack": 24,
                 "rarity": "greater",
                 "image": "frostfangor.png",
-                "hp": 84,
+                "hp": 132,
                 "moves": [
                     {
                         "name": "Splash",
@@ -330,11 +330,11 @@
                     }
                 ],
                 "id": "monster_6a86fc031fe734.40867017",
-                "xp": 75
+                "xp": 125
             }
         ],
         "active": 9,
-        "gold": 284,
+        "gold": 39,
         "discovered": [
             "gravhorn",
             "dustny",
@@ -355,46 +355,46 @@
         "basic_potion": 3,
         "greater_potion": 2,
         "ancient_potion": 0,
-        "basic": 0,
+        "basic": 3,
         "greater": 0,
         "ancient": 0
     },
     "currentBattle": {
         "enemy": {
-            "name": "rivewt",
-            "type": "water",
-            "max_hp": 65,
-            "attack": 11,
-            "rarity": "basic",
-            "image": "rivewt.png",
-            "hp": 65,
+            "name": "magmaag",
+            "type": "fire",
+            "max_hp": 190,
+            "attack": 23,
+            "rarity": "greater",
+            "image": "magmaag.png",
+            "hp": 190,
             "moves": [
                 {
-                    "name": "Splash",
+                    "name": "Ember",
                     "power": 1,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Water Gun",
+                    "name": "Flame Dash",
                     "power": 1.2,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Aqua Tail",
+                    "name": "Fire Blast",
                     "power": 1.5,
-                    "type": "water"
+                    "type": "fire"
                 },
                 {
-                    "name": "Hydro Cannon",
+                    "name": "Overheat",
                     "power": 2,
-                    "type": "water"
+                    "type": "fire"
                 }
             ],
-            "id": "monster_6a86fc9619d582.08862112",
+            "id": "monster_6a91fe99f159b9.42249106",
             "xp": 0
         }
     },
-    "message": "A wild Rivewt appeared!",
+    "message": "A wild Magmaag appeared!",
     "game_started": true,
     "starter_chosen": true,
     "_save_file": "player_Orion_1.json"
