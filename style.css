@@ -54,8 +54,17 @@ body {
 
 /* Nav */
 
- .top-nav {  background-color: rgba(0, 0, 0, 0.50); font-size: large;   padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #eff0f0; color: #333; }
-.nav-links a { text-decoration: none; color: #eceded; font-weight: bold; margin-left: 20px; }
+.top-nav {  background-color: rgba(0, 0, 0, 0.50); 
+    font-size: large;   padding: 15px 40px; 
+    display: flex; justify-content: space-between; 
+    align-items: center; border-bottom: 3px solid #eff0f0; 
+    color: #333; 
+}
+
+.nav-links a { text-decoration: none; 
+    color: #eceded; font-weight: bold; 
+    margin-left: 20px; 
+}
 
 .logo-image-link {
     display: inline-block;
@@ -150,8 +159,8 @@ body {
     background: rgba(20, 30, 35, 0.35);
     border-radius: 50%;
     box-shadow: 
-        0 8px 12px rgba(0, 0, 0, 0.35),
-        inset 0 4px 10px rgba(255, 255, 255, 0.05);
+    0 8px 12px rgba(0, 0, 0, 0.35),
+    inset 0 4px 10px rgba(255, 255, 255, 0.05);
     z-index: 0;
 }
 
@@ -166,9 +175,9 @@ body {
     font-weight: 900;
     color: #ffd21c;
     text-shadow:
-        2px 2px 0 #3d2b1f,
-        -2px -2px 0 #3d2b1f,
-        0 4px 6px rgba(0, 0, 0, 0.5);
+    2px 2px 0 #3d2b1f,
+    -2px -2px 0 #3d2b1f,
+    0 4px 6px rgba(0, 0, 0, 0.5);
     z-index: 4;
 }
 
@@ -195,7 +204,7 @@ body {
 .stage .monster-card:nth-child(2) {
     align-self: flex-start;
     margin-left: 20px;
-    border-color: #b83b32; /* Keeps your red enemy border */
+    border-color: #b83b32; /* Keeps red enemy border */
 }
 
 /* Flips the enemy's image horizontally */
@@ -248,6 +257,8 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     z-index: 10;
 }
+
+/* Elements */
 
 .fire  { background: #e67e22; }
 .water { background: #3498db; }
@@ -317,8 +328,13 @@ body {
     gap: 4px;
 }
 
-.btn-pot { background: #9b59b6; padding: 6px 2px; }
-.btn-stone { background: #2ecc71; padding: 6px 2px; }
+.btn-pot { 
+    background: #9b59b6; padding: 6px 2px; 
+}
+
+.btn-stone { 
+    background: #2ecc71; padding: 6px 2px; 
+}
 
 .moves-grid {
     display: grid;
@@ -450,14 +466,10 @@ body {
 }
 
 .roster-grid {
-
     display: grid;
-
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+    repeat(2, minmax(0, 1fr));
     gap: 10px;
-
 }
 
 
@@ -530,16 +542,16 @@ body {
 .active-slot {
     border-color: #3498db;
     box-shadow:
-        0 0 10px
-        rgba(52, 152, 219, 0.5);
+    0 0 10px
+    rgba(52, 152, 219, 0.5);
     background: #ebf5fb;
 }
 
 
 .fainted-img {
     filter:
-        grayscale(100%)
-        opacity(0.5);
+    grayscale(100%)
+    opacity(0.5);
 }
 
 /* New Game & Starter Selection */
@@ -547,12 +559,12 @@ body {
 .new-game-page {
     min-height: 100vh;
     background:
-        radial-gradient(
-            circle at center,
-            #263238 0%,
-            #15171a 45%,
-            #0d0e10 100%
-        );
+    radial-gradient(
+        circle at center,
+        #263238 0%,
+        #15171a 45%,
+        #0d0e10 100%
+    );
     color: #f4e4bc;
 
 }
@@ -560,7 +572,7 @@ body {
 
 .new-game-container {
     min-height:
-        calc(100vh - 75px);
+    calc(100vh - 75px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -575,14 +587,14 @@ body {
     max-width: 650px;
     text-align: center;
     background:
-        rgba(20, 22, 25, 0.96);
+    rgba(20, 22, 25, 0.96);
     border:
-        3px solid #d4a72c;
+    3px solid #d4a72c;
     border-radius: 18px;
     padding: 50px;
     box-shadow:
-        0 20px 60px
-        rgba(0, 0, 0, 0.7);
+    0 20px 60px
+    rgba(0, 0, 0, 0.7);
 }
 
 
@@ -590,8 +602,8 @@ body {
     font-size: 4rem;
     color: #d4a72c;
     text-shadow:
-        0 0 20px
-        rgba(212, 167, 44, 0.6);
+    0 0 20px
+    rgba(212, 167, 44, 0.6);
 }
 
 
@@ -615,14 +627,14 @@ body {
     line-height: 1.7;
     max-width: 550px;
     margin:
-        15px auto;
+    15px auto;
 }
 
 
 .tutorial-btn {
     margin-top: 25px;
     padding:
-        16px 30px;
+    16px 30px;
     border: none;
     border-radius: 8px;
     background: #27ae60;
@@ -635,14 +647,12 @@ body {
 
 .tutorial-btn:hover {
     transform:
-        translateY(-2px);
+    translateY(-2px);
     box-shadow:
-        0 5px 20px
-        rgba(39, 174, 96, 0.35);
+    0 5px 20px
+    rgba(39, 174, 96, 0.35);
 }
-/* =========================================================
-   STARTER SELECTION
-========================================================= */
+/* STARTER SELECTION */
 
 .starter-selection {
     width: 100%;
@@ -663,9 +673,7 @@ body {
 }
 
 
-/* =========================================================
-   STARTER GRID
-========================================================= */
+/* STARTER GRID */
 
 .starter-grid,
 .starter-stones {
@@ -677,82 +685,58 @@ body {
 }
 
 
-/* =========================================================
-   STARTER CARD
-========================================================= */
+/* STARTER CARD  */
 
 .starter-card {
     width: 100%;
     min-width: 0;
-
     display: flex;
     flex-direction: column;
     align-items: center;
-
     padding: 25px 20px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(28, 40, 51, 0.97),
-            rgba(17, 24, 32, 0.97)
-        );
-
+    background:linear-gradient(145deg, rgba(28, 40, 51, 0.97), rgba(17, 24, 32, 0.97));
     color: #f4e4bc;
-
     border: 3px solid #34495e;
     border-radius: 18px;
 
     box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.5);
+    0 8px 20px rgba(0, 0, 0, 0.5);
 
     position:relative;
     overflow: visible;
 
     transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .starter-card:hover {
     transform: translateY(-8px);
-
     border-color: #d4a72c;
-
     box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.5);
+    0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
 
-/* =========================================================
-   STARTER STONE
-========================================================= */
+/* STARTER STONE */
 
 .starter-stone {
     width: 75px;
     height: 75px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     margin-bottom: 15px;
-
     border-radius: 50%;
-
     background: rgba(0, 0, 0, 0.5);
-
     border: 2px solid #777;
-
     color: #f4e4bc;
-
     font-size: 42px;
-
     transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .starter-stone span {
@@ -762,17 +746,10 @@ body {
 .starter-stone img {
     width: 150px;
     height: 150px;
-
     object-fit: contain;
-
     margin: 15px 0;
 }
 
-
-/* =========================================================
-   OPTIONAL LARGE STONE SELECTION
-   Keeps compatibility with older .starter-stones layout
-========================================================= */
 
 .starter-stone-form {
     width: 100%;
@@ -781,21 +758,16 @@ body {
 .starter-stone-form .starter-stone {
     width: 100%;
     min-height: 340px;
-
     padding: 25px;
-
     border-radius: 18px;
     border: 3px solid #34495e;
-
     background:
-        linear-gradient(
-            145deg,
-            #1c2833,
-            #111820
-        );
-
+    linear-gradient(
+        145deg,
+        #1c2833,
+        #111820
+    );
     cursor: pointer;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -804,40 +776,34 @@ body {
 
 .starter-stone-form .starter-stone:hover {
     transform: translateY(-8px);
-
     border-color: #d4a72c;
-
     box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.5);
+    0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
 
-/* =========================================================
-   ELEMENT-SPECIFIC STONE GLOW
-========================================================= */
+/* ELEMENT-SPECIFIC STONE GLOW */
 
 .starter-card .starter-stone.fire:hover,
 .starter-stone.fire:hover {
     box-shadow:
-        0 0 35px rgba(230, 126, 34, 0.35);
+    0 0 35px rgba(230, 126, 34, 0.35);
 }
 
 .starter-card .starter-stone.water:hover,
 .starter-stone.water:hover {
     box-shadow:
-        0 0 35px rgba(52, 152, 219, 0.35);
+    0 0 35px rgba(52, 152, 219, 0.35);
 }
 
 .starter-card .starter-stone.earth:hover,
 .starter-stone.earth:hover {
     box-shadow:
-        0 0 35px rgba(39, 174, 96, 0.35);
+    0 0 35px rgba(39, 174, 96, 0.35);
 }
 
 
-/* =========================================================
-   STONE INFORMATION
-========================================================= */
+/* STONE INFORMATION */
 
 .stone-glow {
     font-size: 2.5rem;
@@ -861,24 +827,17 @@ body {
 }
 
 
-/* =========================================================
-   MONSTER IMAGE
-========================================================= */
+/* MONSTER IMAGE */
 
 .starter-image {
     width: 100%;
     height: 220px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     margin-bottom: 15px;
-
     overflow: hidden;
-
     border-radius: 12px;
-
     background: rgba(0, 0, 0, 0.35);
 }
 
@@ -892,26 +851,18 @@ body {
 }
 
 
-/* =========================================================
-   MONSTER NAME
-========================================================= */
+/* MONSTER NAME */
 
 .starter-card h3 {
     width: 100%;
-
     margin: 5px 0 10px;
-
     color: #fff;
-
     font-size: clamp(20px, 2vw, 30px);
-
     text-align: center;
 }
 
 
-/* =========================================================
-   TYPE BADGES
-========================================================= */
+/* TYPE BADGES */
 
 .type-badge {
     display: inline-block;
@@ -939,9 +890,7 @@ body {
 }
 
 
-/* =========================================================
-   STARTER STATS
-========================================================= */
+/* STARTER STATS*/
 
 .starter-stats {
     width: 100%;
@@ -956,28 +905,20 @@ body {
 
 .starter-stats div {
     padding: 10px;
-
     background: rgba(255, 255, 255, 0.08);
-
     border-radius: 8px;
-
     font-size: clamp(13px, 1.3vw, 17px);
 }
 
 .starter-stats strong {
     display: block;
-
     margin-bottom: 3px;
-
     color: #d4af37;
-
     font-size: 12px;
 }
 
 
-/* =========================================================
-   STARTER BUTTON
-========================================================= */
+/* STARTER BUTTON  */
 
 .starter-card form {
     width: 100%;
@@ -989,9 +930,7 @@ body {
 }
 
 
-/* =========================================================
-   STARTER ACTIONS
-========================================================= */
+/* STARTER ACTIONS */
 
 .starter-actions {
     display: grid;
@@ -1010,21 +949,13 @@ body {
 .choose-starter-btn,
 .another-starter-btn {
     width: 100%;
-
     padding: 15px;
-
     border: none;
     border-radius: 7px;
-
     color: white;
-
     font-weight: bold;
-
     cursor: pointer;
-
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .choose-starter-btn {
@@ -1043,35 +974,22 @@ body {
 }
 
 
-/* =========================================================
-   BACK / CANCEL BUTTON
-========================================================= */
+/* BACK / CANCEL BUTTON  */
 
 .starter-cancel-form {
     margin-top: 30px;
-
     text-align: center;
 }
 
 
-/* =========================================================
-   TUTORIAL TIP
-========================================================= */
+/* TUTORIAL TIP  */
 
 .tutorial-tip {
     margin-top: 30px;
-
     padding: 15px;
-
     border-radius: 8px;
-
-    background:
-        rgba(212, 167, 44, 0.08);
-
-    border:
-        1px solid
-        rgba(212, 167, 44, 0.3);
-
+    background:rgba(212, 167, 44, 0.08);
+    border:1px solid rgba(212, 167, 44, 0.3);
     color: #bdc3c7;
 }
 
@@ -1080,53 +998,37 @@ body {
 }
 
 
-/* =========================================================
-   STARTER PREVIEW
-========================================================= */
+/* STARTER PREVIEW */
 
 .starter-preview {
     width: 100%;
     max-width: 600px;
-
     margin: 0 auto;
-
     text-align: center;
 }
 
 .preview-card {
     position: relative;
-
     padding: 30px;
-
     background: #f4e4bc;
-
     color: #3d2b1f;
-
     border: 4px solid #d4a72c;
-
     border-radius: 15px;
-
     box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.6);
+    0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .preview-card h1 {
     font-size: 2rem;
-
     text-transform: lowercase;
 }
 
 .preview-type {
     display: inline-block;
-
     padding: 6px 15px;
-
     border-radius: 20px;
-
     color: white;
-
     font-weight: bold;
-
     font-size: 0.75rem;
 }
 
@@ -1136,64 +1038,48 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: white;
-
-    border:
-        3px solid #3d2b1f;
-
+    border:3px solid #3d2b1f;
     border-radius: 8px;
 }
 
 .preview-image img {
     width: 80%;
     height: 90%;
-
     object-fit: contain;
 }
 
 .preview-description {
     margin: 20px 0;
-
     line-height: 1.6;
 }
 
 .preview-stats {
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
     gap: 8px;
 }
 
 .preview-stats div {
     padding: 10px;
-
     background: #ead8a8;
-
     border-radius: 6px;
 }
 
 .preview-stats span {
     display: block;
-
     color: #7f8c8d;
-
     font-size: 0.65rem;
 }
 
 .preview-stats strong {
     display: block;
-
     margin-top: 4px;
-
     text-transform: lowercase;
 }
 
 
-/* =========================================================
-   TABLET
-========================================================= */
+/* TABLET */
 
 @media (max-width: 800px) {
 
@@ -1227,9 +1113,7 @@ body {
 }
 
 
-/* =========================================================
-   SMALL PHONES
-========================================================= */
+/* SMALL PHONES */
 
 @media (max-width: 450px) {
 
@@ -1270,31 +1154,344 @@ body {
 }
 
 /* shop.php styles  */
-       
-        .shop-header { text-align: center; padding: 40px 0; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/shop_bg.jpg'); background-size: cover; }
-        .gold-pouch { display: inline-block; background: #f1c40f; color: #000; padding: 10px 25px; border-radius: 50px; font-weight: bold; font-size: 1.4em; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); border: 3px solid #d4ac0d; }
 
-        .display-case { max-width: 1100px; margin: -30px auto 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; }
+.shop-header { 
+    text-align: center; 
+    padding: 40px 0; 
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/shop_bg.jpg'); 
+    background-size: cover; }
 
-        /* ITEM CARD STYLES */
-        .item-display { background: #2c3e50; border: 4px solid #8e44ad; border-radius: 12px; position: relative; padding: 20px; text-align: center; transition: transform 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .item-display:hover { transform: translateY(-10px); }
-        
-        .item-display.potions { border-color: #27ae60; }
-        .item-display.stones { border-color: #8e44ad; }
+.gold-pouch { 
+    display: inline-block; 
+    background: #f1c40f; color: #000; 
+    padding: 10px 25px; border-radius: 50px; 
+    font-weight: bold; font-size: 1.4em; 
+    box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); border: 3px solid #d4ac0d; }
 
-        .item-title { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; color: #ecf0f1; }
-        
-        .item-icon { width: 80px; height: 80px; background: #fff; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; border: 4px solid #bdc3c7; }
-        .item-icon img { width: 50px; height: 50px; object-fit: contain; }
+.display-case { 
+    max-width: 1100px; 
+    margin: -30px auto 50px; 
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px; padding: 20px; 
+}
 
-        .item-desc { font-size: 0.9em; color: #bdc3c7; height: 40px; margin-bottom: 15px; }
+/* ITEM CARD STYLES */
+.item-display { 
+    background: #2c3e50; 
+    border: 4px solid #8e44ad; border-radius: 12px;
+     position: relative; padding: 20px; text-align: center; 
+     transition: transform 0.2s; 
+     box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+ }
 
-        .price-tag { font-size: 1.5em; font-weight: bold; color: #f1c40f; margin-bottom: 15px; display: block; }
-        
-        .btn-buy { width: 100%; background: #e74c3c; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; border-bottom: 4px solid #c0392b; }
-        .btn-buy:hover { background: #ff5e4d; }
-        .btn-buy:active { border-bottom: 0; transform: translateY(2px); }
+.item-display:hover { 
+    transform: translateY(-10px); 
+}
 
-        .toast { position: fixed; top: 80px; right: 20px; background: #2ecc71; padding: 15px 30px; border-radius: 5px; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 100; animation: slideIn 0.5s forwards; }
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.item-display.potions { 
+    border-color: #27ae60; 
+}
+.item-display.stones { 
+    border-color: #8e44ad; 
+}
+
+.item-title { 
+    background: rgba(0,0,0,0.3); 
+    padding: 8px; border-radius: 5px; 
+    font-weight: bold; margin-bottom: 15px; 
+    text-transform: uppercase; letter-spacing: 1px; 
+    color: #ecf0f1; 
+}
+
+.item-icon { 
+    width: 80px; height: 80px; 
+    background: #fff; 
+    border-radius: 50%; margin: 0 auto 15px; 
+    display: flex; align-items: center; 
+    justify-content: center; 
+    border: 4px solid #bdc3c7; 
+}
+.item-icon img { 
+    width: 50px; 
+    height: 50px; 
+    object-fit: contain; 
+}
+
+.item-desc { 
+    font-size: 0.9em; 
+    color: #bdc3c7; 
+    height: 40px; 
+    margin-bottom: 15px; 
+}
+
+.price-tag { 
+    font-size: 1.5em; 
+    font-weight: bold; 
+    color: #f1c40f; 
+    margin-bottom: 15px; 
+    display: block; 
+}
+
+.btn-buy { 
+    width: 100%; 
+    background: #e74c3c; 
+    color: white; border: none; 
+    padding: 12px; border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: bold; text-transform: uppercase; 
+    border-bottom: 4px solid #c0392b; 
+}
+
+.btn-buy:hover { 
+    background: #ff5e4d; 
+}
+
+.btn-buy:active { 
+    border-bottom: 0; transform: translateY(2px); 
+}
+
+.toast { 
+    position: fixed; top: 80px; right: 20px; 
+    background: #2ecc71; padding: 15px 30px; 
+    border-radius: 5px; font-weight: bold; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+    z-index: 100; animation: slideIn 0.5s forwards; 
+}
+
+@keyframes slideIn { 
+    from { transform: translateX(100%); 
+    } to { transform: translateX(0); } 
+}
+
+/* Bestiary Elements */
+
+.bestiary-grid {
+    display: grid;
+    grid-template-columns:
+    repeat(
+        auto-fill,
+        minmax(220px, 1fr)
+    );
+    gap: 25px;
+
+}
+
+/* HEADER */
+
+.header-area {
+    text-align: center;
+    padding: 40px 0;
+
+    background:
+    linear-gradient(
+        rgba(0,0,0,0.7),
+        rgba(0,0,0,0.7)
+    ),
+    url('images/library_bg.jpg');
+
+    background-size: cover;
+    background-position: center;
+
+    border-bottom: 4px solid #34495e;
+}
+
+
+h1 {
+    margin: 0;
+    font-size: 3em;
+    letter-spacing: 5px;
+
+    text-shadow:
+    2px 2px 10px
+    rgba(0,0,0,0.5);
+}
+
+
+.bestiary-container {
+    max-width: 1200px;
+    margin: -30px auto 50px;
+    padding: 20px;
+}
+
+
+/* RARITY SECTIONS  */
+
+.rarity-title {
+
+    background: #34495e;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin: 40px 0 20px;
+    border-left: 10px solid #f1c40f;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+}
+
+
+
+/* MONSTER CARD */
+/* this monster card will over ride whats in the style.css because it is bestiary specific. */
+.bestiary-monster-card { 
+    background: #f4e4bc;
+    border: 6px solid #3d2b1f;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    transition: 0.3s;
+    box-shadow:
+    0 10px 20px
+    rgba(0,0,0,0.5);
+    position: relative;
+    color: #3d2b1f;
+
+}
+
+
+.bestiary-monster-card:hover {
+
+    transform: translateY(-5px);
+    box-shadow:
+    0 15px 30px
+    rgba(0,0,0,0.7);
+
+}
+
+
+/* IMAGE AREA */
+
+.bestiary-image-well {
+
+    background: #fff;
+    border: 2px solid #3d2b1f;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    overflow: hidden;
+
+}
+
+
+.bestiary-image-well img {
+
+    width: 80%;
+    height: auto;
+    object-fit: contain;
+
+}
+
+
+/* TYPE STICKER */
+
+.bestiary-type-sticker {
+
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.6em;
+    border: 2px solid #fff;
+    box-shadow:
+    0 3px 6px
+    rgba(0,0,0,0.3);
+    z-index: 5;
+    text-transform: uppercase;
+
+}
+
+
+.fire {
+    background: #e67e22;
+}
+
+
+.water {
+    background: #3498db;
+}
+
+
+.earth {
+    background: #27ae60;
+}
+
+
+/* UNKNOWN / NOT CAPTURED MONSTER */
+
+.bestiary-unknown-card {
+
+    background: #2c3e50;
+    border-color: #1a1a1d;
+    color: #7f8c8d;
+
+}
+
+
+.bestiary-unknown-card .bestiary-image-well {
+
+    background: #1a1a1d;
+    border-color: #000;
+
+}
+
+
+/* grey scale monster image */
+
+.bestiary-unknown-img {
+
+    filter:
+    grayscale(100%)
+    brightness(0.45);
+    opacity: 0.5;
+
+}
+
+
+.bestiary-unknown-text {
+
+    font-style: italic;
+    letter-spacing: 3px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #95a5a6;
+
+}
+
+
+/*  DISCOVERED MONSTER NAME */
+
+.bestiary-monster-name {
+
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    border-bottom:
+    1px solid #3d2b1f;
+
+}
+
+
+/* STATS  */
+
+.bestiary-stats-box {
+
+    background:
+    rgba(0,0,0,0.05);
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 0.85em;
+    font-family: monospace;
+    border:
+    1px solid
+    rgba(0,0,0,0.1);
+
+}
