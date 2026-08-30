@@ -29,11 +29,8 @@ function getDefaultGame(): array
         ],
 
         'currentBattle' => null,
-
         'message' => 'Welcome to Soul Stone RPG!',
-
         'game_started' => false,
-
         'starter_chosen' => false
     ];
 }
@@ -116,7 +113,7 @@ function savePlayerGame(array $game, ?string $file = null): string|false
 {
     $saveDirectory = __DIR__ . '/saves';
 
-    // Make sure saves directory exists
+// Make sure saves directory exists
     if (!is_dir($saveDirectory)) {
         if (!mkdir($saveDirectory, 0777, true)) {
             return false;
@@ -128,26 +125,26 @@ function savePlayerGame(array $game, ?string $file = null): string|false
     if ($file === null || $file === '') {
 
         $playerName =
-            $game['player']['name']
-            ?? 'Player';
+        $game['player']['name']
+        ?? 'Player';
 
         $file = getUniqueSaveFileName($playerName);
 
     } else {
 
-        // Only use the filename portion.
+// Only use the filename portion.
         $file = basename($file);
 
-        // Put the save file inside /saves/
+// Put the save file inside /saves/
         $file = $saveDirectory . '/' . $file;
     }
 
 
-    // Store which save file belongs to this game
+// Store which save file belongs to this game
     $game['_save_file'] = basename($file);
 
 
-    // Convert game data to JSON
+// Convert game data to JSON
     $json = json_encode(
         $game,
         JSON_PRETTY_PRINT |
@@ -160,7 +157,7 @@ function savePlayerGame(array $game, ?string $file = null): string|false
     }
 
 
-    // Write to the actual saves directory
+// Write to the actual saves directory
     $result = file_put_contents(
         $file,
         $json,
@@ -171,7 +168,6 @@ function savePlayerGame(array $game, ?string $file = null): string|false
     if ($result === false) {
         return false;
     }
-
 
     return $file;
 }
@@ -189,13 +185,13 @@ function loadPlayerGame(string $file): array
         !str_contains($file, '/')
     ) {
         $file =
-            __DIR__ .
-            '/saves/' .
-            basename($file);
+        __DIR__ .
+        '/saves/' .
+        basename($file);
     }
 
 
-    // Never load a directory
+// Never load a directory
     if (!is_file($file)) {
         return getDefaultGame();
     }
@@ -223,9 +219,9 @@ function loadPlayerGame(string $file): array
     }
 
 
-    // Remember which save file was loaded
+// Remember which save file was loaded
     $game['_save_file'] =
-        basename($file);
+    basename($file);
 
 
     return $game;
@@ -239,7 +235,7 @@ function loadPlayerGame(string $file): array
 function getSavedGames(): array
 {
     $saveDirectory =
-        __DIR__ . '/saves';
+    __DIR__ . '/saves';
 
 
     if (!is_dir($saveDirectory)) {
@@ -248,10 +244,10 @@ function getSavedGames(): array
 
 
     $files =
-        glob(
-            $saveDirectory .
-            '/player_*.json'
-        );
+    glob(
+        $saveDirectory .
+        '/player_*.json'
+    );
 
 
     if ($files === false) {
@@ -270,7 +266,7 @@ function getSavedGames(): array
 
 
         $contents =
-            file_get_contents($file);
+        file_get_contents($file);
 
 
         if (
@@ -282,10 +278,10 @@ function getSavedGames(): array
 
 
         $game =
-            json_decode(
-                $contents,
-                true
-            );
+        json_decode(
+            $contents,
+            true
+        );
 
 
         if (!is_array($game)) {
@@ -296,51 +292,51 @@ function getSavedGames(): array
         $savedGames[] = [
 
             'file' =>
-                basename($file),
+            basename($file),
 
             'name' =>
-                $game['player']['name']
-                ?? 'Unnamed Player',
+            $game['player']['name']
+            ?? 'Unnamed Player',
 
             'gold' =>
-                $game['player']['gold']
-                ?? 0,
+            $game['player']['gold']
+            ?? 0,
 
             'roster_count' =>
-                isset(
-                    $game['player']['roster']
-                )
-                &&
-                is_array(
-                    $game['player']['roster']
-                )
-                    ? count(
-                        $game['player']['roster']
-                    )
-                    : 0,
+            isset(
+                $game['player']['roster']
+            )
+            &&
+            is_array(
+                $game['player']['roster']
+            )
+            ? count(
+                $game['player']['roster']
+            )
+            : 0,
 
             'starter_chosen' =>
-                $game['starter_chosen']
-                ?? false,
+            $game['starter_chosen']
+            ?? false,
 
             'game_started' =>
-                $game['game_started']
-                ?? false,
+            $game['game_started']
+            ?? false,
 
             'modified' =>
-                filemtime($file)
+            filemtime($file)
         ];
     }
 
 
-    // Newest saves first
+// Newest saves first
     usort(
         $savedGames,
         function ($a, $b) {
             return
-                $b['modified']
-                <=>
-                $a['modified'];
+            $b['modified']
+            <=>
+            $a['modified'];
         }
     );
 
@@ -387,7 +383,7 @@ function recordCapture(
         )
     ) {
         $game['player']['discovered'][] =
-            $monsterName;
+        $monsterName;
     }
 }
 
@@ -423,8 +419,8 @@ function getTypeMultiplier(
 
 
     return
-        $chart[$attackerType][$defenderType]
-        ?? 1.0;
+    $chart[$attackerType][$defenderType]
+    ?? 1.0;
 }
 
 
@@ -437,7 +433,7 @@ function spawnMonster($allMonsters)
 
 
     $roll =
-        rand(1, 100);
+    rand(1, 100);
 
 
     if ($roll <= 5) {
@@ -455,15 +451,15 @@ function spawnMonster($allMonsters)
 
 
     $pool =
-        array_filter(
-            $allMonsters,
-            function ($monster) use ($target) {
+    array_filter(
+        $allMonsters,
+        function ($monster) use ($target) {
 
-                return
-                    ($monster['rarity'] ?? '')
-                    === $target;
-            }
-        );
+            return
+            ($monster['rarity'] ?? '')
+            === $target;
+        }
+    );
 
 
     if (empty($pool)) {
@@ -472,13 +468,13 @@ function spawnMonster($allMonsters)
 
 
     $wild =
-        $pool[
-            array_rand($pool)
-        ];
+    $pool[
+        array_rand($pool)
+    ];
 
 
     $wild['hp'] =
-        $wild['max_hp'];
+    $wild['max_hp'];
 
 
     if (
@@ -487,7 +483,7 @@ function spawnMonster($allMonsters)
         )
     ) {
         $wild['moves'] =
-            $moves[$wild['type']];
+        $moves[$wild['type']];
     } else {
         $wild['moves'] = [];
     }
@@ -495,7 +491,7 @@ function spawnMonster($allMonsters)
 
     if (!isset($wild['id'])) {
         $wild['id'] =
-            generateMonsterId();
+        generateMonsterId();
     }
 
 
@@ -514,7 +510,7 @@ function spawnMonster($allMonsters)
 function getBattleRewards(&$game)
 {
     $amount =
-        rand(15, 45);
+    rand(15, 45);
 
 
     if (
@@ -527,7 +523,7 @@ function getBattleRewards(&$game)
 
 
     $game['player']['gold'] +=
-        $amount;
+    $amount;
 
 
     return $amount;
@@ -575,59 +571,59 @@ function getLevel($xp)
 function getXPStats($xp)
 {
     $level =
-        getLevel($xp);
+    getLevel($xp);
 
 
     $currentLvlTotal =
-        getXPForLevel($level);
+    getXPForLevel($level);
 
 
     $nextLvlTotal =
-        getXPForLevel(
-            $level + 1
-        );
+    getXPForLevel(
+        $level + 1
+    );
 
 
     $xpInCurrentLevel =
-        $xp -
-        $currentLvlTotal;
+    $xp -
+    $currentLvlTotal;
 
 
     $xpNeededForNext =
-        $nextLvlTotal -
-        $currentLvlTotal;
+    $nextLvlTotal -
+    $currentLvlTotal;
 
 
     $percent =
-        ($xpNeededForNext > 0)
-            ? (
-                $xpInCurrentLevel /
-                $xpNeededForNext
-            ) * 100
-            : 0;
+    ($xpNeededForNext > 0)
+    ? (
+        $xpInCurrentLevel /
+        $xpNeededForNext
+    ) * 100
+    : 0;
 
 
     return [
         'level' =>
-            $level,
+        $level,
 
         'current' =>
-            $xpInCurrentLevel,
+        $xpInCurrentLevel,
 
         'needed' =>
-            $xpNeededForNext,
+        $xpNeededForNext,
 
         'next_lvl' =>
-            $nextLvlTotal,
+        $nextLvlTotal,
 
         'percent' =>
-            max(
-                0,
-                min(
-                    100,
-                    $percent
-                )
+        max(
+            0,
+            min(
+                100,
+                $percent
             )
+        )
     ];
 }
 
@@ -656,48 +652,48 @@ function gainXP(
 
 
     $oldLevel =
-        getLevel(
-            $monster['xp']
-        );
+    getLevel(
+        $monster['xp']
+    );
 
 
     $monster['xp'] +=
-        $amount;
+    $amount;
 
 
     $newLevel =
-        getLevel(
-            $monster['xp']
-        );
+    getLevel(
+        $monster['xp']
+    );
 
 
     if ($newLevel > $oldLevel) {
 
         $levelsGained =
-            $newLevel -
-            $oldLevel;
+        $newLevel -
+        $oldLevel;
 
 
         $monster['max_hp'] +=
-            10 *
-            $levelsGained;
+        10 *
+        $levelsGained;
 
 
         $monster['hp'] =
-            $monster['max_hp'];
+        $monster['max_hp'];
 
 
         $monster['attack'] +=
-            5 *
-            $levelsGained;
+        5 *
+        $levelsGained;
 
 
         return
-            'Level Up! ' .
-            $monster['name'] .
-            ' is now Level ' .
-            $newLevel .
-            '!';
+        'Level Up! ' .
+        $monster['name'] .
+        ' is now Level ' .
+        $newLevel .
+        '!';
     }
 
 
@@ -720,7 +716,7 @@ function buyItem(
     ) {
 
         $game['player']['gold'] -=
-            $cost;
+        $cost;
 
 
         if (
@@ -729,7 +725,7 @@ function buyItem(
             )
         ) {
             $game['inventory'][$itemType] =
-                0;
+            0;
         }
 
 
@@ -813,27 +809,21 @@ function attemptCatch(
 
 
     $chance =
-        (
-            1 -
-            ($h / $m)
-        ) * 100 +
-        $b;
+    (
+        1 -
+        ($h / $m)
+    ) * 100 +
+    $b;
 
 
     $chance =
-        max(
-            1,
-            min(
-                95,
-                $chance
-            )
-        );
+    max(1, min(95, $chance));
 
 
     return
-        rand(1, 100)
-        <=
-        $chance;
+    rand(1, 100)
+    <=
+    $chance;
 }
 
 
@@ -860,30 +850,30 @@ function usePotion(
 
 
     $pm =
-        &$game['player']['roster']
-        [$game['player']['active']];
+    &$game['player']['roster']
+    [$game['player']['active']];
 
 
     $heals = [
 
         'basic_potion' =>
-            30,
+        30,
 
         'greater_potion' =>
-            100,
+        100,
 
         'ancient_potion' =>
-            999,
+        999,
 
-        // Legacy names
+// Legacy names
         'potions' =>
-            30,
+        30,
 
         'super_potions' =>
-            100,
+        100,
 
         'max_potions' =>
-            999
+        999
     ];
 
 
@@ -908,11 +898,11 @@ function usePotion(
 
 
     $currentHP =
-        $pm['hp'] ?? 0;
+    $pm['hp'] ?? 0;
 
 
     $maxHP =
-        $pm['max_hp'] ?? 1;
+    $pm['max_hp'] ?? 1;
 
 
     if ($currentHP >= $maxHP) {
@@ -924,20 +914,17 @@ function usePotion(
 
 
     $pm['hp'] =
-        min(
-            $currentHP +
-            $heals[$type],
-            $maxHP
-        );
+    min(
+        $currentHP +
+        $heals[$type],
+        $maxHP
+    );
 
 
     return true;
 }
 
-
-
 // Switch Active Monster 
-
 
 function switchActiveMonster(
     &$game,
@@ -962,7 +949,7 @@ function switchActiveMonster(
 
 
     $game['player']['active'] =
-        $newIndex;
+    $newIndex;
 
 
     return true;
@@ -1037,9 +1024,9 @@ function getStarterMonsters(
     ) {
 
         $monsterName =
-            strtolower(
-                $monster['name'] ?? ''
-            );
+        strtolower(
+            $monster['name'] ?? ''
+        );
 
 
         if (
@@ -1051,7 +1038,7 @@ function getStarterMonsters(
         ) {
 
             $starters[$monsterName] =
-                $monster;
+            $monster;
         }
     }
 
@@ -1069,9 +1056,9 @@ function getStarterMonster(
     string $name
 ): ?array {
     $name =
-        strtolower(
-            trim($name)
-        );
+    strtolower(
+        trim($name)
+    );
 
 
     foreach (
@@ -1108,11 +1095,11 @@ function prepareStarterMonster(
 
 
     $monster['hp'] =
-        $monster['max_hp'];
+    $monster['max_hp'];
 
 
     $monster['id'] =
-        generateMonsterId();
+    generateMonsterId();
 
 
     if (
@@ -1122,7 +1109,7 @@ function prepareStarterMonster(
     ) {
 
         $monster['moves'] =
-            $moves[$monster['type']];
+        $moves[$monster['type']];
 
     } else {
 
@@ -1181,14 +1168,14 @@ function createNewGame(): array
         'currentBattle' => null,
 
         'message' =>
-            'Welcome to Soul Stone RPG!',
+        'Welcome to Soul Stone RPG!',
 
 
         'game_started' =>
-            false,
+        false,
 
         'starter_chosen' =>
-            false
+        false
     ];
 }
 
@@ -1202,9 +1189,9 @@ function startGameWithStarter(
     array $starter
 ): void {
     $starter =
-        prepareStarterMonster(
-            $starter
-        );
+    prepareStarterMonster(
+        $starter
+    );
 
 
     $game['player']['roster'] = [
@@ -1213,11 +1200,11 @@ function startGameWithStarter(
 
 
     $game['player']['active'] =
-        0;
+    0;
 
 
     $game['player']['gold'] =
-        500;
+    500;
 
 
     $game['player']['discovered'] = [
@@ -1226,21 +1213,21 @@ function startGameWithStarter(
 
 
     $game['currentBattle'] =
-        null;
+    null;
 
 
     $game['game_started'] =
-        true;
+    true;
 
 
     $game['starter_chosen'] =
-        true;
+    true;
 
 
     $game['message'] =
-        'Your journey has begun! ' .
-        $starter['name'] .
-        ' has joined your team.';
+    'Your journey has begun! ' .
+    $starter['name'] .
+    ' has joined your team.';
 }
 
 ?>

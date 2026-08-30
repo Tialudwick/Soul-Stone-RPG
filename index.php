@@ -6,8 +6,6 @@ session_start();
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/monsters.php';
 
-
-
 // Variables for messages to the player
 
 
@@ -19,12 +17,12 @@ $messageType = '';
 
 
 $selectingStarter =
-    isset($_SESSION['selecting_starter']) &&
-    $_SESSION['selecting_starter'] === true;
+isset($_SESSION['selecting_starter']) &&
+$_SESSION['selecting_starter'] === true;
 
 $hasPlayerName =
-    isset($_SESSION['player_name']) &&
-    trim($_SESSION['player_name']) !== '';
+isset($_SESSION['player_name']) &&
+trim($_SESSION['player_name']) !== '';
 
 
 // Log into the existing saved game if the player submitted the login form
@@ -64,7 +62,7 @@ if (
 
         } else {
 
-            // Make sure important structures exist
+// Make sure important structures exist
             if (!isset($game['player']['roster'])) {
                 $game['player']['roster'] = [];
             }
@@ -81,25 +79,25 @@ if (
                 $game['currentBattle'] = null;
             }
 
-            // Remember the exact save file
+// Remember the exact save file
             $game['_save_file'] = $filename;
 
-            // Regenerate session ID for login
+// Regenerate session ID for login
             session_regenerate_id(true);
 
-            // Store the exact save file in session
+// Store the exact save file in session
             $_SESSION['save_file'] = $filename;
 
-            // Store the complete game in session
+// Store the complete game in session
             $_SESSION['game'] = $game;
 
-            // Clear temporary new-game information
+// Clear temporary new-game information
             unset(
                 $_SESSION['selecting_starter'],
                 $_SESSION['player_name']
             );
 
-            // Go to game
+// Go to game
             header('Location: game.php');
             exit;
         }
@@ -114,8 +112,8 @@ if (
     isset($_POST['new_game'])
 ) {
 
-    // Only clear temporary new-game session data.
-    // NEVER delete existing save files.
+// Only clear temporary new-game session data.
+// NEVER delete existing save files.
 
     unset(
         $_SESSION['save_file'],
@@ -155,7 +153,7 @@ if (
     } elseif (mb_strlen($playerName) > 20) {
 
         $message =
-            'Your player name must be 20 characters or less.';
+        'Your player name must be 20 characters or less.';
 
         $messageType = 'error';
 
@@ -193,12 +191,12 @@ if (
     $starters = getStarterMonsters($allMonsters);
 
 
-    // Player Name Validation
+// Player Name Validation
 
     if ($playerName === '') {
 
         $message =
-            'Please enter your player name first.';
+        'Please enter your player name first.';
 
         $messageType = 'error';
 
@@ -208,7 +206,7 @@ if (
         $hasPlayerName = false;
 
 
-    // Invalid Starter Monster Validation
+// Invalid Starter Monster Validation
 
     } elseif (
         $starterName === '' ||
@@ -216,7 +214,7 @@ if (
     ) {
 
         $message =
-            'Please choose a valid starter monster.';
+        'Please choose a valid starter monster.';
 
         $messageType = 'error';
 
@@ -226,20 +224,20 @@ if (
         $hasPlayerName = true;
 
 
-    // Create New Game with Starter Monster
+// Create New Game with Starter Monster
 
     } else {
 
-        // Create completely fresh game
+// Create completely fresh game
         $game = createNewGame();
 
 
-        // Player Name
+// Player Name
 
         $game['player']['name'] = $playerName;
 
 
-        // Starter Monster
+// Starter Monster
 
         startGameWithStarter(
             $game,
@@ -247,55 +245,55 @@ if (
         );
 
 
-        // Starting Gold
+// Starting Gold
 
         $game['player']['gold'] = 500;
 
 
-        // Starting Potions
+// Starting Potions
 
         $game['inventory']['basic_potion'] = 3;
         $game['inventory']['greater_potion'] = 1;
         $game['inventory']['ancient_potion'] = 0;
 
 
-        // Starting Soul Stones
+// Starting Soul Stones
 
         $game['inventory']['basic'] = 5;
         $game['inventory']['greater'] = 1;
         $game['inventory']['ancient'] = 0;
 
 
-        // Game Started Logic
+// Game Started Logic
 
         $game['game_started'] = true;
         $game['starter_chosen'] = true;
 
 
 
-        // Creates a Uniqu save file
+// Creates a Uniqu save file
 
 
         $saveFilename =
-            getUniqueSaveFileName($playerName);
+        getUniqueSaveFileName($playerName);
 
 
-        // Save game to file and check for errors
-    
+// Save game to file and check for errors
+
 
         $savedFile =
-            savePlayerGame(
-                $game,
-                $saveFilename
-            );
+        savePlayerGame(
+            $game,
+            $saveFilename
+        );
 
 
         if ($savedFile === false) {
 
             $message =
-                'The game could not be saved. ' .
-                'Please check that the saves folder exists ' .
-                'and is writable.';
+            'The game could not be saved. ' .
+            'Please check that the saves folder exists ' .
+            'and is writable.';
 
             $messageType = 'error';
 
@@ -307,13 +305,13 @@ if (
 
         } else {
 
-            // Store exact filename in session for later use
+// Store exact filename in session for later use
 
             $filenameOnly = basename($savedFile);
 
             $game['_save_file'] = $filenameOnly;
 
-            // Login the player into the new game
+// Login the player into the new game
             session_regenerate_id(true);
 
             $_SESSION['save_file'] = $filenameOnly;
@@ -321,7 +319,7 @@ if (
             $_SESSION['game'] = $game;
 
 
-            // Clear temporary setup data
+// Clear temporary setup data
 
             unset(
                 $_SESSION['selecting_starter'],
@@ -329,9 +327,9 @@ if (
             );
 
 
-        
-            // Go to game page after successful creation
-           
+
+// Go to game page after successful creation
+
 
             header('Location: game.php');
             exit;
@@ -360,13 +358,13 @@ if (
 // Get starters
 
 $starters =
-    getStarterMonsters($allMonsters);
+getStarterMonsters($allMonsters);
 
 // Get saved games for display on the main menu
 
 
 $savedGames =
-    getSavedGames();
+getSavedGames();
 
 ?>
 
@@ -378,466 +376,355 @@ $savedGames =
     <meta charset="UTF-8">
 
     <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
     >
 
     <title>Soul Stone RPG</title>
 
     <link
-        rel="stylesheet"
-        href="style.css"
+    rel="stylesheet"
+    href="style.css"
     >
 
 </head>
 
 <body>
 
-<main class="start-panel backgroundBody body_box">
+    <main class="start-panel backgroundBody body_box">
 
-<?php if (!$selectingStarter): ?>
+        <?php if (!$selectingStarter): ?>
 
-    <!-- =====================================
-         MAIN MENU
-    ====================================== -->
+<!-- MAIN MENU -->
 
-    <div class="black-box">
+<div class="black-box">
 
-        <div class="start-logo">
+    <div class="start-logo">
 
-            <div class="logo-symbol">
-                ◆
-            </div>
-
-            <h1 class="bigFont">
-                SOUL STONE RPG
-            </h1>
-
-            <p>
-                Capture. Battle. Become Legendary.
-            </p>
-
+        <div class="logo-symbol">
+            ◆
         </div>
 
-        <br>
-
-
-        <!-- =================================
-             SAVED GAMES
-        ================================== -->
-
-        <section class="start-section">
-
-            <h2 class="subFont">
-                YOUR GAMES
-            </h2>
-
-            <p class="section-description">
-                Select a saved game to continue your journey.
-            </p>
-
-
-            <?php if (empty($savedGames)): ?>
-
-                <p class="section-description">
-                    You do not have any saved games yet.
-                </p>
-
-            <?php else: ?>
-
-                <div class="saved-games">
-
-                    <?php foreach ($savedGames as $saved): ?>
-
-                        <?php
-
-                        $playerName =
-                            $saved['name']
-                            ?? 'Player';
-
-                        $gold =
-                            $saved['gold']
-                            ?? 0;
-
-                        $rosterCount =
-                            $saved['roster_count']
-                            ?? 0;
-
-                        /*
-                         * Load the actual save here so the
-                         * start page can display its monster.
-                         */
-                        $savedGame =
-                            loadPlayerGame(
-                                $saved['file']
-                            );
-
-                        $player =
-                            $savedGame['player']
-                            ?? [];
-
-                        $roster =
-                            $player['roster']
-                            ?? [];
-
-                        $activeIndex =
-                            $player['active']
-                            ?? 0;
-
-                        $activeMonster =
-                            $roster[$activeIndex]
-                            ?? ($roster[0] ?? null);
-
-                        $activeXP =
-                            $activeMonster
-                            ? getXPStats(
-                                $activeMonster['xp'] ?? 0
-                            )
-                            : [
-                                'level' => 1
-                            ];
-
-                        ?>
-
-                        <div class="saved-game-card">
-
-                            <!-- PLAYER NAME -->
-
-                            <h3>
-
-                                <?php
-
-                                echo htmlspecialchars(
-                                    $playerName
-                                );
-
-                                ?>
-
-                            </h3>
-
-
-                            <?php if ($activeMonster): ?>
-
-                                <p>
-
-                                    Active Monster:
-
-                                    <strong>
-
-                                        <?php
-
-                                        echo htmlspecialchars(
-                                            $activeMonster['name']
-                                        );
-
-                                        ?>
-
-                                    </strong>
-
-                                </p>
-
-
-                                <p>
-
-                                    Level:
-
-                                    <strong>
-
-                                        <?php
-
-                                        echo (int)
-                                            $activeXP['level'];
-
-                                        ?>
-
-                                    </strong>
-
-                                </p>
-
-                            <?php endif; ?>
-
-
-                            <!-- ROSTER -->
-
-                            <p>
-
-                                Monsters:
-
-                                <strong>
-
-                                    <?php
-
-                                    echo (int)
-                                        $rosterCount;
-
-                                    ?>
-
-                                </strong>
-
-                            </p>
-
-
-                            <!-- GOLD -->
-
-                            <p>
-
-                                Gold:
-
-                                <strong>
-
-                                    <?php
-
-                                    echo number_format(
-                                        (int)$gold
-                                    );
-
-                                    ?>
-
-                                </strong>
-
-                            </p>
-
-
-                            <!-- LOGIN -->
-
-                            <form
-                                method="post"
-                                action="index.php"
-                            >
-
-                                <input
-                                    type="hidden"
-                                    name="save_file"
-                                    value="<?php
-
-                                    echo htmlspecialchars(
-                                        $saved['file'],
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    );
-
-                                    ?>"
-                                >
-
-                                <button
-                                    type="submit"
-                                    name="login_game"
-                                    class="start-btn continue-btn"
-                                >
-
-                                    LOG IN
-
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    <?php endforeach; ?>
-
-                </div>
-
-            <?php endif; ?>
-
-        </section>
-
-
-        <br>
-
-
-        <!-- DIVIDER -->
-
-        <div class="divider">
-
-            <span>
-                OR
-            </span>
-
-        </div>
-
-
-        <!-- =================================
-             NEW GAME
-        ================================== -->
-
-        <section class="start-section new-game-section">
-
-            <h2 class="subFont">
-                BEGIN A NEW JOURNEY
-            </h2>
-
-            <p class="section-description">
-                Start a completely new Soul Stone adventure.
-            </p>
-
-            <form
-                method="post"
-                action="index.php"
-            >
-
-                <button
-                    type="submit"
-                    name="new_game"
-                    class="start-btn new-game-btn"
-                >
-
-                    NEW GAME
-
-                </button>
-
-            </form>
-
-        </section>
+        <h1 class="bigFont">
+            SOUL STONE RPG
+        </h1>
+
+        <p>
+            Capture. Battle. Become Legendary.
+        </p>
 
     </div>
+
+    <br>
+
+
+<!-- SAVED GAMES -->
+
+<section class="start-section">
+
+    <h2 class="subFont">
+        YOUR GAMES
+    </h2>
+
+    <p class="section-description">
+        Select a saved game to continue your journey.
+    </p>
+
+
+    <?php if (empty($savedGames)): ?>
+
+        <p class="section-description">
+            You do not have any saved games yet.
+        </p>
+
+    <?php else: ?>
+
+        <div class="saved-games">
+
+            <?php foreach ($savedGames as $saved): ?>
+
+                <?php
+
+                $playerName =
+                $saved['name']
+                ?? 'Player';
+
+                $gold =
+                $saved['gold']
+                ?? 0;
+
+                $rosterCount =
+                $saved['roster_count']
+                ?? 0;
+
+/*
+* Load the actual save here so the
+* start page can display its monster.
+*/
+$savedGame =
+loadPlayerGame(
+    $saved['file']
+);
+
+$player =
+$savedGame['player']
+?? [];
+
+$roster =
+$player['roster']
+?? [];
+
+$activeIndex =
+$player['active']
+?? 0;
+
+$activeMonster =
+$roster[$activeIndex]
+?? ($roster[0] ?? null);
+
+$activeXP =
+$activeMonster
+? getXPStats(
+    $activeMonster['xp'] ?? 0
+)
+: [
+    'level' => 1
+];
+
+?>
+
+<div class="saved-game-card">
+
+<!-- PLAYER NAME -->
+
+<h3>
+
+    <?php
+
+    echo htmlspecialchars(
+        $playerName
+    );
+
+    ?>
+
+</h3>
+
+
+<?php if ($activeMonster): ?>
+
+    <p>
+
+        Active Monster:
+
+        <strong>
+
+            <?php
+
+            echo htmlspecialchars(
+                $activeMonster['name']
+            );
+
+            ?>
+
+        </strong>
+
+    </p>
+
+
+    <p>
+
+        Level:
+
+        <strong>
+
+            <?php
+
+            echo (int)
+            $activeXP['level'];
+
+            ?>
+
+        </strong>
+
+    </p>
+
+<?php endif; ?>
+
+
+<!-- ROSTER -->
+
+<p>
+
+    Monsters:
+
+    <strong>
+
+        <?php
+
+        echo (int)
+        $rosterCount;
+
+        ?>
+
+    </strong>
+
+</p>
+
+
+<!-- GOLD -->
+
+<p>
+
+    Gold:
+
+    <strong>
+
+        <?php
+
+        echo number_format(
+            (int)$gold
+        );
+
+        ?>
+
+    </strong>
+
+</p>
+
+
+<!-- LOGIN -->
+
+<form
+method="post"
+action="index.php"
+>
+
+<input
+type="hidden"
+name="save_file"
+value="<?php
+
+echo htmlspecialchars(
+    $saved['file'],
+    ENT_QUOTES,
+    'UTF-8'
+);
+
+?>"
+>
+
+<button
+type="submit"
+name="login_game"
+class="start-btn continue-btn"
+>
+
+LOG IN
+
+</button>
+
+</form>
+
+</div>
+
+<?php endforeach; ?>
+
+</div>
+
+<?php endif; ?>
+
+</section>
+
+
+<br>
+
+
+<!-- DIVIDER -->
+
+<div class="divider">
+
+    <span>
+        OR
+    </span>
+
+</div>
+
+
+<!-- NEW GAME -->
+
+<section class="start-section new-game-section">
+
+    <h2 class="subFont">
+        BEGIN A NEW JOURNEY
+    </h2>
+
+    <p class="section-description">
+        Start a completely new Soul Stone adventure.
+    </p>
+
+    <form
+    method="post"
+    action="index.php"
+    >
+
+    <button
+    type="submit"
+    name="new_game"
+    class="start-btn new-game-btn"
+    >
+
+    NEW GAME
+
+</button>
+
+</form>
+
+</section>
+
+</div>
 
 
 <?php elseif (!$hasPlayerName): ?>
 
-    <!-- =====================================
-         PLAYER NAME
-    ====================================== -->
+<!-- PLAYER NAME -->
 
-    <div class="black-box">
+<div class="black-box">
 
-        <div class="start-logo">
+    <div class="start-logo">
 
-            <div class="logo-symbol">
-                ◆
-            </div>
-
-            <h1 class="bigFont">
-                NEW JOURNEY
-            </h1>
-
-            <p>
-                Every legend needs a name.
-            </p>
-
+        <div class="logo-symbol">
+            ◆
         </div>
 
+        <h1 class="bigFont">
+            NEW JOURNEY
+        </h1>
 
-        <section class="start-section">
-
-            <h2 class="subFont">
-                ENTER YOUR NAME
-            </h2>
-
-            <p class="section-description">
-                This name will be used for your saved game.
-            </p>
-
-
-            <?php if (!empty($message)): ?>
-
-                <div
-                    class="start-message <?php echo htmlspecialchars(
-                        $messageType
-                    ); ?>"
-                >
-
-                    <?php
-
-                    echo htmlspecialchars(
-                        $message
-                    );
-
-                    ?>
-
-                </div>
-
-            <?php endif; ?>
-
-
-            <form
-                method="post"
-                action="index.php"
-            >
-
-                <label for="player_name">
-                    PLAYER NAME
-                </label>
-
-                <input
-                    type="text"
-                    id="player_name"
-                    name="player_name"
-                    maxlength="20"
-                    required
-                    autocomplete="off"
-                    placeholder="Enter your name"
-                >
-
-                <button
-                    type="submit"
-                    name="create_player"
-                    class="start-btn new-game-btn"
-                >
-
-                    CONTINUE
-
-                </button>
-
-            </form>
-
-
-            <br>
-
-
-            <form
-                method="post"
-                action="index.php"
-            >
-
-                <button
-                    type="submit"
-                    name="cancel_starter"
-                    class="start-btn continue-btn"
-                >
-
-                    BACK
-
-                </button>
-
-            </form>
-
-        </section>
+        <p>
+            Every legend needs a name.
+        </p>
 
     </div>
 
 
-<?php else: ?>
+    <section class="start-section">
 
-    <!-- =====================================
-         STARTER SELECTION
-    ====================================== -->
+        <h2 class="subFont">
+            ENTER YOUR NAME
+        </h2>
 
-    <div class="black-box">
-
-        <div class="start-logo">
-
-            <div class="logo-symbol">
-                ◆
-            </div>
-
-            <h1 class="bigFont">
-                CHOOSE YOUR SOUL MONSTER
-            </h1>
-
-            <p>
-                Your journey begins with one choice.
-            </p>
-
-        </div>
+        <p class="section-description">
+            This name will be used for your saved game.
+        </p>
 
 
         <?php if (!empty($message)): ?>
 
             <div
-                class="start-message <?php echo htmlspecialchars(
-                    $messageType
+            class="start-message <?php echo htmlspecialchars(
+                $messageType
                 ); ?>"
-            >
+                >
 
                 <?php
 
@@ -852,247 +739,347 @@ $savedGames =
         <?php endif; ?>
 
 
-        <section class="starter-selection">
+        <form
+        method="post"
+        action="index.php"
+        >
 
-            <div class="starter-grid">
+        <label for="player_name">
+            PLAYER NAME
+        </label>
 
-                <?php foreach ($starters as $starter): ?>
+        <input
+        type="text"
+        id="player_name"
+        name="player_name"
+        maxlength="20"
+        required
+        autocomplete="off"
+        placeholder="Enter your name"
+        >
 
-                    <?php
+        <button
+        type="submit"
+        name="create_player"
+        class="start-btn new-game-btn"
+        >
 
-                    $starterKey =
-                        strtolower(
-                            $starter['name']
-                        );
+        CONTINUE
+
+    </button>
+
+</form>
+
+
+<br>
+
+
+<form
+method="post"
+action="index.php"
+>
+
+<button
+type="submit"
+name="cancel_starter"
+class="start-btn continue-btn"
+>
+
+BACK
+
+</button>
+
+</form>
+
+</section>
+
+</div>
+
+
+<?php else: ?>
+<!-- DEFAULT CONTENT -->
+
+<!-- STARTER SELECTION -->
+
+<div class="black-box">
+
+    <div class="start-logo">
+
+        <div class="logo-symbol">
+            ◆
+        </div>
+
+        <h1 class="bigFont">
+            CHOOSE YOUR SOUL MONSTER
+        </h1>
+
+        <p>
+            Your journey begins with one choice.
+        </p>
+
+    </div>
+
+
+    <?php if (!empty($message)): ?>
+
+        <div
+        class="start-message <?php echo htmlspecialchars(
+            $messageType
+            ); ?>"
+            >
+
+            <?php
+
+            echo htmlspecialchars(
+                $message
+            );
+
+            ?>
+
+        </div>
+
+    <?php endif; ?>
+
+
+    <section class="starter-selection">
+
+        <div class="starter-grid">
+
+            <?php foreach ($starters as $starter): ?>
+
+                <?php
+
+                $starterKey =
+                strtolower(
+                    $starter['name']
+                );
+
+                $stoneSymbol = '◆';
+
+                if (
+                    $starter['type'] === 'fire'
+                ) {
+
+                    $stoneSymbol = '♦';
+
+                } elseif (
+                    $starter['type'] === 'water'
+                ) {
+
+                    $stoneSymbol = '●';
+
+                } elseif (
+                    $starter['type'] === 'earth'
+                ) {
 
                     $stoneSymbol = '◆';
 
-                    if (
-                        $starter['type'] === 'fire'
-                    ) {
+                }
 
-                        $stoneSymbol = '♦';
+                ?>
 
-                    } elseif (
-                        $starter['type'] === 'water'
-                    ) {
+                <div class="starter-card">
 
-                        $stoneSymbol = '●';
+                    <div class="starter-stone">
 
-                    } elseif (
-                        $starter['type'] === 'earth'
-                    ) {
-
-                        $stoneSymbol = '◆';
-
-                    }
-
-                    ?>
-
-                    <div class="starter-card">
-
-                        <div class="starter-stone">
-
-                            <span>
-
-                                <?php
-                                echo $stoneSymbol;
-                                ?>
-
-                            </span>
-
-                        </div>
-
-
-                        <div class="starter-image">
-
-                            <?php if (
-                                !empty(
-                                    $starter['image']
-                                )
-                            ): ?>
-
-                                <img
-                                    src="images/monsters/<?php
-
-                                    echo htmlspecialchars(
-                                        $starter['image']
-                                    );
-
-                                    ?>"
-                                    alt="<?php
-
-                                    echo htmlspecialchars(
-                                        $starter['name']
-                                    );
-
-                                    ?>"
-                                >
-
-                            <?php endif; ?>
-
-                        </div>
-
-
-                        <h3>
+                        <span>
 
                             <?php
-
-                            echo htmlspecialchars(
-                                $starter['name']
-                            );
-
+                            echo $stoneSymbol;
                             ?>
 
-                        </h3>
-
-
-                        <div
-                            class="type-badge <?php
-
-                            echo htmlspecialchars(
-                                $starter['type']
-                            );
-
-                            ?>"
-                        >
-
-                            <?php
-
-                            echo strtoupper(
-                                htmlspecialchars(
-                                    $starter['type']
-                                )
-                            );
-
-                            ?>
-
-                        </div>
-
-
-                        <div class="starter-stats">
-
-                            <div>
-
-                                <strong>
-                                    HP
-                                </strong>
-
-                                <?php
-
-                                echo (int)
-                                    $starter['max_hp'];
-
-                                ?>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong>
-                                    ATK
-                                </strong>
-
-                                <?php
-
-                                echo (int)
-                                    $starter['attack'];
-
-                                ?>
-
-                            </div>
-
-                        </div>
-
-
-                        <form
-                            method="post"
-                            action="index.php"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="starter"
-                                value="<?php
-
-                                echo htmlspecialchars(
-                                    $starterKey
-                                );
-
-                                ?>"
-                            >
-
-                            <button
-                                type="submit"
-                                name="choose_starter"
-                                class="start-btn new-game-btn"
-                            >
-
-                                CHOOSE
-
-                            </button>
-
-                        </form>
+                        </span>
 
                     </div>
 
-                <?php endforeach; ?>
 
-            </div>
+                    <div class="starter-image">
 
+                        <?php if (
+                            !empty(
+                                $starter['image']
+                            )
+                        ): ?>
 
-            <!-- BACK -->
+                        <img
+                        src="images/monsters/<?php
 
-            <form
-                method="post"
-                action="index.php"
-                class="starter-cancel-form"
-            >
+                        echo htmlspecialchars(
+                            $starter['image']
+                        );
 
-                <button
-                    type="submit"
-                    name="cancel_starter"
-                    class="start-btn continue-btn"
+                    ?>"
+                    alt="<?php
+
+                    echo htmlspecialchars(
+                        $starter['name']
+                    );
+
+                ?>"
                 >
 
-                    BACK
+            <?php endif; ?>
 
-                </button>
+        </div>
 
-            </form>
 
-        </section>
+        <h3>
+
+            <?php
+
+            echo htmlspecialchars(
+                $starter['name']
+            );
+
+            ?>
+
+        </h3>
+
+
+        <div
+        class="type-badge <?php
+
+        echo htmlspecialchars(
+            $starter['type']
+        );
+
+    ?>"
+    >
+
+    <?php
+
+    echo strtoupper(
+        htmlspecialchars(
+            $starter['type']
+        )
+    );
+
+    ?>
+
+</div>
+
+
+<div class="starter-stats">
+
+    <div>
+
+        <strong>
+            HP
+        </strong>
+
+        <?php
+
+        echo (int)
+        $starter['max_hp'];
+
+        ?>
 
     </div>
+
+
+    <div>
+
+        <strong>
+            ATK
+        </strong>
+
+        <?php
+
+        echo (int)
+        $starter['attack'];
+
+        ?>
+
+    </div>
+
+</div>
+
+
+<form
+method="post"
+action="index.php"
+>
+
+<input
+type="hidden"
+name="starter"
+value="<?php
+
+echo htmlspecialchars(
+    $starterKey
+);
+
+?>"
+>
+
+<button
+type="submit"
+name="choose_starter"
+class="start-btn new-game-btn"
+>
+
+CHOOSE
+
+</button>
+
+</form>
+
+</div>
+
+<?php endforeach; ?>
+
+</div>
+
+
+<!-- BACK -->
+
+<form
+method="post"
+action="index.php"
+class="starter-cancel-form"
+>
+
+<button
+type="submit"
+name="cancel_starter"
+class="start-btn continue-btn"
+>
+
+BACK
+
+</button>
+
+</form>
+
+</section>
+
+</div>
 
 <?php endif; ?>
 
 
-<!-- =====================================
-     MESSAGE
-====================================== -->
+<!-- MESSAGE -->
 
 <?php if (
     !empty($message) &&
     $hasPlayerName
 ): ?>
 
-    <div
-        class="start-message <?php echo htmlspecialchars(
-            $messageType
-        ); ?>"
+<div
+class="start-message <?php echo htmlspecialchars(
+    $messageType
+    ); ?>"
     >
 
-        <?php
+    <?php
 
-        echo htmlspecialchars(
-            $message
-        );
+    echo htmlspecialchars(
+        $message
+    );
 
-        ?>
+    ?>
 
-    </div>
+</div>
 
 <?php endif; ?>
 

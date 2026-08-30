@@ -255,12 +255,9 @@ in_array(
 
 </div>
 
-
 <?php endforeach; ?>
 
-
 </div>
-
 
 </body>
 

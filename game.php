@@ -113,46 +113,38 @@ foreach ($inventoryDefaults as $item => $amount) {
     }
 }
 
-/*
-| POST ACTIONS
-*/
+/* POST ACTIONS */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $action = $_POST['action'] ?? '';
 
-    /*
-    | START WILD BATTLE
-    */
+    /* START WILD BATTLE */
 
     if ($action === 'start_battle') {
 
         if (!hasUsableMonster($game)) {
 
             $game['message'] =
-                "You have no usable monsters. Visit the roster and heal your team.";
+            "You have no usable monsters. Visit the roster and heal your team.";
 
         } else {
 
             $wild = spawnMonster($allMonsters);
 
-            /*
-             * Store the complete enemy inside currentBattle.
-             */
+            /* Store the complete enemy inside currentBattle. */
             $game['currentBattle'] = [
                 'enemy' => $wild
             ];
 
             $game['message'] =
-                "A wild "
-                . ucfirst($wild['name'])
-                . " appeared!";
+            "A wild "
+            . ucfirst($wild['name'])
+            . " appeared!";
         }
     }
 
-    /*
-    | RUN AWAY
-    */
+    /* RUN AWAY */
 
     elseif ($action === 'run') {
 
@@ -165,18 +157,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $game['currentBattle'] = null;
 
             $game['message'] =
-                "You escaped safely.";
+            "You escaped safely.";
 
         } else {
 
             $game['message'] =
-                "There is no battle to escape from.";
+            "There is no battle to escape from.";
         }
     }
 
-    /*
-    | SWITCH ACTIVE MONSTER
-    */
+    /* SWITCH ACTIVE MONSTER */
 
     elseif (isset($_POST['switch_to'])) {
 
@@ -185,76 +175,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (switchActiveMonster($game, $newIndex)) {
 
             $activeMonster =
-                $game['player']['roster'][$newIndex];
+            $game['player']['roster'][$newIndex];
 
             $game['message'] =
-                $activeMonster['name']
-                . " is now your active monster.";
+            $activeMonster['name']
+            . " is now your active monster.";
 
         } else {
 
             $game['message'] =
-                "That monster cannot battle right now.";
+            "That monster cannot battle right now.";
         }
     }
 
-    /*
-    | BASIC POTION
-    */
+    /* BASIC POTION */
 
     elseif ($action === 'use_pot_basic') {
 
         if (usePotion($game, 'basic_potion')) {
 
             $game['message'] =
-                "Your monster recovered 30 HP.";
+            "Your monster recovered 30 HP.";
 
         } else {
 
             $game['message'] =
-                "You cannot use a Basic Potion right now.";
+            "You cannot use a Basic Potion right now.";
         }
     }
 
-    /*
-    | GREATER POTION
-    */
+    /* GREATER POTION */
 
     elseif ($action === 'use_pot_greater') {
 
         if (usePotion($game, 'greater_potion')) {
 
             $game['message'] =
-                "Your monster recovered 100 HP.";
+            "Your monster recovered 100 HP.";
 
         } else {
 
             $game['message'] =
-                "You cannot use a Greater Potion right now.";
+            "You cannot use a Greater Potion right now.";
         }
     }
 
-    /*
-    | ANCIENT POTION
-    */
+    /* ANCIENT POTION */
 
     elseif ($action === 'use_pot_ancient') {
 
         if (usePotion($game, 'ancient_potion')) {
 
             $game['message'] =
-                "Your monster was completely healed.";
+            "Your monster was completely healed.";
 
         } else {
 
             $game['message'] =
-                "You cannot use an Ancient Potion right now.";
+            "You cannot use an Ancient Potion right now.";
         }
     }
 
-    /*
-    | BASIC SOUL STONE
-    */
+    /* BASIC SOUL STONE */
 
     elseif ($action === 'catch_basic') {
 
@@ -265,12 +247,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ) {
 
             $game['message'] =
-                "There is no wild monster to capture.";
+            "There is no wild monster to capture.";
 
         } elseif (($game['inventory']['basic'] ?? 0) <= 0) {
 
             $game['message'] =
-                "You do not have a Basic Soul Stone.";
+            "You do not have a Basic Soul Stone.";
 
         }  else {
 
@@ -302,23 +284,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $game['currentBattle'] = null;
 
                 $game['message'] =
-                    "Success! "
-                    . ucfirst($captured['name'])
-                    . " was captured!";
+                "Success! "
+                . ucfirst($captured['name'])
+                . " was captured!";
 
             } else {
 
                 $game['message'] =
-                    "The Basic Soul Stone failed to capture "
-                    . ucfirst($enemy['name'])
-                    . ".";
+                "The Basic Soul Stone failed to capture "
+                . ucfirst($enemy['name'])
+                . ".";
             }
         }
     }
 
-    /*
-    | GREATER SOUL STONE
-    */
+    /* GREATER SOUL STONE */
 
     elseif ($action === 'catch_greater') {
 
@@ -329,12 +309,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ) {
 
             $game['message'] =
-                "There is no wild monster to capture.";
+            "There is no wild monster to capture.";
 
         } elseif (($game['inventory']['greater'] ?? 0) <= 0) {
 
             $game['message'] =
-                "You do not have a Greater Soul Stone.";
+            "You do not have a Greater Soul Stone.";
 
         } else {
 
@@ -366,23 +346,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $game['currentBattle'] = null;
 
                 $game['message'] =
-                    "Amazing! "
-                    . ucfirst($captured['name'])
-                    . " was captured!";
+                "Amazing! "
+                . ucfirst($captured['name'])
+                . " was captured!";
 
             } else {
 
                 $game['message'] =
-                    "The Greater Soul Stone failed to capture "
-                    . ucfirst($enemy['name'])
-                    . ".";
+                "The Greater Soul Stone failed to capture "
+                . ucfirst($enemy['name'])
+                . ".";
             }
         }
     }
 
-    /*
-    | ANCIENT SOUL STONE
-    */
+    /* ANCIENT SOUL STONE */
 
     elseif ($action === 'catch_ancient') {
 
@@ -393,12 +371,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ) {
 
             $game['message'] =
-                "There is no wild monster to capture.";
+            "There is no wild monster to capture.";
 
         } elseif (($game['inventory']['ancient'] ?? 0) <= 0) {
 
             $game['message'] =
-                "You do not have an Ancient Soul Stone.";
+            "You do not have an Ancient Soul Stone.";
 
         } else {
 
@@ -430,23 +408,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $game['currentBattle'] = null;
 
                 $game['message'] =
-                    "Legendary capture! "
-                    . ucfirst($captured['name'])
-                    . " joined your roster!";
+                "Legendary capture! "
+                . ucfirst($captured['name'])
+                . " joined your roster!";
 
             } else {
 
                 $game['message'] =
-                    "The Ancient Soul Stone failed to capture "
-                    . ucfirst($enemy['name'])
-                    . ".";
+                "The Ancient Soul Stone failed to capture "
+                . ucfirst($enemy['name'])
+                . ".";
             }
         }
     }
 
-    /*
-    | ATTACK
-    */
+    /* ATTACK */
 
     elseif (str_starts_with($action, 'attack_')) {
 
@@ -464,398 +440,372 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ) {
 
                 $game['currentBattle'] =
-                    $_SESSION['game']['currentBattle'];
+                $_SESSION['game']['currentBattle'];
 
             } else {
 
                 $game['message'] =
-                    "There is no enemy to attack.";
+                "There is no enemy to attack.";
             }
         }
 
-        /*
-         * Only continue attacking if an enemy actually exists.
-         */
+/*
+* Only continue attacking if an enemy actually exists.
+*/
+
+if (
+    isset($game['currentBattle']['enemy']) &&
+    is_array($game['currentBattle']['enemy'])
+) {
+
+    $moveIndex =
+    (int) str_replace(
+        'attack_',
+        '',
+        $action
+    );
+
+    $activeIndex =
+    (int) ($game['player']['active'] ?? 0);
+
+/*
+* Make sure active monster exists.
+*/
+
+if (
+    !isset(
+        $game['player']['roster'][$activeIndex]
+    )
+) {
+
+    $game['message'] =
+    "You do not have an active monster.";
+
+} else {
+
+
+    $pm =
+    &$game['player']['roster'][$activeIndex];
+
+    $enemy =
+    &$game['currentBattle']['enemy'];
+
+/*
+* Make sure player monster has moves.
+*/
+
+if (empty($pm['moves'])) {
+
+    $pm['moves'] =
+    $moves[$pm['type']]
+    ?? [];
+}
+
+/*
+* Validate move.
+*/
+
+if (!isset($pm['moves'][$moveIndex])) {
+
+    $game['message'] =
+    "Invalid move.";
+
+} elseif (($pm['hp'] ?? 0) <= 0) {
+
+    $game['message'] =
+    $pm['name']
+    . " has fainted.";
+
+} else {
+
+    $move =
+    $pm['moves'][$moveIndex];
+
+    /* PLAYER DAMAGE */
+
+    $multiplier =
+    getTypeMultiplier(
+        $move['type'],
+        $enemy['type']
+    );
+
+    $baseDamage =
+    ($pm['attack'] ?? 1)
+    * ($move['power'] ?? 1);
+
+    $damage =
+    max(
+        1,
+        (int) round(
+            $baseDamage
+            * $multiplier
+        )
+    );
+
+    $enemy['hp'] =
+    max(
+        0,
+        ($enemy['hp'] ?? $enemy['max_hp'])
+        - $damage
+    );
+
+    $effectText = '';
+
+    if ($multiplier >= 2) {
+
+        $effectText =
+        " Super effective!";
+
+    } elseif ($multiplier <= 0.5) {
+
+        $effectText =
+        " Not very effective...";
+    }
+
+    /* ENEMY DEFEATED */
+
+    if ($enemy['hp'] <= 0) {
+
+        $gold =
+        getBattleRewards($game);
+
+        $xpReward = 25;
 
         if (
-            isset($game['currentBattle']['enemy']) &&
-            is_array($game['currentBattle']['enemy'])
+            ($enemy['rarity'] ?? '')
+            === 'greater'
         ) {
 
-            $moveIndex =
-                (int) str_replace(
-                    'attack_',
-                    '',
-                    $action
-                );
+            $xpReward = 50;
 
-            $activeIndex =
-                (int) ($game['player']['active'] ?? 0);
+        } elseif (
+            ($enemy['rarity'] ?? '')
+            === 'ancient'
+        ) {
 
-            /*
-             * Make sure active monster exists.
-             */
+            $xpReward = 100;
+        }
 
-            if (
-                !isset(
-                    $game['player']['roster'][$activeIndex]
+        $levelMessage =
+        gainXP(
+            $pm,
+            $xpReward
+        );
+
+        /* Battle is over.  */
+
+        $game['currentBattle'] = null;
+
+        if ($levelMessage) {
+
+            $game['message'] =
+            $pm['name']
+            . " dealt "
+            . $damage
+            . " damage!"
+            . $effectText
+            . " "
+            . $levelMessage
+            . " +"
+            . $gold
+            . " gold.";
+
+        } else {
+
+            $game['message'] =
+            $pm['name']
+            . " dealt "
+            . $damage
+            . " damage!"
+            . $effectText
+            . " Wild "
+            . $enemy['name']
+            . " was defeated!"
+            . " +"
+            . $xpReward
+            . " XP and +"
+            . $gold
+            . " gold.";
+        }
+
+    } else {
+
+        /* ENEMY ATTACK */
+
+        $enemyMoves =
+        $enemy['moves']
+        ?? (
+            $moves[$enemy['type']]
+            ?? []
+        );
+
+        if (!empty($enemyMoves)) {
+
+            $enemyMove =
+            $enemyMoves[
+                array_rand($enemyMoves)
+            ];
+
+            $enemyMultiplier =
+            getTypeMultiplier(
+                $enemyMove['type'],
+                $pm['type']
+            );
+
+            $enemyBaseDamage =
+            ($enemy['attack'] ?? 1)
+            * ($enemyMove['power'] ?? 1);
+
+            $enemyDamage =
+            max(
+                1,
+                (int) round(
+                    $enemyBaseDamage
+                    * $enemyMultiplier
                 )
-            ) {
+            );
 
-                $game['message'] =
-                    "You do not have an active monster.";
+            $pm['hp'] =
+            max(
+                0,
+                ($pm['hp'] ?? 0)
+                - $enemyDamage
+            );
 
-            } else {
+            /* PLAYER MONSTER FAINTED */
 
+            if ($pm['hp'] <= 0) {
 
-                $pm =
-                    &$game['player']['roster'][$activeIndex];
+                $nextMonster =
+                getFirstUsableMonster($game);
 
-                $enemy =
-                    &$game['currentBattle']['enemy'];
+                if ($nextMonster !== null) {
 
-                /*
-                 * Make sure player monster has moves.
-                 */
+                    $game['player']['active'] =
+                    $nextMonster;
 
-                if (empty($pm['moves'])) {
-
-                    $pm['moves'] =
-                        $moves[$pm['type']]
-                        ?? [];
-                }
-
-                /*
-                 * Validate move.
-                 */
-
-                if (!isset($pm['moves'][$moveIndex])) {
+                    $newActive =
+                    $game['player']['roster']
+                    [$nextMonster];
 
                     $game['message'] =
-                        "Invalid move.";
-
-                } elseif (($pm['hp'] ?? 0) <= 0) {
-
-                    $game['message'] =
-                        $pm['name']
-                        . " has fainted.";
+                    $pm['name']
+                    . " dealt "
+                    . $damage
+                    . " damage!"
+                    . $effectText
+                    . " "
+                    . $pm['name']
+                    . " fainted!"
+                    . " "
+                    . $newActive['name']
+                    . " entered the battle.";
 
                 } else {
 
-                    $move =
-                        $pm['moves'][$moveIndex];
+// All monsters have fainted.
+// Automatically heal the entire roster.
 
-                    /*
-                     * PLAYER DAMAGE
-                     */
-
-                    $multiplier =
-                        getTypeMultiplier(
-                            $move['type'],
-                            $enemy['type']
-                        );
-
-                    $baseDamage =
-                        ($pm['attack'] ?? 1)
-                        * ($move['power'] ?? 1);
-
-                    $damage =
-                        max(
-                            1,
-                            (int) round(
-                                $baseDamage
-                                * $multiplier
-                            )
-                        );
-
-                    $enemy['hp'] =
-                        max(
-                            0,
-                            ($enemy['hp'] ?? $enemy['max_hp'])
-                            - $damage
-                        );
-
-                    $effectText = '';
-
-                    if ($multiplier >= 2) {
-
-                        $effectText =
-                            " Super effective!";
-
-                    } elseif ($multiplier <= 0.5) {
-
-                        $effectText =
-                            " Not very effective...";
+                    foreach ($game['player']['roster'] as &$monster) {
+                        if (isset($monster['max_hp'])) {
+                            $monster['hp'] = $monster['max_hp'];
+                        }
                     }
+                    unset($monster);
 
-                    /*
-                     * ENEMY DEFEATED
-                     */
+// Reset active monster to the first monster.
+                    $game['player']['active'] = 0;
 
-                    if ($enemy['hp'] <= 0) {
+// End the battle.
+                    $game['currentBattle'] = null;
 
-                        $gold =
-                            getBattleRewards($game);
+                    $game['message'] =
+                    "All of your monsters have fainted. "
+                    . "Your entire team has been fully healed!";
+                }
 
-                        $xpReward = 25;
+            } else {
 
-                        if (
-                            ($enemy['rarity'] ?? '')
-                            === 'greater'
-                        ) {
+                $game['message'] =
+                $pm['name']
+                . " dealt "
+                . $damage
+                . " damage!"
+                . $effectText
+                . " Wild "
+                . $enemy['name']
+                . " used "
+                . $enemyMove['name']
+                . " and dealt "
+                . $enemyDamage
+                . " damage!";
+            }
+        } else {
 
-                            $xpReward = 50;
+            /* Enemy has no moves. */
 
-                        } elseif (
-                            ($enemy['rarity'] ?? '')
-                            === 'ancient'
-                        ) {
-
-                            $xpReward = 100;
-                        }
-
-                        $levelMessage =
-                            gainXP(
-                                $pm,
-                                $xpReward
-                            );
-
-                        /*
-                         * Battle is over.
-                         */
-
-                        $game['currentBattle'] = null;
-
-                        if ($levelMessage) {
-
-                            $game['message'] =
-                                $pm['name']
-                                . " dealt "
-                                . $damage
-                                . " damage!"
-                                . $effectText
-                                . " "
-                                . $levelMessage
-                                . " +"
-                                . $gold
-                                . " gold.";
-
-                        } else {
-
-                            $game['message'] =
-                                $pm['name']
-                                . " dealt "
-                                . $damage
-                                . " damage!"
-                                . $effectText
-                                . " Wild "
-                                . $enemy['name']
-                                . " was defeated!"
-                                . " +"
-                                . $xpReward
-                                . " XP and +"
-                                . $gold
-                                . " gold.";
-                        }
-
-                    } else {
-
-                        /*
-                         * ENEMY ATTACK
-                         */
-
-                        $enemyMoves =
-                            $enemy['moves']
-                            ?? (
-                                $moves[$enemy['type']]
-                                ?? []
-                            );
-
-                        if (!empty($enemyMoves)) {
-
-                            $enemyMove =
-                                $enemyMoves[
-                                    array_rand($enemyMoves)
-                                ];
-
-                            $enemyMultiplier =
-                                getTypeMultiplier(
-                                    $enemyMove['type'],
-                                    $pm['type']
-                                );
-
-                            $enemyBaseDamage =
-                                ($enemy['attack'] ?? 1)
-                                * ($enemyMove['power'] ?? 1);
-
-                            $enemyDamage =
-                                max(
-                                    1,
-                                    (int) round(
-                                        $enemyBaseDamage
-                                        * $enemyMultiplier
-                                    )
-                                );
-
-                            $pm['hp'] =
-                                max(
-                                    0,
-                                    ($pm['hp'] ?? 0)
-                                    - $enemyDamage
-                                );
-
-                            /*
-                             * PLAYER MONSTER FAINTED
-                             */
-
-                            if ($pm['hp'] <= 0) {
-
-                                $nextMonster =
-                                    getFirstUsableMonster($game);
-
-                                if ($nextMonster !== null) {
-
-                                    $game['player']['active'] =
-                                        $nextMonster;
-
-                                    $newActive =
-                                        $game['player']['roster']
-                                        [$nextMonster];
-
-                                    $game['message'] =
-                                        $pm['name']
-                                        . " dealt "
-                                        . $damage
-                                        . " damage!"
-                                        . $effectText
-                                        . " "
-                                        . $pm['name']
-                                        . " fainted!"
-                                        . " "
-                                        . $newActive['name']
-                                        . " entered the battle.";
-
-                                } else {
-
-    // All monsters have fainted.
-    // Automatically heal the entire roster.
-
-    foreach ($game['player']['roster'] as &$monster) {
-        if (isset($monster['max_hp'])) {
-            $monster['hp'] = $monster['max_hp'];
+            $game['message'] =
+            $pm['name']
+            . " dealt "
+            . $damage
+            . " damage!"
+            . $effectText
+            . " Wild "
+            . $enemy['name']
+            . " has no move to use.";
         }
     }
-    unset($monster);
+}
+}
+}
+}
 
-    // Reset active monster to the first monster.
-    $game['player']['active'] = 0;
+/* UNKNOWN ACTION */
 
-    // End the battle.
-    $game['currentBattle'] = null;
+elseif ($action !== '') {
 
     $game['message'] =
-        "All of your monsters have fainted. "
-        . "Your entire team has been fully healed!";
+    "Nothing happened.";
 }
 
-                            } else {
+/* Save the game AND session copy. */
 
-                                $game['message'] =
-                                    $pm['name']
-                                    . " dealt "
-                                    . $damage
-                                    . " damage!"
-                                    . $effectText
-                                    . " Wild "
-                                    . $enemy['name']
-                                    . " used "
-                                    . $enemyMove['name']
-                                    . " and dealt "
-                                    . $enemyDamage
-                                    . " damage!";
-                            }
-                        } else {
+savePlayerGame($game, $saveFile);
 
-                            /*
-                             * Enemy has no moves.
-                             */
-
-                            $game['message'] =
-                                $pm['name']
-                                . " dealt "
-                                . $damage
-                                . " damage!"
-                                . $effectText
-                                . " Wild "
-                                . $enemy['name']
-                                . " has no move to use.";
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /*
-    | UNKNOWN ACTION
-    */
-
-    elseif ($action !== '') {
-
-        $game['message'] =
-            "Nothing happened.";
-    }
-
-    /*
-    | Save the game AND session copy.
-    */
-
-    savePlayerGame($game, $saveFile);
-
-    $_SESSION['game'] = $game;
+$_SESSION['game'] = $game;
 }
 
-/*
-
-| ACTIVE PLAYER MONSTER
-
-*/
+/* ACTIVE PLAYER MONSTER */
 
 $activeIndex =
-    (int) ($game['player']['active'] ?? 0);
+(int) ($game['player']['active'] ?? 0);
 
 $pm =
-    $game['player']['roster'][$activeIndex]
-    ?? null;
+$game['player']['roster'][$activeIndex]
+?? null;
 
-/*
-| MAKE SURE ACTIVE MONSTER HAS MOVES
-*/
+/* MAKE SURE ACTIVE MONSTER HAS MOVES */
 
 if ($pm !== null) {
 
     if (empty($pm['moves'])) {
 
         $pm['moves'] =
-            $moves[$pm['type']]
-            ?? [];
+        $moves[$pm['type']]
+        ?? [];
 
         $game['player']['roster'][$activeIndex]['moves'] =
-            $pm['moves'];
+        $pm['moves'];
     }
 }
 
-/*
-| REFRESH ACTIVE MONSTER AFTER POSSIBLE MOVE UPDATE
-*/
+/* REFRESH ACTIVE MONSTER AFTER POSSIBLE MOVE UPDATE */
 
 $pm =
-    $game['player']['roster'][$activeIndex]
-    ?? null;
+$game['player']['roster'][$activeIndex]
+?? null;
 
-/*
-| ENEMY
-*/
+/* ENEMY */
 
 $em = null;
 
@@ -867,12 +817,10 @@ if (
 ) {
 
     $em =
-        $game['currentBattle']['enemy'];
+    $game['currentBattle']['enemy'];
 }
 
-/*
-| PLAYER HP
-*/
+/* PLAYER HP */
 
 $pmHP = 0;
 
@@ -882,15 +830,13 @@ if (
 ) {
 
     $pmHP =
-        (
-            $pm['hp']
-            / $pm['max_hp']
-        ) * 100;
+    (
+        $pm['hp']
+        / $pm['max_hp']
+    ) * 100;
 }
 
-/*
-| ENEMY HP
-*/
+/* ENEMY HP */
 
 $emHP = 0;
 
@@ -900,31 +846,27 @@ if (
 ) {
 
     $emHP =
-        (
-            $em['hp']
-            / $em['max_hp']
-        ) * 100;
+    (
+        $em['hp']
+        / $em['max_hp']
+    ) * 100;
 }
 
-/*
-| XP
-*/
+/* XP  */
 
 $pmXP =
-    $pm !== null
-    ? getXPStats(
-        $pm['xp'] ?? 0
-    )
-    : [
-        'level' => 1,
-        'current' => 0,
-        'needed' => 100,
-        'percent' => 0
-    ];
+$pm !== null
+? getXPStats(
+    $pm['xp'] ?? 0
+)
+: [
+    'level' => 1,
+    'current' => 0,
+    'needed' => 100,
+    'percent' => 0
+];
 
-/*
-| SAVE ANY MOVE NORMALIZATION
-*/
+/* SAVE ANY MOVE NORMALIZATION */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['game'] = $game;
@@ -940,543 +882,505 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     <meta charset="UTF-8">
 
     <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
     >
 
     <title>Soul Stone RPG</title>
 
     <link
-        rel="stylesheet"
-        href="style.css"
+    rel="stylesheet"
+    href="style.css"
     >
 
 </head>
 
 <body>
 
-<!-- =========================================================
-     NAVIGATION
-========================================================= -->
+<!-- NAVIGATION -->
 
 <nav class="top-nav">
 
     <a
-        href="index.php"
-        class="logo-image-link"
+    href="index.php"
+    class="logo-image-link"
     >
 
-        <img
-            src="images/logo.png"
-            alt="Soul Stone RPG Logo"
-            class="game-logo"
-        >
+    <img
+    src="images/logo.png"
+    alt="Soul Stone RPG Logo"
+    class="game-logo"
+    >
 
-    </a>
+</a>
 
-    <div class="nav-links">
+<div class="nav-links">
 
-        <a
-            href="bestiary.php"
-                >
-            BESTIARY
-        </a>
+    <a
+    href="bestiary.php"
+    >
+    BESTIARY
+</a>
 
-        <a
-            href="shop.php"
-            
-        >
-            SHOP
-        </a>
+<a
+href="shop.php"
 
-        <a
-            href="index.php"
+>
+SHOP
+</a>
 
-        >
-            HOME
-        </a>
+<a
+href="index.php"
 
-    </div>
+>
+HOME
+</a>
+
+</div>
 
 </nav>
 
-<!-- =========================================================
-     MAIN GAME
-========================================================= -->
+<!-- MAIN GAME -->
 
 <main class="main-container">
 
-    <!-- =====================================================
-         BATTLE COLUMN
-    ====================================================== -->
+<!-- BATTLE COLUMN -->
 
-    <div class="battle-column">
+<div class="battle-column">
 
-        <?php if ($em !== null && $pm !== null): ?>
+    <?php if ($em !== null && $pm !== null): ?>
 
-            <!-- =================================================
-                 BATTLEFIELD
-            ================================================== -->
+<!-- BATTLEFIELD -->
 
-            <div class="stage">
+<div class="stage">
 
-                <!-- PLAYER MONSTER -->
+<!-- PLAYER MONSTER -->
 
-                <div class="monster-card player-card">
+<div class="monster-card player-card">
 
-                    <div
-                        class="type-badge <?php echo htmlspecialchars($pm['type']); ?>"
-                    >
+    <div
+    class="type-badge <?php echo htmlspecialchars($pm['type']); ?>"
+    >
 
-                        <?php
-                        echo strtoupper(
-                            htmlspecialchars($pm['type'])
-                        );
-                        ?>
+    <?php
+    echo strtoupper(
+        htmlspecialchars($pm['type'])
+    );
+    ?>
 
-                    </div>
+</div>
 
-                    <div class="card-header">
+<div class="card-header">
 
-                        <span>
-                            <?php
-                            echo htmlspecialchars($pm['name']);
-                            ?>
-                        </span>
+    <span>
+        <?php
+        echo htmlspecialchars($pm['name']);
+        ?>
+    </span>
 
-                        <span>
-                            Lv.<?php echo $pmXP['level']; ?>
-                        </span>
+    <span>
+        Lv.<?php echo $pmXP['level']; ?>
+    </span>
 
-                    </div>
+</div>
 
-                    <div class="image-well">
+<div class="image-well">
 
-                        <img
-                            src="images/monsters/<?php echo htmlspecialchars($pm['image']); ?>"
-                            alt="<?php echo htmlspecialchars($pm['name']); ?>"
-                        >
+    <img
+    src="images/monsters/<?php echo htmlspecialchars($pm['image']); ?>"
+    alt="<?php echo htmlspecialchars($pm['name']); ?>"
+    >
 
-                    </div>
+</div>
 
-                    <div class="hp-bar">
+<div class="hp-bar">
 
-                        <div
-                            class="hp-fill"
-                            style="width:<?php echo max(0, min(100, $pmHP)); ?>%;"
-                        ></div>
+    <div
+    class="hp-fill"
+    style="width:<?php echo max(0, min(100, $pmHP)); ?>%;"
+    ></div>
 
-                    </div>
+</div>
 
-                    <div class="card-stats">
+<div class="card-stats">
 
-                        HP:
-                        <?php echo $pm['hp']; ?>
-                        /
-                        <?php echo $pm['max_hp']; ?>
+    HP:
+    <?php echo $pm['hp']; ?>
+    /
+    <?php echo $pm['max_hp']; ?>
 
-                        |
+    |
 
-                        ATK:
-                        <?php echo $pm['attack']; ?>
+    ATK:
+    <?php echo $pm['attack']; ?>
 
-                    </div>
+</div>
 
-                    <!-- XP BAR -->
+<!-- XP BAR -->
 
-                    <div style="margin-top:3px;">
+<div style="margin-top:3px;">
 
-                        <div
-                            class="hp-bar"
-                            style="
-                                height:4px;
-                                background:#34495e;
-                            "
-                        >
+    <div
+    class="hp-bar"
+    style="
+    height:4px;
+    background:#34495e;
+    "
+    >
 
-                            <div
-                                class="hp-fill"
-                                style="
-                                    width:<?php echo max(0, min(100, $pmXP['percent'])); ?>%;
-                                    background:#3498db;
-                                "
-                            ></div>
+    <div
+    class="hp-fill"
+    style="
+    width:<?php echo max(0, min(100, $pmXP['percent'])); ?>%;
+    background:#3498db;
+    "
+    ></div>
 
-                        </div>
+</div>
 
-                        <div
-                            style="
-                                font-size:0.6em;
-                                display:flex;
-                                justify-content:space-between;
-                                color:#3d2b1f;
-                                font-weight:bold;
-                                margin-top:2px;
-                            "
-                        >
+<div
+style="
+font-size:0.6em;
+display:flex;
+justify-content:space-between;
+color:#3d2b1f;
+font-weight:bold;
+margin-top:2px;
+"
+>
 
-                            <span>
+<span>
 
-                                XP:
-                                <?php echo $pmXP['current']; ?>
-                                /
-                                <?php echo $pmXP['needed']; ?>
+    XP:
+    <?php echo $pmXP['current']; ?>
+    /
+    <?php echo $pmXP['needed']; ?>
 
-                            </span>
+</span>
 
-                            <span>
+<span>
 
-                                <?php
-                                echo floor($pmXP['percent']);
-                                ?>%
+    <?php
+    echo floor($pmXP['percent']);
+?>%
 
-                            </span>
+</span>
 
-                        </div>
+</div>
 
-                    </div>
+</div>
 
-                </div>
+</div>
 
-                <!-- ENEMY MONSTER -->
+<!-- ENEMY MONSTER -->
 
-                <div class="monster-card enemy-card">
+<div class="monster-card enemy-card">
 
-                    <div
-                        class="type-badge <?php echo htmlspecialchars($em['type']); ?>"
-                    >
+    <div
+    class="type-badge <?php echo htmlspecialchars($em['type']); ?>"
+    >
 
-                        <?php
-                        echo strtoupper(
-                            htmlspecialchars($em['type'])
-                        );
-                        ?>
+    <?php
+    echo strtoupper(
+        htmlspecialchars($em['type'])
+    );
+    ?>
 
-                    </div>
+</div>
 
-                    <div class="card-header">
+<div class="card-header">
 
-                        <span>
+    <span>
 
-                            Wild
-                            <?php
-                            echo htmlspecialchars($em['name']);
-                            ?>
+        Wild
+        <?php
+        echo htmlspecialchars($em['name']);
+        ?>
 
-                        </span>
+    </span>
 
-                        <span>
+    <span>
 
-                            Lv.
-                            <?php
-                            echo getLevel(
-                                $em['xp'] ?? 0
-                            );
-                            ?>
+        Lv.
+        <?php
+        echo getLevel(
+            $em['xp'] ?? 0
+        );
+        ?>
 
-                        </span>
+    </span>
 
-                    </div>
+</div>
 
-                    <div class="image-well">
+<div class="image-well">
 
-                        <img
-                            src="images/monsters/<?php echo htmlspecialchars($em['image']); ?>"
-                            alt="<?php echo htmlspecialchars($em['name']); ?>"
-                        >
+    <img
+    src="images/monsters/<?php echo htmlspecialchars($em['image']); ?>"
+    alt="<?php echo htmlspecialchars($em['name']); ?>"
+    >
 
-                    </div>
+</div>
 
-                    <div class="hp-bar">
+<div class="hp-bar">
 
-                        <div
-                            class="hp-fill hp-enemy"
-                            style="width:<?php echo max(0, min(100, $emHP)); ?>%;"
-                        ></div>
+    <div
+    class="hp-fill hp-enemy"
+    style="width:<?php echo max(0, min(100, $emHP)); ?>%;"
+    ></div>
 
-                    </div>
+</div>
 
-                    <div class="card-stats">
+<div class="card-stats">
 
-                        WILD BEAST
+    WILD BEAST
 
-                    </div>
+</div>
 
-                </div>
+</div>
 
-            </div>
+</div>
 
-            <!-- =================================================
-                 BATTLE MESSAGE
-            ================================================== -->
+<!-- BATTLE MESSAGE -->
 
-            <div
-                style="
-                    color:white;
-                    text-align:center;
-                    font-size:0.85em;
-                    font-weight:bold;
-                    min-height:18px;
-                    margin:10px 0;
-                "
-            >
+<div
+style="
+color:white;
+text-align:center;
+font-size:0.85em;
+font-weight:bold;
+min-height:18px;
+margin:10px 0;
+"
+>
 
-                <?php
-                echo htmlspecialchars(
-                    $game['message'] ?? ''
-                );
-                ?>
+<?php
+echo htmlspecialchars(
+    $game['message'] ?? ''
+);
+?>
 
-            </div>
+</div>
 
-            <!-- =================================================
-                 MOVES
-            ================================================== -->
+<!-- MOVES -->
 
-            <form method="post">
+<form method="post">
 
-                <div class="moves-grid">
+    <div class="moves-grid">
 
-                    <?php
-                    foreach (
-                        ($pm['moves'] ?? []) as $i => $move
-                    ):
-                    ?>
+        <?php
+        foreach (
+            ($pm['moves'] ?? []) as $i => $move
+        ):
+        ?>
 
-                        <button
-                            type="submit"
-                            name="action"
-                            value="attack_<?php echo $i; ?>"
-                            class="btn btn-move"
+        <button
+        type="submit"
+        name="action"
+        value="attack_<?php echo $i; ?>"
+        class="btn btn-move"
 
-                            <?php
-                            echo ($pm['hp'] ?? 0) <= 0
-                                ? 'disabled'
-                                : '';
-                            ?>
-                        >
-
-                            <?php
-                            echo strtoupper(
-                                htmlspecialchars(
-                                    $move['name']
-                                )
-                            );
-                            ?>
-
-                            <br>
-
-                            <small style="font-size:0.8em;">
-
-                                PWR:
-                                <?php
-                                echo $move['power'];
-                                ?>
-
-                            </small>
-
-                        </button>
-
-                    <?php endforeach; ?>
-
-                </div>
-
-                <button
-                    type="submit"
-                    name="action"
-                    value="run"
-                    class="btn btn-run"
-                >
-
-                    RUN AWAY
-
-                </button>
-
-            </form>
-
-        <?php else: ?>
-
-            <!-- =================================================
-                 EXPLORE SCREEN
-            ================================================== -->
-
-            <div class="explore-screen">
-
-                <h3
-                    style="
-                        color:white;
-                        margin-bottom:15px;
-                    "
-                >
-
-                    <?php
-
-                    echo htmlspecialchars(
-                        $game['message']
-                        ?: "Explore the world of Soul Stones!"
-                    );
-
-                    ?>
-
-                </h3>
-
-                <form method="post">
-
-                    <button
-                        type="submit"
-                        name="action"
-                        value="start_battle"
-                        class="btn"
-                        style="
-                            background:#27ae60;
-                            padding:15px 40px;
-                            font-size:1.3em;
-                        "
-                    >
-
-                        EXPLORE GRASS
-
-                    </button>
-
-                </form>
-
-            </div>
-
-        <?php endif; ?>
-
-    </div>
-
-    <!--UI COLUMN -->
-
-    <div class="ui-column">
-
-        <form
-            method="post"
-            style="
-                display:flex;
-                flex-direction:column;
-                height:100%;
-                justify-content:space-between;
-            "
+        <?php
+        echo ($pm['hp'] ?? 0) <= 0
+        ? 'disabled'
+        : '';
+        ?>
         >
 
-            <div>
+        <?php
+        echo strtoupper(
+            htmlspecialchars(
+                $move['name']
+            )
+        );
+        ?>
 
-                <!-- POTIONS -->
+        <br>
 
-                <div class="section-title">
-                    POTIONS
-                </div>
+        <small style="font-size:0.8em;">
 
-                <div class="btn-grid">
+            PWR:
+            <?php
+            echo $move['power'];
+            ?>
 
-                    <button
-                        type="submit"
-                        name="action"
-                        value="use_pot_basic"
-                        class="btn btn-pot"
-                    >
+        </small>
 
-                        Basic
-                        (
-                        <?php
-                        echo $game['inventory']['basic_potion'];
-                        ?>
-                        )
+    </button>
 
-                    </button>
+<?php endforeach; ?>
 
-                    <button
-                        type="submit"
-                        name="action"
-                        value="use_pot_greater"
-                        class="btn btn-pot"
-                    >
+</div>
 
-                        Great
-                        (
-                        <?php
-                        echo $game['inventory']['greater_potion'];
-                        ?>
-                        )
+<button
+type="submit"
+name="action"
+value="run"
+class="btn btn-run"
+>
 
-                    </button>
+RUN AWAY
 
-                    <button
-                        type="submit"
-                        name="action"
-                        value="use_pot_ancient"
-                        class="btn btn-pot"
-                    >
+</button>
 
-                        Ancient
-                        (
-                        <?php
-                        echo $game['inventory']['ancient_potion'];
-                        ?>
-                        )
+</form>
 
-                    </button>
+<?php else: ?>
 
-                </div>
+<!-- EXPLORE SCREEN -->
 
-                <!-- SOUL STONES -->
+<div class="explore-screen">
 
-                <div class="section-title">
-                    SOUL STONES
-                </div>
+    <h3
+    style="
+    color:white;
+    margin-bottom:15px;
+    "
+    >
 
-                <div class="btn-grid">
+    <?php
 
-                    <button
-                        type="submit"
-                        name="action"
-                        value="catch_basic"
-                        class="btn btn-stone"
-                    >
+    echo htmlspecialchars(
+        $game['message']
+        ?: "Explore the world of Soul Stones!"
+    );
 
-                        Basic
-                        (
-                        <?php
-                        echo $game['inventory']['basic'];
-                        ?>
-                        )
+    ?>
 
-                    </button>
+</h3>
 
-                    <button
-                        type="submit"
-                        name="action"
-                        value="catch_greater"
-                        class="btn btn-stone"
-                    >
+<form method="post">
 
-                        Great
-                        (
-                        <?php
-                        echo $game['inventory']['greater'];
-                        ?>
-                        )
+    <button
+    type="submit"
+    name="action"
+    value="start_battle"
+    class="btn"
+    style="
+    background:#27ae60;
+    padding:15px 40px;
+    font-size:1.3em;
+    "
+    >
 
-                    </button>
+    EXPLORE GRASS
 
-                    <button
-                        type="submit"
-                        name="action"
-                        value="catch_ancient"
-                        class="btn btn-stone"
-                    >
+</button>
 
-                        Ancient
-                        (
-                        <?php
-                        echo $game['inventory']['ancient'];
-                        ?>
-                        )
+</form>
 
-                    </button>
+</div>
 
-                </div>
+<?php endif; ?>
+
+</div>
+
+<!--UI COLUMN -->
+
+<div class="ui-column">
+
+    <form
+    method="post"
+    style="
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    justify-content:space-between;
+    "
+    >
+
+    <div>
+
+<!-- POTIONS -->
+
+<div class="section-title">
+    POTIONS
+</div>
+
+<div class="btn-grid">
+
+    <button
+    type="submit"
+    name="action"
+    value="use_pot_basic"
+    class="btn btn-pot"
+    >
+
+    Basic
+    (<?php echo $game['inventory']['basic_potion'];?>)
+
+</button>
+
+<button
+type="submit"
+name="action"
+value="use_pot_greater"
+class="btn btn-pot"
+>
+
+Great
+(<?php echo $game['inventory']['greater_potion']; ?>)
+
+</button>
+
+<button
+type="submit"
+name="action"
+value="use_pot_ancient"
+class="btn btn-pot"
+>
+
+Ancient
+(<?php echo $game['inventory']['ancient_potion']; ?>)
+
+</button>
+
+</div>
+
+<!-- SOUL STONES -->
+
+<div class="section-title">
+    SOUL STONES
+</div>
+
+<div class="btn-grid">
+
+    <button
+    type="submit"
+    name="action"
+    value="catch_basic"
+    class="btn btn-stone"
+    >
+
+    Basic
+    (<?php echo $game['inventory']['basic']; ?>)
+
+</button>
+
+<button
+type="submit"
+name="action"
+value="catch_greater"
+class="btn btn-stone"
+>
+
+Great
+(<?php echo $game['inventory']['greater']; ?> )
+
+</button>
+
+<button
+type="submit"
+name="action"
+value="catch_ancient"
+class="btn btn-stone"
+>
+
+Ancient
+(<?php echo $game['inventory']['ancient']; ?>)
+
+</button>
+
+</div>
 
 <!-- MONSTER ROSTER -->
 
@@ -1501,107 +1405,107 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 <?php
 
                 $hpP = ($m['max_hp'] ?? 0) > 0
-                    ? (($m['hp'] ?? 0) / $m['max_hp']) * 100
-                    : 0;
+                ? (($m['hp'] ?? 0) / $m['max_hp']) * 100
+                : 0;
 
                 $stats = getXPStats($m['xp'] ?? 0);
 
                 ?>
 
                 <button
-                    type="submit"
-                    name="switch_to"
-                    value="<?php echo $i; ?>"
-                    class="roster-card <?php
-                        echo $i == $game['player']['active']
-                            ? 'active-slot'
-                            : '';
-                    ?>"
-                >
+                type="submit"
+                name="switch_to"
+                value="<?php echo $i; ?>"
+                class="roster-card <?php
+                echo $i == $game['player']['active']
+                ? 'active-slot'
+                : '';
+            ?>"
+            >
 
-                    <img
-                        src="images/monsters/<?php
-                            echo htmlspecialchars($m['image']);
-                        ?>"
-                        class="<?php
-                            echo ($m['hp'] ?? 0) <= 0
-                                ? 'fainted-img'
-                                : '';
-                        ?>"
-                        alt="<?php
-                            echo htmlspecialchars($m['name']);
-                        ?>"
-                    >
+            <img
+            src="images/monsters/<?php
+            echo htmlspecialchars($m['image']);
+        ?>"
+        class="<?php
+        echo ($m['hp'] ?? 0) <= 0
+        ? 'fainted-img'
+        : '';
+    ?>"
+    alt="<?php
+    echo htmlspecialchars($m['name']);
+?>"
+>
 
-                    <div class="roster-info">
+<div class="roster-info">
 
-                        <div class="roster-name">
-                            <?php
-                            echo htmlspecialchars($m['name']);
-                            ?>
-                        </div>
-
-                        <div class="roster-level">
-
-                            Lv.<?php echo $stats['level']; ?>
-
-                            <span class="<?php
-                                echo htmlspecialchars($m['type']);
-                            ?>">
-
-                                <?php
-                                echo strtoupper(
-                                    htmlspecialchars($m['type'])
-                                );
-                                ?>
-
-                            </span>
-
-                        </div>
-
-                        <div class="hp-bar">
-
-                            <div
-                                class="hp-fill"
-                                style="width:<?php
-                                    echo max(
-                                        0,
-                                        min(100, $hpP)
-                                    );
-                                ?>%;"
-                            ></div>
-
-                        </div>
-
-                    </div>
-
-                </button>
-
-            <?php endforeach; ?>
-
-        <?php endif; ?>
-
+    <div class="roster-name">
+        <?php
+        echo htmlspecialchars($m['name']);
+        ?>
     </div>
+
+    <div class="roster-level">
+
+        Lv.<?php echo $stats['level']; ?>
+
+        <span class="<?php
+        echo htmlspecialchars($m['type']);
+    ?>">
+
+    <?php
+    echo strtoupper(
+        htmlspecialchars($m['type'])
+    );
+    ?>
+
+</span>
 
 </div>
 
-            <!-- GOLD -->
+<div class="hp-bar">
 
-            <div class="gold-box">
+    <div
+    class="hp-fill"
+    style="width:<?php
+    echo max(
+        0,
+        min(100, $hpP)
+    );
+?>%;"
+></div>
 
-                GOLD AMOUNT:
+</div>
 
-                <?php
-                echo number_format(
-                    $game['player']['gold']
-                );
-                ?>
+</div>
 
-            </div>
+</button>
 
-        </form>
+<?php endforeach; ?>
 
-    </div>
+<?php endif; ?>
+
+</div>
+
+</div>
+
+<!-- GOLD -->
+
+<div class="gold-box">
+
+    GOLD AMOUNT:
+
+    <?php
+    echo number_format(
+        $game['player']['gold']
+    );
+    ?>
+
+</div>
+
+</form>
+
+</div>
 
 </main>
 
