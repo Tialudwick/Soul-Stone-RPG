@@ -1,4 +1,3 @@
-```php
 <?php
 
 session_start();
@@ -7,11 +6,7 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/monsters.php';
 
 
-/*
-|--------------------------------------------------------------------------
-| Make sure a game has been selected
-|--------------------------------------------------------------------------
-*/
+/* Make sure a game has been selected */
 
 if (empty($_SESSION['save_file'])) {
 
@@ -20,11 +15,7 @@ if (empty($_SESSION['save_file'])) {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Load the SAME player save used by game.php
-|--------------------------------------------------------------------------
-*/
+/* Load the SAME player save used by game.php */
 
 $saveFile = basename($_SESSION['save_file']);
 
@@ -43,20 +34,12 @@ if (!is_file($savePath)) {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Load player's individual game
-|--------------------------------------------------------------------------
-*/
+/* Load player's individual game */
 
 $game = loadPlayerGame($saveFile);
 
 
-/*
-|--------------------------------------------------------------------------
-| Safety checks
-|--------------------------------------------------------------------------
-*/
+/* Safety checks */
 
 if (!isset($game['player'])) {
     $game['player'] = [];
@@ -75,11 +58,7 @@ if (!isset($game['inventory'])) {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Make sure inventory keys exist
-|--------------------------------------------------------------------------
-*/
+/* Make sure inventory keys exist */
 
 $inventoryDefaults = [
 
@@ -103,11 +82,7 @@ foreach ($inventoryDefaults as $item => $amount) {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Shop prices
-|--------------------------------------------------------------------------
-*/
+/* Shop prices */
 
 $prices = [
 
@@ -126,11 +101,7 @@ $prices = [
 ];
 
 
-/*
-|--------------------------------------------------------------------------
-| Shop purchase
-|--------------------------------------------------------------------------
-*/
+/* Shop purchase */
 
 $message = '';
 
@@ -142,11 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $item = $_POST['buy'] ?? '';
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Make sure the item actually exists
-    |--------------------------------------------------------------------------
-    */
+    /* Make sure the item actually exists */
 
     if (!isset($prices[$item])) {
 
@@ -159,21 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cost = $prices[$item];
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Make sure gold is numeric
-        |--------------------------------------------------------------------------
-        */
+        /* Make sure gold is numeric */
 
         $game['player']['gold'] =
             (int) $game['player']['gold'];
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Check gold
-        |--------------------------------------------------------------------------
-        */
+        /* Check gold */
 
         if ($game['player']['gold'] < $cost) {
 
@@ -184,20 +143,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } else {
 
-            /*
-            |--------------------------------------------------------------------------
-            | Remove gold
-            |--------------------------------------------------------------------------
-            */
+            /* Remove gold */
 
             $game['player']['gold'] -= $cost;
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Add item to inventory
-            |--------------------------------------------------------------------------
-            */
+            /* Add item to inventory */
 
             if (!isset($game['inventory'][$item])) {
 
@@ -208,11 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $game['inventory'][$item]++;
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Save the player's EXISTING save file
-            |--------------------------------------------------------------------------
-            */
+            /* Save the player's EXISTING save file */
 
             $saved = savePlayerGame(
                 $game,
@@ -220,17 +167,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Make sure save succeeded
-            |--------------------------------------------------------------------------
-            */
+            /* Make sure save succeeded */
 
             if ($saved === false) {
 
-                /*
-                | Undo purchase if save failed
-                */
+                /* Undo purchase if save failed */
 
                 $game['player']['gold'] += $cost;
 
@@ -260,11 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messageType = 'success';
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Keep session data synchronized
-                |--------------------------------------------------------------------------
-                */
+                /* Keep session data synchronized */
 
                 $_SESSION['game'] = $game;
 
@@ -275,11 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Make sure session has newest game data
-|--------------------------------------------------------------------------
-*/
+/* Make sure session has newest game data */
 
 $_SESSION['game'] = $game;
 
@@ -300,208 +233,9 @@ $_SESSION['game'] = $game;
 
     <title>Soul Stone RPG - The Emporium</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
-    <style>
-
-        .shop-header {
-            text-align: center;
-            padding: 40px 0;
-            background:
-                linear-gradient(
-                    rgba(0,0,0,0.6),
-                    rgba(0,0,0,0.6)
-                ),
-                url('images/shop_bg.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-
-
-        .gold-pouch {
-            display: inline-block;
-            background: #f1c40f;
-            color: #000;
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.4em;
-            box-shadow:
-                0 4px 15px
-                rgba(241, 196, 15, 0.3);
-            border: 3px solid #d4ac0d;
-        }
-
-
-        .display-case {
-            max-width: 1100px;
-            margin: -30px auto 50px;
-            display: grid;
-            grid-template-columns:
-                repeat(
-                    auto-fit,
-                    minmax(280px, 1fr)
-                );
-            gap: 30px;
-            padding: 20px;
-        }
-
-
-        .item-display {
-            background: #2c3e50;
-            border: 4px solid #8e44ad;
-            border-radius: 12px;
-            position: relative;
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.2s;
-            box-shadow:
-                0 10px 20px
-                rgba(0,0,0,0.5);
-        }
-
-
-        .item-display:hover {
-            transform: translateY(-10px);
-        }
-
-
-        .item-display.potions {
-            border-color: #27ae60;
-        }
-
-
-        .item-display.stones {
-            border-color: #8e44ad;
-        }
-
-
-        .item-title {
-            background:
-                rgba(0,0,0,0.3);
-            padding: 8px;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #ecf0f1;
-        }
-
-
-        .item-icon {
-            width: 80px;
-            height: 80px;
-            background: #fff;
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 4px solid #bdc3c7;
-        }
-
-
-        .item-icon img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-        }
-
-
-        .item-desc {
-            font-size: 0.9em;
-            color: #bdc3c7;
-            height: 40px;
-            margin-bottom: 15px;
-        }
-
-
-        .price-tag {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #f1c40f;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-
-        .btn-buy {
-            width: 100%;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-bottom: 4px solid #c0392b;
-        }
-
-
-        .btn-buy:hover {
-            background: #ff5e4d;
-        }
-
-
-        .btn-buy:active {
-            border-bottom: 0;
-            transform: translateY(2px);
-        }
-
-
-        .btn-buy:disabled {
-            background: #555;
-            border-bottom-color: #333;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-
-        .toast {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: #2ecc71;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 5px;
-            font-weight: bold;
-            box-shadow:
-                0 5px 15px
-                rgba(0,0,0,0.3);
-            z-index: 100;
-            animation:
-                slideIn 0.5s forwards;
-        }
-
-
-        .toast.error {
-            background: #e74c3c;
-        }
-
-
-        @keyframes slideIn {
-
-            from {
-                transform: translateX(100%);
-            }
-
-            to {
-                transform: translateX(0);
-            }
-
-        }
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 
 </head>
-
-
 <body>
 
 
@@ -509,16 +243,9 @@ $_SESSION['game'] = $game;
 
 <nav class="top-nav">
 
-    <a
-        href="index.php"
-        class="logo-image-link"
-    >
+    <a href="index.php" class="logo-image-link">
 
-        <img
-            src="images/logo.png"
-            alt="Soul Stone RPG Logo"
-            class="game-logo"
-        >
+        <img src="images/logo.png" alt="Soul Stone RPG Logo" class="game-logo">
 
     </a>
 
