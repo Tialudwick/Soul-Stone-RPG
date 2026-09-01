@@ -75,7 +75,7 @@
                 "attack": 13,
                 "rarity": "basic",
                 "image": "thistox.png",
-                "hp": 55,
+                "hp": 26,
                 "moves": [
                     {
                         "name": "Pebble Toss",
@@ -99,7 +99,7 @@
                     }
                 ],
                 "id": "monster_6a7bb4708d9c71.09069606",
-                "xp": 0
+                "xp": 50
             },
             {
                 "name": "mudig",
@@ -333,8 +333,8 @@
                 "xp": 175
             }
         ],
-        "active": 9,
-        "gold": 76,
+        "active": 2,
+        "gold": 104,
         "discovered": [
             "gravhorn",
             "dustny",
@@ -359,42 +359,8 @@
         "greater": 0,
         "ancient": 0
     },
-    "currentBattle": {
-        "enemy": {
-            "name": "frostfangor",
-            "type": "water",
-            "max_hp": 140,
-            "attack": 19,
-            "rarity": "greater",
-            "image": "frostfangor.png",
-            "hp": 140,
-            "moves": [
-                {
-                    "name": "Splash",
-                    "power": 1,
-                    "type": "water"
-                },
-                {
-                    "name": "Water Gun",
-                    "power": 1.2,
-                    "type": "water"
-                },
-                {
-                    "name": "Aqua Tail",
-                    "power": 1.5,
-                    "type": "water"
-                },
-                {
-                    "name": "Hydro Cannon",
-                    "power": 2,
-                    "type": "water"
-                }
-            ],
-            "id": "monster_6a96f96add6476.85345144",
-            "xp": 0
-        }
-    },
-    "message": "A wild Frostfangor appeared!",
+    "currentBattle": null,
+    "message": "thistox dealt 52 damage! Super effective! Wild frostfangor was defeated! +50 XP and +28 gold.",
     "game_started": true,
     "starter_chosen": true,
     "_save_file": "player_Orion_1.json"
